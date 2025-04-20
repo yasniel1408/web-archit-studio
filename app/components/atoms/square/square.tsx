@@ -244,7 +244,14 @@ export function Square({
   const handleSquareClick = (e: React.MouseEvent) => {
     if (editable) {
       e.stopPropagation();
+    }
+  };
+  
+  const handleSquareDoubleClick = (e: React.MouseEvent) => {
+    if (editable) {
+      e.stopPropagation();
       setShowColorPicker(true);
+      console.log("Square - Abriendo selector de color por doble clic");
     }
   };
 
@@ -273,6 +280,7 @@ export function Square({
                 flex flex-col items-center justify-center p-2 relative ${className}`}
       style={{ backgroundColor: selectedColor }}
       onClick={handleSquareClick}
+      onDoubleClick={handleSquareDoubleClick}
     >
       {/* Icono */}
       {selectedIcon !== 'none' && (
