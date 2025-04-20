@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Square } from '@/app/components/atoms/square/square';
+import { Square, IconType } from '@/app/components/atoms/square/square';
 import { ConnectionPoint, ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
 
 interface CanvasNodeProps {
@@ -9,11 +9,13 @@ interface CanvasNodeProps {
   type: string;
   position: { x: number; y: number };
   text?: string;
+  iconType?: IconType; // Usar el tipo importado
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
   onConnectionEnd: (targetNodeId: string) => void;
   onNodeMove: (nodeId: string, position: { x: number, y: number }) => void;
   onNodeResize: (nodeId: string, size: { width: number, height: number }) => void;
   onDeleteNode?: (nodeId: string) => void;
+  onPropertiesChange?: (properties: { [key: string]: any }) => void; // Para cambios de propiedades adicionales
   disabled?: boolean;
 }
 
@@ -24,11 +26,13 @@ export function CanvasNode({
   type, 
   position, 
   text = "",
+  iconType,
   onConnectionStart,
   onConnectionEnd,
   onNodeMove,
   onNodeResize,
   onDeleteNode,
+  onPropertiesChange,
   disabled = false
 }: CanvasNodeProps) {
   const [pos, setPos] = useState(position);
@@ -83,9 +87,15 @@ export function CanvasNode({
         e.preventDefault();
         const newX = dragStartRef.current.startX + (e.clientX - dragStartRef.current.x);
         const newY = dragStartRef.current.startY + (e.clientY - dragStartRef.current.y);
-        const newPos = { x: newX, y: newY };
-        setPos(newPos);
-        onNodeMove(id, newPos);
+        
+        // Actualizar directamente el DOM para movimiento sin lag
+        if (nodeRef.current) {
+          nodeRef.current.style.left = `${newX}px`;
+          nodeRef.current.style.top = `${newY}px`;
+        }
+        
+        // Solo guardar la posición en el estado cuando se libera el ratón
+        // Esto evita rerenders innecesarios durante el arrastre
       } else if (isResizing && resizeStartRef.current) {
         e.preventDefault();
         handleResizeMove(e);
@@ -93,11 +103,37 @@ export function CanvasNode({
     };
 
     const handleGlobalMouseUp = () => {
-      if (isDragging) {
+      if (isDragging && dragStartRef.current && nodeRef.current) {
+        // En el mouseUp, actualizar el estado y notificar al padre
+        // Obtener las posiciones directamente del DOM
+        const left = parseInt(nodeRef.current.style.left, 10) || pos.x;
+        const top = parseInt(nodeRef.current.style.top, 10) || pos.y;
+        
+        const newPos = { x: left, y: top };
+        setPos(newPos);
+        onNodeMove(id, newPos);
+        
         setIsDragging(false);
         dragStartRef.current = null;
       }
-      if (isResizing) {
+      
+      if (isResizing && resizeStartRef.current && nodeRef.current) {
+        // Al finalizar el redimensionado, obtener valores del DOM y actualizar estado
+        const left = parseInt(nodeRef.current.style.left, 10) || pos.x;
+        const top = parseInt(nodeRef.current.style.top, 10) || pos.y;
+        const width = parseInt(nodeRef.current.style.width, 10) || size.width;
+        const height = parseInt(nodeRef.current.style.height, 10) || size.height;
+        
+        const newPos = { x: left, y: top };
+        const newSize = { width, height };
+        
+        setPos(newPos);
+        setSize(newSize);
+        
+        // Notificar al padre
+        onNodeMove(id, newPos);
+        onNodeResize(id, newSize);
+        
         setIsResizing(null);
         resizeStartRef.current = null;
       }
@@ -115,7 +151,7 @@ export function CanvasNode({
       document.removeEventListener('mousemove', handleGlobalMouseMove);
       document.removeEventListener('mouseup', handleGlobalMouseUp);
     };
-  }, [isDragging, isResizing, id, onNodeMove, onNodeResize]);
+  }, [isDragging, isResizing, id, onNodeMove, onNodeResize, pos.x, pos.y]);
 
   // Manejadores para arrastrar el nodo
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -158,7 +194,7 @@ export function CanvasNode({
   };
 
   const handleResizeMove = (moveEvent: MouseEvent) => {
-    if (!resizeStartRef.current) return;
+    if (!resizeStartRef.current || !nodeRef.current) return;
     
     const { handle, x, y, width, height, startX, startY } = resizeStartRef.current;
     
@@ -185,16 +221,14 @@ export function CanvasNode({
       newHeight = Math.max(60, height + deltaY);
     }
     
-    // Actualizar tamaño y posición
-    const newSize = { width: newWidth, height: newHeight };
-    const newPos = { x: newPosX, y: newPosY };
+    // Actualizar directamente en el DOM para un redimensionado fluido
+    nodeRef.current.style.left = `${newPosX}px`;
+    nodeRef.current.style.top = `${newPosY}px`;
+    nodeRef.current.style.width = `${newWidth}px`;
+    nodeRef.current.style.height = `${newHeight}px`;
     
-    setSize(newSize);
-    setPos(newPos);
-    
-    // Notificar al padre
-    onNodeMove(id, newPos);
-    onNodeResize(id, newSize);
+    // No actualizamos el estado aquí para evitar rerenders innecesarios
+    // El estado se actualizará en el mouseUp
   };
   
   const handleMouseEnter = () => {
@@ -236,6 +270,17 @@ export function CanvasNode({
     }
   };
 
+  // Función para manejar cambios en el ícono
+  const handleIconChange = (newIcon: IconType) => {
+    // Notificar al padre del cambio
+    console.log("Icono cambiado en nodo:", id, newIcon);
+    
+    // Propagar cambio al componente padre
+    if (onPropertiesChange) {
+      onPropertiesChange({ iconType: newIcon });
+    }
+  };
+
   // Determinar las clases CSS para el nodo según su estado
   const nodeClasses = `
     absolute 
@@ -274,7 +319,12 @@ export function CanvasNode({
       onMouseUp={handleMouseUp} // Podría finalizar una conexión
     >
       <div className="w-full h-full p-2 overflow-hidden rounded-md">
-        <Square editable={true} initialText={text} />
+        <Square 
+          editable={true} 
+          initialText={text} 
+          icon={iconType}
+          onIconChange={handleIconChange}
+        />
       </div>
       
       {/* Mostrar puntos de conexión cuando el ratón está sobre el nodo */}

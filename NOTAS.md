@@ -1,5 +1,5 @@
 react-aws-icons para los iconos del square
-no no pero no es a ese al que quiero darle doble click quiero que ese quede como esta por default y que a los que ya estan en el lienzo cuando le de docle click a uno que ese me habra el modal y que los cambio solo apliquen para ese squere ademas asegurate de que todos estos cambios queden en el json del diagrama
+al darlo doble click a los que ya estan en el lienzo cuando le de docle click a uno que ese me habra el modal y que los cambio solo apliquen para ese squere ademas asegurate de que todos estos cambios queden en el json del diagrama
 
 deberia tener una opcion para ver el json de todo el diagrama actual en el que estoy trabajando que lo levante en un modal que aparesca debajo de las opciones de exportat y importar
 

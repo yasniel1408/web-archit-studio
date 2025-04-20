@@ -5,6 +5,7 @@ import { CanvasNode } from '@/app/components/molecules/canvas-node/canvas-node';
 import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
 import { Arrow } from '@/app/components/atoms/arrow/arrow';
 import { MiniMap } from '@/app/components/molecules/mini-map/mini-map';
+import { IconType } from '@/app/components/atoms/square/square';
 
 type NodeType = {
   id: string;
@@ -12,6 +13,7 @@ type NodeType = {
   position: { x: number; y: number };
   size: { width: number; height: number };
   text?: string;
+  iconType?: IconType;
 };
 
 type ConnectionType = {
@@ -60,6 +62,338 @@ export function DiagramCanvas() {
   const transformRef = useRef<HTMLDivElement>(null);
   
   const [selectedConnectionId, setSelectedConnectionId] = useState<string | null>(null);
+  
+  // Estado para el modal de JSON
+  const [showJsonModal, setShowJsonModal] = useState<boolean>(false);
+  const [formattedJson, setFormattedJson] = useState<string>('');
+  
+  // Estado para el modal de plantillas
+  const [showTemplatesModal, setShowTemplatesModal] = useState<boolean>(false);
+  
+  // Plantillas de ejemplo predefinidas
+  const exampleTemplates = [
+    {
+      id: 'microservices',
+      name: 'Arquitectura de Microservicios',
+      description: 'Estructura básica de una aplicación de microservicios con API Gateway, servicios y bases de datos.',
+      image: '/templates/microservices.png',
+      nodes: [
+        {
+          id: 'api-gateway',
+          type: 'square',
+          position: { x: 400, y: 100 },
+          size: { width: 150, height: 80 },
+          text: 'API Gateway',
+          iconType: 'api' as IconType
+        },
+        {
+          id: 'auth-service',
+          type: 'square',
+          position: { x: 200, y: 250 },
+          size: { width: 140, height: 80 },
+          text: 'Auth Service',
+          iconType: 'security' as IconType
+        },
+        {
+          id: 'user-service',
+          type: 'square',
+          position: { x: 400, y: 250 },
+          size: { width: 140, height: 80 },
+          text: 'User Service',
+          iconType: 'user' as IconType
+        },
+        {
+          id: 'product-service',
+          type: 'square',
+          position: { x: 600, y: 250 },
+          size: { width: 140, height: 80 },
+          text: 'Product Service',
+          iconType: 'app' as IconType
+        },
+        {
+          id: 'user-db',
+          type: 'square',
+          position: { x: 400, y: 400 },
+          size: { width: 140, height: 80 },
+          text: 'User DB',
+          iconType: 'database' as IconType
+        },
+        {
+          id: 'product-db',
+          type: 'square',
+          position: { x: 600, y: 400 },
+          size: { width: 140, height: 80 },
+          text: 'Product DB',
+          iconType: 'database' as IconType
+        }
+      ],
+      connections: [
+        {
+          id: 'conn-1',
+          sourceId: 'api-gateway',
+          targetId: 'auth-service',
+          sourcePosition: 'bottom' as ConnectionPosition,
+          targetPosition: 'top' as ConnectionPosition,
+          sourceX: 425,
+          sourceY: 180,
+          targetX: 250,
+          targetY: 250,
+          style: 'solid' as 'solid' | 'dashed' | 'dotted',
+          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
+          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
+          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
+          color: '#000000',
+          strokeWidth: 2
+        },
+        {
+          id: 'conn-2',
+          sourceId: 'api-gateway',
+          targetId: 'user-service',
+          sourcePosition: 'bottom' as ConnectionPosition,
+          targetPosition: 'top' as ConnectionPosition,
+          sourceX: 475,
+          sourceY: 180,
+          targetX: 450,
+          targetY: 250,
+          style: 'solid' as 'solid' | 'dashed' | 'dotted',
+          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
+          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
+          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
+          color: '#000000',
+          strokeWidth: 2
+        },
+        {
+          id: 'conn-3',
+          sourceId: 'api-gateway',
+          targetId: 'product-service',
+          sourcePosition: 'bottom' as ConnectionPosition,
+          targetPosition: 'top' as ConnectionPosition,
+          sourceX: 525,
+          sourceY: 180,
+          targetX: 650,
+          targetY: 250,
+          style: 'solid' as 'solid' | 'dashed' | 'dotted',
+          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
+          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
+          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
+          color: '#000000',
+          strokeWidth: 2
+        },
+        {
+          id: 'conn-4',
+          sourceId: 'user-service',
+          targetId: 'user-db',
+          sourcePosition: 'bottom' as ConnectionPosition,
+          targetPosition: 'top' as ConnectionPosition,
+          sourceX: 450,
+          sourceY: 330,
+          targetX: 450,
+          targetY: 400,
+          style: 'solid' as 'solid' | 'dashed' | 'dotted',
+          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
+          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
+          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
+          color: '#000000',
+          strokeWidth: 2
+        },
+        {
+          id: 'conn-5',
+          sourceId: 'product-service',
+          targetId: 'product-db',
+          sourcePosition: 'bottom' as ConnectionPosition,
+          targetPosition: 'top' as ConnectionPosition,
+          sourceX: 650,
+          sourceY: 330,
+          targetX: 650,
+          targetY: 400,
+          style: 'solid' as 'solid' | 'dashed' | 'dotted',
+          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
+          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
+          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
+          color: '#000000',
+          strokeWidth: 2
+        },
+        {
+          id: 'conn-6',
+          sourceId: 'auth-service',
+          targetId: 'user-service',
+          sourcePosition: 'right' as ConnectionPosition,
+          targetPosition: 'left' as ConnectionPosition,
+          sourceX: 340,
+          sourceY: 290,
+          targetX: 400,
+          targetY: 290,
+          style: 'dashed' as 'solid' | 'dashed' | 'dotted',
+          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
+          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
+          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
+          color: '#000000',
+          strokeWidth: 2
+        }
+      ]
+    },
+    {
+      id: 'serverless',
+      name: 'Arquitectura Serverless',
+      description: 'Arquitectura basada en servicios serverless con API Gateway, funciones Lambda y servicios de almacenamiento.',
+      image: '/templates/serverless.png',
+      "version": "1.0",
+      "nodes": [
+        {
+          "id": "api-gateway",
+          "type": "square size:490x145",
+          "position": {
+            "x": 217,
+            "y": -14
+          },
+          "size": {
+            "width": 490,
+            "height": 145
+          },
+          "text": "API Gateway",
+          "iconType": "api"
+        },
+        {
+          "id": "auth-lambda",
+          "type": "square size:177x144",
+          "position": {
+            "x": 121,
+            "y": 250
+          },
+          "size": {
+            "width": 177,
+            "height": 144
+          },
+          "text": "Auth Lambda",
+          "iconType": "cloud"
+        },
+        {
+          "id": "users-lambda",
+          "type": "square size:208x142",
+          "position": {
+            "x": 329,
+            "y": 249
+          },
+          "size": {
+            "width": 208,
+            "height": 142
+          },
+          "text": "Users Lambda",
+          "iconType": "cloud"
+        },
+        {
+          "id": "dynamo-users",
+          "type": "square size:192x130",
+          "position": {
+            "x": 312,
+            "y": 503
+          },
+          "size": {
+            "width": 192,
+            "height": 130
+          },
+          "text": "DynamoDB Users",
+          "iconType": "database"
+        },
+        {
+          "id": "s3-storage",
+          "type": "square size:164x142",
+          "position": {
+            "x": 657,
+            "y": 315
+          },
+          "size": {
+            "width": 164,
+            "height": 142
+          },
+          "text": "S3 Storage",
+          "iconType": "database"
+        }
+      ],
+      "connections": [
+        {
+          "id": "conn-1",
+          "sourceId": "api-gateway",
+          "targetId": "auth-lambda",
+          "sourcePosition": "bottom",
+          "targetPosition": "top",
+          "sourceX": 462,
+          "sourceY": 131,
+          "targetX": 209.5,
+          "targetY": 250,
+          "style": "solid",
+          "animation": "traveling-dot-fastest",
+          "startArrowHead": "none",
+          "endArrowHead": "arrow",
+          "color": "#6200ee",
+          "strokeWidth": 2
+        },
+        {
+          "id": "conn-2",
+          "sourceId": "api-gateway",
+          "targetId": "users-lambda",
+          "sourcePosition": "bottom",
+          "targetPosition": "top",
+          "sourceX": 462,
+          "sourceY": 131,
+          "targetX": 433,
+          "targetY": 249,
+          "style": "solid",
+          "animation": "traveling-dot",
+          "startArrowHead": "none",
+          "endArrowHead": "arrow",
+          "color": "#6200ee",
+          "strokeWidth": 2
+        },
+        {
+          "id": "conn-3",
+          "sourceId": "users-lambda",
+          "targetId": "dynamo-users",
+          "sourcePosition": "bottom",
+          "targetPosition": "top",
+          "sourceX": 433,
+          "sourceY": 391,
+          "targetX": 408,
+          "targetY": 503,
+          "style": "solid",
+          "animation": "none",
+          "startArrowHead": "none",
+          "endArrowHead": "arrow",
+          "color": "#000000",
+          "strokeWidth": 2
+        },
+        {
+          "id": "conn-4",
+          "sourceId": "users-lambda",
+          "targetId": "s3-storage",
+          "sourcePosition": "right",
+          "targetPosition": "left",
+          "sourceX": 537,
+          "sourceY": 320,
+          "targetX": 657,
+          "targetY": 386,
+          "style": "solid",
+          "animation": "none",
+          "startArrowHead": "none",
+          "endArrowHead": "arrow",
+          "color": "#000000",
+          "strokeWidth": 2
+        }
+      ],
+      "viewport": {
+        "scale": 0.8499999999999999,
+        "position": {
+          "x": 183.55459555555558,
+          "y": 131.49277291005296
+        }
+      },
+      "metadata": {
+        "exportedAt": "2025-04-20T05:14:56.389Z",
+        "nodeCount": 5,
+        "connectionCount": 4
+      }
+    }
+  ];
   
   // Función para registrar mensajes de debug
   const logDebug = (message: string) => {
@@ -557,11 +891,12 @@ export function DiagramCanvas() {
     // Guardar la posición anterior para cálculos
     const oldPosition = { ...node.position };
     
-    // Actualizar el nodo
+    // Actualizar el nodo - usar transformación directa para evitar retardo visual
+    const updatedNode = { ...node, position: newPosition };
+    
+    // Actualizar el estado de los nodos
     setNodes(prevNodes => 
-      prevNodes.map(n => 
-        n.id === nodeId ? { ...n, position: newPosition } : n
-      )
+      prevNodes.map(n => n.id === nodeId ? updatedNode : n)
     );
     
     // Actualizar las conexiones relacionadas con este nodo
@@ -905,6 +1240,83 @@ export function DiagramCanvas() {
     fileInputRef.current?.click();
   };
 
+  // Añadir función para actualizar propiedades de un nodo (como el iconType)
+  const updateNodeProperties = (
+    nodeId: string,
+    properties: Partial<NodeType>
+  ) => {
+    setNodes(prevNodes =>
+      prevNodes.map(node => 
+        node.id === nodeId ? { ...node, ...properties } : node
+      )
+    );
+    
+    console.log(`Propiedades del nodo ${nodeId} actualizadas:`, properties);
+  };
+
+  // Función para generar y mostrar el JSON del diagrama
+  const showDiagramJson = () => {
+    // Crear objeto de diagrama completo
+    const diagram = {
+      version: "1.0",
+      nodes,
+      connections,
+      viewport: {
+        scale,
+        position
+      },
+      metadata: {
+        exportedAt: new Date().toISOString(),
+        nodeCount: nodes.length,
+        connectionCount: connections.length
+      }
+    };
+    
+    // Formatear el JSON para visualización
+    setFormattedJson(JSON.stringify(diagram, null, 2));
+    setShowJsonModal(true);
+    
+    logDebug("Mostrando JSON del diagrama actual");
+  };
+  
+  // Función para copiar el JSON al portapapeles
+  const copyJsonToClipboard = () => {
+    navigator.clipboard.writeText(formattedJson)
+      .then(() => {
+        logDebug("JSON copiado al portapapeles");
+      })
+      .catch(err => {
+        console.error("Error al copiar al portapapeles:", err);
+        logDebug("Error al copiar JSON");
+      });
+  };
+
+  // Función para cargar una plantilla seleccionada
+  const loadTemplate = (templateId: string) => {
+    const template = exampleTemplates.find(t => t.id === templateId);
+    if (!template) return;
+    
+    // Limpiar el diagrama actual
+    setNodes(template.nodes);
+    setConnections(template.connections);
+    
+    // Guardar en localStorage
+    localStorage.setItem('architectDiagram', JSON.stringify({
+      savedNodes: template.nodes,
+      savedConnections: template.connections,
+      savedViewport: {
+        scale: 1,
+        position: { x: 0, y: 0 }
+      }
+    }));
+    
+    // Cerrar el modal y resetear la vista
+    setShowTemplatesModal(false);
+    resetView();
+    
+    logDebug(`Plantilla "${template.name}" cargada`);
+  };
+
   return (
     <div 
       ref={canvasRef}
@@ -972,11 +1384,13 @@ export function DiagramCanvas() {
             type={node.type} 
             position={node.position}
             text={node.text}
+            iconType={node.iconType}
             onConnectionStart={isSpacePressed ? undefined : handleConnectionStart}
             onConnectionEnd={isSpacePressed ? undefined : handleConnectionEnd}
             onNodeMove={isSpacePressed ? undefined : handleNodeMove}
             onNodeResize={isSpacePressed ? undefined : handleNodeResize}
             onDeleteNode={isSpacePressed ? undefined : handleDeleteNode}
+            onPropertiesChange={(props) => updateNodeProperties(node.id, props)}
             disabled={isSpacePressed}
           />
         ))}
@@ -1052,6 +1466,14 @@ export function DiagramCanvas() {
       <div className="absolute top-16 right-4 bg-white shadow-md rounded-md flex z-50">
         <button 
           className="px-3 py-2 text-gray-600 hover:bg-gray-100 focus:outline-none flex items-center" 
+          onClick={() => setShowTemplatesModal(true)}
+          title="Plantillas de ejemplo"
+        >
+          <span className="text-sm mr-1">✓</span>
+          <span className="text-xs">Plantillas</span>
+        </button>
+        <button 
+          className="px-3 py-2 text-gray-600 hover:bg-gray-100 focus:outline-none border-l border-gray-200 flex items-center" 
           onClick={exportDiagram}
           title="Exportar diagrama"
         >
@@ -1066,7 +1488,113 @@ export function DiagramCanvas() {
           <span className="text-sm mr-1">↑</span>
           <span className="text-xs">Importar</span>
         </button>
+        <button 
+          className="px-3 py-2 text-gray-600 hover:bg-gray-100 border-l border-gray-200 focus:outline-none flex items-center" 
+          onClick={showDiagramJson}
+          title="Ver JSON del diagrama"
+        >
+          <span className="text-sm mr-1">{ }</span>
+          <span className="text-xs">Ver JSON</span>
+        </button>
       </div>
+      
+      {/* Modal para visualizar el JSON */}
+      {showJsonModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000] p-4"
+          onClick={() => setShowJsonModal(false)}
+        >
+          <div 
+            className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white z-10">
+              <h3 className="text-lg font-semibold">JSON del Diagrama</h3>
+              <div className="flex gap-2">
+                <button
+                  className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm flex items-center gap-1"
+                  onClick={copyJsonToClipboard}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                  </svg>
+                  Copiar
+                </button>
+                <button
+                  className="p-1.5 text-gray-500 hover:text-gray-700 rounded hover:bg-gray-100"
+                  onClick={() => setShowJsonModal(false)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-auto p-4 bg-gray-50">
+              <pre className="text-sm font-mono whitespace-pre-wrap break-all bg-white p-4 rounded border border-gray-200 shadow-inner h-full overflow-auto">
+                {formattedJson}
+              </pre>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Modal para plantillas de ejemplo */}
+      {showTemplatesModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000] p-4"
+          onClick={() => setShowTemplatesModal(false)}
+        >
+          <div 
+            className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white z-10">
+              <h3 className="text-lg font-semibold">Plantillas de Arquitectura</h3>
+              <button
+                className="p-1.5 text-gray-500 hover:text-gray-700 rounded hover:bg-gray-100"
+                onClick={() => setShowTemplatesModal(false)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {exampleTemplates.map(template => (
+                <div 
+                  key={template.id}
+                  className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full"
+                >
+                  <div className="h-40 bg-gray-100 flex items-center justify-center">
+                    {/* Aquí iría la imagen de preview, la dejamos como placeholder por ahora */}
+                    <div className="text-center">
+                      <div className="text-5xl text-gray-300 mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                      </div>
+                      <div className="text-gray-500 text-sm">Vista previa no disponible</div>
+                    </div>
+                  </div>
+                  <div className="p-4 flex-1">
+                    <h4 className="text-lg font-medium">{template.name}</h4>
+                    <p className="text-gray-600 text-sm mt-1">{template.description}</p>
+                  </div>
+                  <div className="p-4 border-t border-gray-100 bg-gray-50">
+                    <button
+                      className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors text-sm"
+                      onClick={() => loadTemplate(template.id)}
+                    >
+                      Cargar plantilla
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Panel de depuración */}
       <div className="absolute bottom-4 left-4 bg-black/80 text-white p-2 rounded-md shadow-md text-xs font-mono z-50">
