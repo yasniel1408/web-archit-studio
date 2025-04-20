@@ -3,12 +3,36 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
 import { motion } from 'framer-motion';
+import { createPortal } from 'react-dom';
 import { 
   PaintBrushIcon, 
   Square2StackIcon, 
   ArrowPathIcon,
   CheckIcon
 } from '@heroicons/react/24/solid';
+
+// Estilos personalizados para la barra de desplazamiento
+const scrollbarStyles = `
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+  @media (max-width: 640px) {
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+  }
+`;
 
 export type ArrowStyle = 'solid' | 'dashed' | 'dotted';
 export type ArrowAnimation = 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest';
@@ -38,6 +62,7 @@ interface ArrowProps {
     color?: string;
     strokeWidth?: number;
   }) => void;
+  onDelete?: (id: string) => void;
 }
 
 export function Arrow({ 
@@ -56,15 +81,19 @@ export function Arrow({
   strokeWidth = 2,
   isSelected = false,
   onSelect,
-  onPropertiesChange
+  onPropertiesChange,
+  onDelete
 }: ArrowProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimationsMenuOpen, setIsAnimationsMenuOpen] = useState(false);
   const [currentStyle, setCurrentStyle] = useState<ArrowStyle>(style || 'solid');
   const [currentAnimation, setCurrentAnimation] = useState<ArrowAnimation>(animation || 'none');
   const [currentArrowHead, setCurrentArrowHead] = useState<ArrowHeadType>(endArrowHead || 'arrow');
+  const [currentStartArrowHead, setCurrentStartArrowHead] = useState<ArrowHeadType>(startArrowHead || 'none');
+  const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const optionsMenuRef = useRef<HTMLDivElement>(null);
   const animationsMenuRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   
   // Para animación de punto recorriendo (traveling-dot)
   const [dotPosition, setDotPosition] = useState(0);
@@ -109,8 +138,25 @@ export function Arrow({
     const dx = Math.abs(endX - startX);
     const dy = Math.abs(endY - startY);
     const distance = Math.sqrt(dx * dx + dy * dy);
-    const controlDistance = Math.min(distance * 0.5, 100);
     
+    // Ajustar distancia de control basada en la distancia total
+    // Usamos una fórmula que escala proporcionalmente pero con un límite superior
+    const controlDistance = Math.min(
+      distance * 0.4, // 40% de la distancia total como máximo
+      Math.max(50, distance * 0.2) // Al menos 50px o 20% de la distancia
+    );
+    
+    // Vectores direccionales desde los puntos de inicio/fin hacia el centro
+    const dirXStart = endX - startX;
+    const dirYStart = endY - startY;
+    const dirXEnd = startX - endX;
+    const dirYEnd = startY - endY;
+    
+    // Normalizar los vectores
+    const lenStart = Math.sqrt(dirXStart * dirXStart + dirYStart * dirYStart) || 1;
+    const lenEnd = Math.sqrt(dirXEnd * dirXEnd + dirYEnd * dirYEnd) || 1;
+    
+    // Inicializar puntos de control en los puntos de inicio/fin
     let controlPoint1X = startX;
     let controlPoint1Y = startY;
     let controlPoint2X = endX;
@@ -119,33 +165,59 @@ export function Arrow({
     // Ajustar punto de control según la posición de inicio
     switch (startPosition) {
       case 'top':
+        // Si sale por arriba, mover punto de control hacia arriba
+        controlPoint1X += (dirXStart / lenStart) * controlDistance * 0.1;
         controlPoint1Y -= controlDistance;
         break;
       case 'right':
+        // Si sale por la derecha, mover punto de control hacia la derecha
         controlPoint1X += controlDistance;
+        controlPoint1Y += (dirYStart / lenStart) * controlDistance * 0.1;
         break;
       case 'bottom':
+        // Si sale por abajo, mover punto de control hacia abajo
+        controlPoint1X += (dirXStart / lenStart) * controlDistance * 0.1;
         controlPoint1Y += controlDistance;
         break;
       case 'left':
+        // Si sale por la izquierda, mover punto de control hacia la izquierda
         controlPoint1X -= controlDistance;
+        controlPoint1Y += (dirYStart / lenStart) * controlDistance * 0.1;
         break;
     }
     
     // Ajustar punto de control según la posición final
     switch (endPosition) {
       case 'top':
+        // Si entra por arriba, mover punto de control hacia arriba
+        controlPoint2X += (dirXEnd / lenEnd) * controlDistance * 0.1;
         controlPoint2Y -= controlDistance;
         break;
       case 'right':
+        // Si entra por la derecha, mover punto de control hacia la derecha
         controlPoint2X += controlDistance;
+        controlPoint2Y += (dirYEnd / lenEnd) * controlDistance * 0.1;
         break;
       case 'bottom':
+        // Si entra por abajo, mover punto de control hacia abajo
+        controlPoint2X += (dirXEnd / lenEnd) * controlDistance * 0.1;
         controlPoint2Y += controlDistance;
         break;
       case 'left':
+        // Si entra por la izquierda, mover punto de control hacia la izquierda
         controlPoint2X -= controlDistance;
+        controlPoint2Y += (dirYEnd / lenEnd) * controlDistance * 0.1;
         break;
+    }
+    
+    // Caso especial: si los puntos están casi alineados horizontal o verticalmente,
+    // ajustar para evitar curvas demasiado planas
+    if (dx < dy * 0.1) { // Casi vertical
+      controlPoint1X -= controlDistance * 0.5;
+      controlPoint2X += controlDistance * 0.5;
+    } else if (dy < dx * 0.1) { // Casi horizontal
+      controlPoint1Y -= controlDistance * 0.5;
+      controlPoint2Y += controlDistance * 0.5;
     }
     
     return {
@@ -392,6 +464,8 @@ export function Arrow({
   function getStrokeAnimation(): string {
     if (currentAnimation === 'dash') {
       return 'animate-dash';
+    } else if (currentAnimation === 'flow') {
+      return 'animate-flow';
     }
     return '';
   }
@@ -400,7 +474,7 @@ export function Arrow({
   const optionsMenuClass = "absolute bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden min-w-[200px] text-xs fade-in z-50 pointer-events-auto";
   const optionButtonClass = "flex items-center justify-between w-full px-3 py-2 text-gray-600 hover:bg-gray-50";
 
-  const pathClass = `${getStrokeAnimation()} pointer-events-none`;
+  const pathClass = `${getStrokeAnimation()} pointer-events-none ${isSelected ? 'connection-selected' : ''}`;
 
   // Render traveling dot animation
   const renderTravelingDot = () => {
@@ -457,39 +531,74 @@ export function Arrow({
   
   const handleArrowClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log(`Arrow ${id}: Arrow clicked. Opening menu.`);
-    setIsMenuOpen(true);
+    
     if (onSelect) {
       onSelect(id);
     }
+    
+    // Abrir el menú de opciones al hacer clic
+    setIsMenuOpen(true);
+    
+    // Cerrar los submenús si están abiertos
+    setIsAnimationsMenuOpen(false);
   };
   
-  // Efecto para cerrar el menú al hacer clic fuera
+  // Manejador para doble clic que abrirá el modal completo
+  const handleArrowDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log(`Arrow ${id}: Double-clicked. Opening options modal.`);
+    setIsOptionsModalOpen(true);
+    setIsMenuOpen(false); // Cerrar el menú flotante si estaba abierto
+    
+    if (onSelect) {
+      onSelect(id);
+    }
+    
+    // Añadimos una clase al body para prevenir scroll cuando el modal está abierto
+    document.body.classList.add('overflow-hidden');
+  };
+
+  // Al cerrar el modal, reestablecemos el scroll
+  const closeModal = () => {
+    setIsOptionsModalOpen(false);
+    document.body.classList.remove('overflow-hidden');
+  };
+
+  // Efecto para cerrar el menú y el modal al hacer clic fuera
   useEffect(() => {
+    // Función para detectar clics fuera del menú
     function handleClickOutside(event: MouseEvent) {
-      // Si el menú principal está abierto y se hace clic fuera de él
-      if (isMenuOpen && optionsMenuRef.current && !optionsMenuRef.current.contains(event.target as Node)) {
-        // Revisar si el clic fue en la propia flecha (para evitar cerrar inmediatamente)
-        const svgElement = document.getElementById(`arrow-path-${id}`);
-        if (svgElement && svgElement.contains(event.target as Node)) {
-          return; // No cerrar si se hace clic en la flecha
-        }
-        
+      // Si el menú de opciones está abierto y el clic fue fuera del menú
+      if (isMenuOpen && 
+          optionsMenuRef.current && 
+          !optionsMenuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
         setIsAnimationsMenuOpen(false);
       }
-      // Si solo el menú de animaciones está abierto y se hace clic fuera
-      else if (isAnimationsMenuOpen && animationsMenuRef.current && 
-               !animationsMenuRef.current.contains(event.target as Node)) {
+      
+      // Si el menú de animaciones está abierto y el clic fue fuera de ese menú
+      if (isAnimationsMenuOpen && 
+          animationsMenuRef.current && 
+          !animationsMenuRef.current.contains(event.target as Node)) {
         setIsAnimationsMenuOpen(false);
       }
+      
+      // Si el modal de opciones está abierto y el clic fue fuera del modal
+      if (isOptionsModalOpen && 
+          modalRef.current && 
+          !modalRef.current.contains(event.target as Node)) {
+        closeModal();
+      }
     }
-
+    
+    // Agregar el event listener
     document.addEventListener('mousedown', handleClickOutside);
+    
+    // Limpiar el event listener al desmontar
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isMenuOpen, isAnimationsMenuOpen, id]);
+  }, [isMenuOpen, isAnimationsMenuOpen, isOptionsModalOpen]);
   
   const getAnimationIcon = (anim: ArrowAnimation) => {
     switch (anim) {
@@ -531,71 +640,97 @@ export function Arrow({
   // Manejadores para los botones de opciones
   const handleStyleChange = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Rotar entre los diferentes estilos de línea
+    
+    // Rotar entre los estilos de línea
     const styles: ArrowStyle[] = ['solid', 'dashed', 'dotted'];
     const currentIndex = styles.indexOf(currentStyle);
     const nextIndex = (currentIndex + 1) % styles.length;
+    const nextStyle = styles[nextIndex];
     
-    console.log(`Arrow ${id}: Style changed to ${styles[nextIndex]}`);
-    setCurrentStyle(styles[nextIndex]);
+    setCurrentStyle(nextStyle);
     
-    // Si la animación era de recorrido, la quitamos al cambiar el estilo manualmente
-    if (currentAnimation === 'traveling-dot' || 
-        currentAnimation === 'traveling-dot-fast' || 
-        currentAnimation === 'traveling-dot-fastest') {
-      setCurrentAnimation('none');
+    if (onPropertiesChange) {
+      onPropertiesChange({ style: nextStyle });
     }
+    
+    // No cerramos el menú para permitir más interacciones
   };
 
   const handleAnimationButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsAnimationsMenuOpen(prev => !prev); // Toggle visibility
-    console.log(`Arrow ${id}: Animations menu toggled. Visible: ${!isAnimationsMenuOpen}`);
+    // Alternar menú de animaciones sin cerrar el menú principal
+    setIsAnimationsMenuOpen(!isAnimationsMenuOpen);
   };
 
   const handleAnimationSelect = (anim: ArrowAnimation) => (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log(`Arrow ${id}: Selecting animation: ${anim}. Previous: ${currentAnimation}`);
+    
     setCurrentAnimation(anim);
+    setIsAnimationsMenuOpen(false); // Cerrar el submenú
     
-    // No cerramos el menú principal al seleccionar una animación
-    setIsAnimationsMenuOpen(false);
-    
-    // Aplicamos los cambios inmediatamente
     if (onPropertiesChange) {
-      onPropertiesChange({
-        animation: anim
-      });
+      onPropertiesChange({ animation: anim });
     }
+    
+    // No cerramos el menú principal para permitir más interacciones
   };
 
   const handleArrowHeadChange = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Rotar entre los diferentes tipos de punta de flecha
-    const arrowHeads: ArrowHeadType[] = ['arrow', 'circle', 'diamond', 'none'];
-    const currentIndex = arrowHeads.indexOf(currentArrowHead);
-    const nextIndex = (currentIndex + 1) % arrowHeads.length;
     
-    console.log(`Arrow ${id}: Arrow head changed to ${arrowHeads[nextIndex]}`);
-    setCurrentArrowHead(arrowHeads[nextIndex]);
+    // Rotar entre los tipos de punta de flecha
+    const types: ArrowHeadType[] = ['none', 'arrow', 'circle', 'diamond'];
+    const currentIndex = types.indexOf(currentArrowHead);
+    const nextIndex = (currentIndex + 1) % types.length;
+    const nextType = types[nextIndex];
+    
+    setCurrentArrowHead(nextType);
+    
+    if (onPropertiesChange) {
+      onPropertiesChange({ endArrowHead: nextType });
+    }
+    
+    // No cerramos el menú para permitir más interacciones
+  };
+
+  // Manejador para cambiar la punta de flecha inicial
+  const handleStartArrowHeadChange = (type: ArrowHeadType) => {
+    console.log(`Arrow ${id}: Start arrow head changed to ${type}`);
+    setCurrentStartArrowHead(type);
     
     // Aplicamos los cambios inmediatamente
     if (onPropertiesChange) {
       onPropertiesChange({
-        endArrowHead: arrowHeads[nextIndex]
+        startArrowHead: type
       });
     }
+  };
+
+  // Manejador para eliminar la conexión
+  const handleDelete = () => {
+    // Confirmar antes de eliminar
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta conexión?')) {
+      if (onDelete) {
+        onDelete(id);
+      }
+    }
+    
+    // Cerrar menús después de eliminar o cancelar
+    setIsMenuOpen(false);
+    setIsOptionsModalOpen(false);
   };
 
   return (
     <div 
       className="absolute top-0 left-0 w-full h-full pointer-events-none"
-      style={{ zIndex: isMenuOpen ? 25 : 5 }}
+      style={{ zIndex: isMenuOpen || isOptionsModalOpen ? 25 : 5 }}
     >
       <svg 
         width="100%" 
         height="100%" 
         className="pointer-events-none" 
+        overflow="visible"
+        preserveAspectRatio="none"
       >
         {/* Trazo invisible más ancho para facilitar la selección - solo permite eventos en el propio trazo */}
         <path
@@ -609,6 +744,7 @@ export function Arrow({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleArrowClick}
+          onDoubleClick={handleArrowDoubleClick}
         />
         
         {/* Trazo visible de la flecha */}
@@ -713,8 +849,319 @@ export function Arrow({
               <span>Punta de flecha: <strong>{getArrowHeadName(currentArrowHead)}</strong></span>
               <ArrowPathIcon className="h-4 w-4" />
             </button>
+            
+            <div className="border-t border-gray-200 mt-1">
+              <button 
+                className="w-full px-3 py-2 text-red-600 hover:bg-red-50 flex items-center justify-between"
+                onClick={handleDelete}
+              >
+                <span>Eliminar conexión</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
+      )}
+      
+      {/* Modal completo de opciones para doble clic - usando portal para asegurar que está sobre todo */}
+      {isOptionsModalOpen && typeof window === 'object' && createPortal(
+        <>
+          {/* Estilos personalizados para la barra de desplazamiento */}
+          <style>{scrollbarStyles}</style>
+          
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-[9999] pointer-events-auto backdrop-blur-sm p-2 sm:p-4 md:p-6"
+            onClick={closeModal} // Cierra al hacer clic en el backdrop
+          >
+            <motion.div 
+              ref={modalRef}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 18, stiffness: 500, delay: 0.1 }}
+              className="bg-white rounded-lg shadow-xl w-full max-w-2xl pointer-events-auto connection-modal flex flex-col max-h-[95vh] sm:max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()} // Evita que el clic en el modal cierre el modal
+            >
+              {/* Cabecera fija */}
+              <div className="flex justify-between items-center p-4 sm:p-5 border-b border-gray-200 sticky top-0 bg-white rounded-t-lg z-10">
+                <motion.h3 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-lg sm:text-xl font-semibold text-gray-900"
+                >
+                  Opciones de conexión
+                </motion.h3>
+                <motion.button 
+                  initial={{ opacity: 0, rotate: -90 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100"
+                  onClick={closeModal}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </motion.button>
+              </div>
+              
+              {/* Contenido con scroll */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-5 custom-scrollbar">
+                {/* Vista previa de la conexión */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.25 }}
+                  className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-6 h-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <h4 className="text-sm font-medium text-gray-700">Vista previa de la conexión</h4>
+                  </div>
+                  
+                  <div className="flex justify-center py-6">
+                    <svg width="300" height="60" className="pointer-events-none">
+                      {/* Previsualización de la línea con estilo actual */}
+                      <path
+                        d="M 50,30 C 100,30 200,30 250,30"
+                        fill="none"
+                        stroke={baseColor}
+                        strokeWidth={strokeWidth}
+                        strokeDasharray={getDashArray()}
+                        className={getStrokeAnimation()}
+                      />
+                      
+                      {/* Punta inicial */}
+                      {currentStartArrowHead !== 'none' && (
+                        <path
+                          d={calculateArrowHead('left', 50, 30, true, currentStartArrowHead)}
+                          fill={baseColor}
+                          strokeWidth="0"
+                        />
+                      )}
+                      
+                      {/* Punta final */}
+                      {currentArrowHead !== 'none' && (
+                        <path
+                          d={calculateArrowHead('right', 250, 30, false, currentArrowHead)}
+                          fill={baseColor}
+                          strokeWidth="0"
+                        />
+                      )}
+                      
+                      {/* Punto viajero para animación traveling-dot */}
+                      {(currentAnimation === 'traveling-dot' || 
+                        currentAnimation === 'traveling-dot-fast' || 
+                        currentAnimation === 'traveling-dot-fastest') && (
+                        <circle
+                          cx={50 + dotPosition * 200}
+                          cy={30}
+                          r={5}
+                          fill={currentAnimation === 'traveling-dot-fastest' ? "#FFCB00" : 
+                                currentAnimation === 'traveling-dot-fast' ? "#FF9500" : "#FF0000"}
+                          stroke="#FFFFFF"
+                          strokeWidth={1}
+                        />
+                      )}
+                    </svg>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
+                    <div>
+                      <span className="font-medium">Estilo:</span> {getStyleName(currentStyle)}
+                    </div>
+                    <div>
+                      <span className="font-medium">Animación:</span> {getAnimationName(currentAnimation)}
+                    </div>
+                    <div>
+                      <span className="font-medium">Punta inicial:</span> {getArrowHeadName(currentStartArrowHead)}
+                    </div>
+                    <div>
+                      <span className="font-medium">Punta final:</span> {getArrowHeadName(currentArrowHead)}
+                    </div>
+                  </div>
+                </motion.div>
+                
+                <motion.div 
+                  className="space-y-6"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {/* Selector de estilo de línea */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">Estilo de línea</label>
+                    <div className="flex space-x-3">
+                      {(['solid', 'dashed', 'dotted'] as ArrowStyle[]).map((styleOption) => (
+                        <button
+                          key={styleOption}
+                          className={`flex-1 py-3 border rounded-md connection-option transition-colors ${currentStyle === styleOption ? 'bg-blue-50 border-blue-300' : 'hover:bg-gray-50'}`}
+                          onClick={() => {
+                            setCurrentStyle(styleOption);
+                            if (onPropertiesChange) {
+                              onPropertiesChange({ style: styleOption });
+                            }
+                          }}
+                        >
+                          <div className={`w-full mx-auto h-1 ${
+                            styleOption === 'solid' ? 'bg-gray-700' : 
+                            styleOption === 'dashed' ? 'border-t-2 border-dashed border-gray-700' : 
+                            'border-t-2 border-dotted border-gray-700'
+                          }`} />
+                          <div className="text-sm mt-2 text-center">{getStyleName(styleOption)}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Selector de animación */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">Animación</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {(['none', 'dash', 'traveling-dot', 'traveling-dot-fast', 'traveling-dot-fastest'] as ArrowAnimation[]).map((animOption) => (
+                        <button
+                          key={animOption}
+                          className={`py-3 px-2 border rounded-md text-sm connection-option transition-colors ${currentAnimation === animOption ? 'bg-blue-50 border-blue-300' : 'hover:bg-gray-50'}`}
+                          onClick={() => {
+                            setCurrentAnimation(animOption);
+                            if (onPropertiesChange) {
+                              onPropertiesChange({ animation: animOption });
+                            }
+                          }}
+                        >
+                          <div className="flex items-center justify-center h-6 text-xl">
+                            {getAnimationIcon(animOption)}
+                          </div>
+                          <div className="mt-2 text-center truncate">{getAnimationName(animOption)}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Selector de punta inicial */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">Punta inicial</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {(['none', 'arrow', 'circle', 'diamond'] as ArrowHeadType[]).map((headOption) => (
+                        <button
+                          key={headOption}
+                          className={`py-3 px-2 border rounded-md connection-option transition-colors ${currentStartArrowHead === headOption ? 'bg-blue-50 border-blue-300' : 'hover:bg-gray-50'}`}
+                          onClick={() => handleStartArrowHeadChange(headOption)}
+                        >
+                          <div className="flex items-center justify-center h-6 text-lg">
+                            {headOption === 'none' ? '⊘' :
+                             headOption === 'arrow' ? '←' :
+                             headOption === 'circle' ? '◯' : '◇'}
+                          </div>
+                          <div className="text-sm mt-2 text-center">{getArrowHeadName(headOption)}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Selector de punta final */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">Punta final</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {(['none', 'arrow', 'circle', 'diamond'] as ArrowHeadType[]).map((headOption) => (
+                        <button
+                          key={headOption}
+                          className={`py-3 px-2 border rounded-md connection-option transition-colors ${currentArrowHead === headOption ? 'bg-blue-50 border-blue-300' : 'hover:bg-gray-50'}`}
+                          onClick={() => {
+                            setCurrentArrowHead(headOption);
+                            if (onPropertiesChange) {
+                              onPropertiesChange({ endArrowHead: headOption });
+                            }
+                          }}
+                        >
+                          <div className="flex items-center justify-center h-6 text-lg">
+                            {headOption === 'none' ? '⊘' :
+                             headOption === 'arrow' ? '→' :
+                             headOption === 'circle' ? '◯' : '◇'}
+                          </div>
+                          <div className="text-sm mt-2 text-center">{getArrowHeadName(headOption)}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Sección para opciones adicionales en el futuro */}
+                  <div className="border-t border-dashed border-gray-200 pt-5">
+                    <div className="flex items-center gap-3 text-gray-500 text-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      <span>Espacio reservado para opciones adicionales</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+              
+              {/* Pie fijo */}
+              <motion.div 
+                className="p-4 sm:p-5 border-t border-gray-200 bg-gray-50 sticky bottom-0 rounded-b-lg z-10"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                  <motion.button
+                    className="px-5 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                    onClick={handleDelete}
+                    title="Eliminar esta conexión"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    Eliminar
+                  </motion.button>
+                  
+                  <div className="flex space-x-3 justify-end">
+                    <motion.button
+                      className="px-5 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                      onClick={closeModal}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      Cancelar
+                    </motion.button>
+                    <motion.button
+                      className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                      onClick={() => {
+                        // Aplicar todos los cambios
+                        if (onPropertiesChange) {
+                          onPropertiesChange({
+                            style: currentStyle,
+                            animation: currentAnimation,
+                            startArrowHead: currentStartArrowHead,
+                            endArrowHead: currentArrowHead
+                          });
+                        }
+                        closeModal();
+                      }}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      Aplicar
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </>,
+        document.body
       )}
     </div>
   );

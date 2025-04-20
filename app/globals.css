@@ -151,6 +151,24 @@
   }
 }
 
+@keyframes travelingDot {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes flow {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
 .image-drag-preview {
   opacity: 0.6;
   pointer-events: none;
@@ -193,7 +211,6 @@
     transition-all hover:bg-opacity-90;
 }
 
-/* Añadir estilos para el estado de arrastre */
 body.is-dragging {
   cursor: grabbing !important;
 }
@@ -202,9 +219,51 @@ body.is-dragging * {
   cursor: grabbing !important;
 }
 
-/* Destacar la zona de soltar cuando se está arrastrando */
 body.is-dragging .flex-1.bg-slate-100 {
   background-color: rgba(224, 231, 255, 0.5) !important;
   box-shadow: inset 0 0 0 2px rgba(79, 70, 229, 0.3) !important;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.connection-modal {
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.connection-option {
+  transition: all 0.2s ease;
+}
+
+.connection-option:hover {
+  background-color: rgba(224, 231, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.connection-option.active {
+  background-color: rgba(79, 70, 229, 0.1);
+  border-color: rgba(79, 70, 229, 0.6);
+}
+
+.animate-dash {
+  stroke-dasharray: 5,5;
+  animation: dash 1s linear infinite;
+}
+
+.animate-flow {
+  stroke-dasharray: 12, 12;
+  animation: flow 1s linear infinite;
+}
+
+.connection-selected {
+  filter: drop-shadow(0 0 3px rgba(79, 70, 229, 0.4));
 }

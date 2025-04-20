@@ -59,6 +59,8 @@ export function DiagramCanvas() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const transformRef = useRef<HTMLDivElement>(null);
   
+  const [selectedConnectionId, setSelectedConnectionId] = useState<string | null>(null);
+  
   // Función para registrar mensajes de debug
   const logDebug = (message: string) => {
     console.log(message);
@@ -474,8 +476,9 @@ export function DiagramCanvas() {
     
     // Si tenemos una conexión activa, usamos el punto donde está el cursor
     if (activeConnection.currentX && activeConnection.currentY) {
-      const currentX = activeConnection.currentX;
-      const currentY = activeConnection.currentY;
+      // Convertir las coordenadas del cursor al espacio del canvas
+      const currentX = (activeConnection.currentX - position.x) / scale;
+      const currentY = (activeConnection.currentY - position.y) / scale;
       
       // Calcular a qué lado está más cercano el cursor
       const distanceToLeft = Math.abs(targetNode.position.x - currentX);
@@ -551,6 +554,9 @@ export function DiagramCanvas() {
     const node = nodes.find(n => n.id === nodeId);
     if (!node) return;
     
+    // Guardar la posición anterior para cálculos
+    const oldPosition = { ...node.position };
+    
     // Actualizar el nodo
     setNodes(prevNodes => 
       prevNodes.map(n => 
@@ -566,7 +572,15 @@ export function DiagramCanvas() {
         
         // Si el nodo es el origen de la conexión
         if (connection.sourceId === nodeId) {
-          // Recalcular el punto de inicio según la nueva posición
+          // Calcular el desplazamiento del nodo
+          const deltaX = newPosition.x - oldPosition.x;
+          const deltaY = newPosition.y - oldPosition.y;
+          
+          // Aplicar el mismo desplazamiento al punto de conexión
+          updatedConnection.sourceX += deltaX;
+          updatedConnection.sourceY += deltaY;
+          
+          // Además, asegurar que la posición está correcta según el lado del nodo
           switch (connection.sourcePosition) {
             case 'top':
               updatedConnection.sourceX = newPosition.x + node.size.width / 2;
@@ -589,7 +603,15 @@ export function DiagramCanvas() {
         
         // Si el nodo es el destino de la conexión
         if (connection.targetId === nodeId) {
-          // Recalcular el punto final según la nueva posición
+          // Calcular el desplazamiento del nodo
+          const deltaX = newPosition.x - oldPosition.x;
+          const deltaY = newPosition.y - oldPosition.y;
+          
+          // Aplicar el mismo desplazamiento al punto de conexión
+          updatedConnection.targetX += deltaX;
+          updatedConnection.targetY += deltaY;
+          
+          // Además, asegurar que la posición está correcta según el lado del nodo
           switch (connection.targetPosition) {
             case 'top':
               updatedConnection.targetX = newPosition.x + node.size.width / 2;
@@ -700,7 +722,19 @@ export function DiagramCanvas() {
 
   // Manejar la selección de una conexión
   const handleConnectionSelect = (connectionId: string) => {
-    logDebug(`Conexión seleccionada: ${connectionId}`);
+    console.log('Conexión seleccionada:', connectionId);
+    setSelectedConnectionId(connectionId);
+  };
+
+  const deleteConnection = (connectionId: string) => {
+    console.log('Eliminando conexión:', connectionId);
+    setConnections((prevConnections) => 
+      prevConnections.filter((connection) => connection.id !== connectionId)
+    );
+    // Si la conexión eliminada estaba seleccionada, deseleccionarla
+    if (selectedConnectionId === connectionId) {
+      setSelectedConnectionId(null);
+    }
   };
 
   // Actualizar propiedades de una conexión cuando cambian en el componente Arrow
@@ -726,7 +760,36 @@ export function DiagramCanvas() {
 
   // Exportar diagrama a JSON
   const exportDiagram = () => {
-    // Crear objeto de diagrama completo
+    // Calcular los límites del diagrama completo
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    
+    // Considerar todos los nodos
+    nodes.forEach(node => {
+      minX = Math.min(minX, node.position.x);
+      minY = Math.min(minY, node.position.y);
+      maxX = Math.max(maxX, node.position.x + node.size.width);
+      maxY = Math.max(maxY, node.position.y + node.size.height);
+    });
+    
+    // Considerar también todas las conexiones
+    connections.forEach(conn => {
+      minX = Math.min(minX, conn.sourceX, conn.targetX);
+      minY = Math.min(minY, conn.sourceY, conn.targetY);
+      maxX = Math.max(maxX, conn.sourceX, conn.targetX);
+      maxY = Math.max(maxY, conn.sourceY, conn.targetY);
+    });
+    
+    // Ajustar con un margen de seguridad
+    const padding = 100;
+    minX -= padding;
+    minY -= padding;
+    maxX += padding;
+    maxY += padding;
+    
+    // Crear objeto de diagrama completo con metadatos
     const diagram = {
       version: "1.0",
       nodes,
@@ -735,10 +798,22 @@ export function DiagramCanvas() {
         scale,
         position
       },
+      boundingBox: {
+        minX,
+        minY,
+        maxX,
+        maxY,
+        width: maxX - minX,
+        height: maxY - minY
+      },
       metadata: {
         exportedAt: new Date().toISOString(),
         nodeCount: nodes.length,
-        connectionCount: connections.length
+        connectionCount: connections.length,
+        diagramSize: {
+          width: maxX - minX,
+          height: maxY - minY
+        }
       }
     };
     
@@ -760,7 +835,7 @@ export function DiagramCanvas() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    logDebug(`Diagrama exportado: ${nodes.length} nodos, ${connections.length} conexiones`);
+    logDebug(`Diagrama exportado: ${nodes.length} nodos, ${connections.length} conexiones, tamaño: ${Math.round(maxX - minX)}x${Math.round(maxY - minY)}`);
   };
   
   // Importar diagrama desde archivo JSON
@@ -852,16 +927,22 @@ export function DiagramCanvas() {
       {/* Capa de transformación para zoom/pan */}
       <div 
         ref={transformRef}
-        className="absolute top-0 left-0 w-full h-full"
+        className="absolute top-0 left-0"
         style={{
           transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
           transformOrigin: '0 0',
           transition: 'transform 0.05s ease',
+          width: '100%',
+          height: '100%',
+          // Extender espacio virtual para elementos fuera de pantalla
+          minWidth: '10000px',
+          minHeight: '10000px',
+          overflow: 'visible'
         }}
       >
         {/* Renderizar las conexiones existentes */}
-        {connections.map(connection => (
-          <Arrow 
+        {connections.map((connection) => (
+          <Arrow
             key={connection.id}
             id={connection.id}
             startX={connection.sourceX}
@@ -876,8 +957,10 @@ export function DiagramCanvas() {
             endArrowHead={connection.endArrowHead}
             color={connection.color || 'rgba(99, 102, 241, 0.8)'}
             strokeWidth={connection.strokeWidth}
+            isSelected={selectedConnectionId === connection.id}
             onSelect={handleConnectionSelect}
             onPropertiesChange={(properties) => updateConnectionProperties(connection.id, properties)}
+            onDelete={deleteConnection}
           />
         ))}
         
@@ -901,14 +984,32 @@ export function DiagramCanvas() {
 
       {/* Renderizar la conexión activa (mientras se está arrastrando) - fuera de la capa de transformación */}
       {activeConnection && (
-        <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 15 }}>
+        <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" 
+             style={{ zIndex: 15, overflow: "visible" }}>
+          {/* Utilizamos una Bezier simple para la conexión durante el arrastre */}
           <path
             d={`M ${activeConnection.sourceX * scale + position.x} ${activeConnection.sourceY * scale + position.y} 
-                L ${activeConnection.currentX} ${activeConnection.currentY}`}
+                C ${activeConnection.sourceX * scale + position.x + 50} ${activeConnection.sourceY * scale + position.y},
+                  ${activeConnection.currentX - 50} ${activeConnection.currentY},
+                  ${activeConnection.currentX} ${activeConnection.currentY}`}
             fill="none"
             stroke="rgba(79, 70, 229, 0.7)"
             strokeWidth="2"
             strokeDasharray="5,5"
+          />
+          {/* Punto de inicio */}
+          <circle 
+            cx={activeConnection.sourceX * scale + position.x} 
+            cy={activeConnection.sourceY * scale + position.y} 
+            r="4" 
+            fill="rgba(79, 70, 229, 1)" 
+          />
+          {/* Punto final (cursor) */}
+          <circle 
+            cx={activeConnection.currentX} 
+            cy={activeConnection.currentY} 
+            r="4" 
+            fill="rgba(79, 70, 229, 0.7)" 
           />
         </svg>
       )}
