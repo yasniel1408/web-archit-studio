@@ -83,67 +83,67 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       
     // Iconos AWS Compute
     case 'aws-ec2':
-      return <img src="/assets/icons/aws/ec2.svg" className={className} alt="AWS EC2" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/ec2.svg" className={className} alt="AWS EC2" style={{borderRadius: '7px'}} />;
     case 'aws-lambda':
-      return <img src="/assets/icons/aws/lambda.svg" className={className} alt="AWS Lambda" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/lambda.svg" className={className} alt="AWS Lambda" style={{borderRadius: '7px'}} />;
     case 'aws-fargate':
-      return <img src="/assets/icons/aws/fargate.svg" className={className} alt="AWS Fargate" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/fargate.svg" className={className} alt="AWS Fargate" style={{borderRadius: '7px'}} />;
     case 'aws-batch':
-      return <img src="/assets/icons/aws/batch.svg" className={className} alt="AWS Batch" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/batch.svg" className={className} alt="AWS Batch" style={{borderRadius: '7px'}} />;
     case 'aws-elastic-beanstalk':
-      return <img src="/assets/icons/aws/elastic-beanstalk.svg" className={className} alt="AWS Elastic Beanstalk" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/elastic-beanstalk.svg" className={className} alt="AWS Elastic Beanstalk" style={{borderRadius: '7px'}} />;
     case 'aws-app-runner':
-      return <img src="/assets/icons/aws/app-runner.svg" className={className} alt="AWS App Runner" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/app-runner.svg" className={className} alt="AWS App Runner" style={{borderRadius: '7px'}} />;
     case 'aws-wavelength':
-      return <img src="/assets/icons/aws/wavelength.svg" className={className} alt="AWS Wavelength" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/wavelength.svg" className={className} alt="AWS Wavelength" style={{borderRadius: '7px'}} />;
     case 'aws-local-zones':
-      return <img src="/assets/icons/aws/local-zones.svg" className={className} alt="AWS Local Zones" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/local-zones.svg" className={className} alt="AWS Local Zones" style={{borderRadius: '7px'}} />;
       
     // Iconos AWS Database
     case 'aws-rds':
-      return <img src="/assets/icons/aws/rds.svg" className={className} alt="AWS RDS" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/rds.svg" className={className} alt="AWS RDS" style={{borderRadius: '7px'}} />;
     case 'aws-dynamodb':
-      return <img src="/assets/icons/aws/dynamodb.svg" className={className} alt="AWS DynamoDB" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/dynamodb.svg" className={className} alt="AWS DynamoDB" style={{borderRadius: '7px'}} />;
     case 'aws-aurora':
-      return <img src="/assets/icons/aws/aurora.svg" className={className} alt="AWS Aurora" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/aurora.svg" className={className} alt="AWS Aurora" style={{borderRadius: '7px'}} />;
     case 'aws-elasticache':
-      return <img src="/assets/icons/aws/elasticache.svg" className={className} alt="AWS ElastiCache" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/elasticache.svg" className={className} alt="AWS ElastiCache" style={{borderRadius: '7px'}} />;
     case 'aws-neptune':
-      return <img src="/assets/icons/aws/neptune.svg" className={className} alt="AWS Neptune" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/neptune.svg" className={className} alt="AWS Neptune" style={{borderRadius: '7px'}} />;
     case 'aws-database-migration':
-      return <img src="/assets/icons/aws/database-migration.svg" className={className} alt="AWS Database Migration" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/database-migration.svg" className={className} alt="AWS Database Migration" style={{borderRadius: '7px'}} />;
     case 'aws-timestream':
-      return <img src="/assets/icons/aws/timestream.svg" className={className} alt="AWS Timestream" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/timestream.svg" className={className} alt="AWS Timestream" style={{borderRadius: '7px'}} />;
       
     // Iconos AWS App Integration
     case 'aws-api-gateway':
-      return <img src="/assets/icons/aws/api-gateway.svg" className={className} alt="AWS API Gateway" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/api-gateway.svg" className={className} alt="AWS API Gateway" style={{borderRadius: '7px'}} />;
     case 'aws-app-sync':
-      return <img src="/assets/icons/aws/app-sync.svg" className={className} alt="AWS App Sync" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/app-sync.svg" className={className} alt="AWS App Sync" style={{borderRadius: '7px'}} />;
     case 'aws-step-functions':
-      return <img src="/assets/icons/aws/step-functions.svg" className={className} alt="AWS Step Functions" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/step-functions.svg" className={className} alt="AWS Step Functions" style={{borderRadius: '7px'}} />;
     case 'aws-sns':
-      return <img src="/assets/icons/aws/sns.svg" className={className} alt="AWS SNS" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/sns.svg" className={className} alt="AWS SNS" style={{borderRadius: '7px'}} />;
     case 'aws-sqs':
-      return <img src="/assets/icons/aws/sqs.svg" className={className} alt="AWS SQS" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/sqs.svg" className={className} alt="AWS SQS" style={{borderRadius: '7px'}} />;
       
     // Iconos AWS Networking
     case 'aws-cloudfront':
-      return <img src="/assets/icons/aws/cloudfront.svg" className={className} alt="AWS CloudFront" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/cloudfront.svg" className={className} alt="AWS CloudFront" style={{borderRadius: '7px'}} />;
     case 'aws-route53':
-      return <img src="/assets/icons/aws/route53.svg" className={className} alt="AWS Route 53" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/route53.svg" className={className} alt="AWS Route 53" style={{borderRadius: '7px'}} />;
     case 'aws-vpc':
-      return <img src="/assets/icons/aws/vpc.svg" className={className} alt="AWS VPC" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/vpc.svg" className={className} alt="AWS VPC" style={{borderRadius: '7px'}} />;
     case 'aws-direct-connect':
       return <img src="/assets/icons/aws/direct-connect.svg" className={className} alt="AWS Direct Connect" />;
       
     // Iconos AWS Storage
     case 'aws-s3':
-      return <img src="/assets/icons/aws/s3.svg" className={className} alt="AWS S3" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/s3.svg" className={className} alt="AWS S3" style={{borderRadius: '7px'}} />;
     case 'aws-efs':
-      return <img src="/assets/icons/aws/efs.svg" className={className} alt="AWS EFS" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/efs.svg" className={className} alt="AWS EFS" style={{borderRadius: '7px'}} />;
     case 'aws-glacier':
-      return <img src="/assets/icons/aws/glacier.svg" className={className} alt="AWS Glacier" style={{borderRadius: '10px'}} />;
+      return <img src="/assets/icons/aws/glacier.svg" className={className} alt="AWS Glacier" style={{borderRadius: '7px'}} />;
       
     default:
       return null;

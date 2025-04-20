@@ -96,7 +96,7 @@ export function IconSelector({ isOpen, onClose, onSelect, initialIcon = 'none' }
       
       {/* Overlay de fondo */}
       <motion.div 
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -104,7 +104,7 @@ export function IconSelector({ isOpen, onClose, onSelect, initialIcon = 'none' }
       >
         {/* Modal */}
         <motion.div 
-          className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden"
+          className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -188,7 +188,7 @@ export function IconSelector({ isOpen, onClose, onSelect, initialIcon = 'none' }
           {/* Contenido con scroll - Grid de iconos */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 custom-scrollbar">
             {filterIcons().length > 0 ? (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4">
                 {filterIcons().map(icon => (
                   <motion.div
                     key={icon.id}
@@ -242,12 +242,26 @@ export function IconSelector({ isOpen, onClose, onSelect, initialIcon = 'none' }
             <span className="text-sm text-gray-500">
               {filterIcons().length} {filterIcons().length === 1 ? 'icono' : 'iconos'} disponible{filterIcons().length !== 1 ? 's' : ''}
             </span>
-            <button
-              className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              onClick={closeIconSelector}
-            >
-              Cancelar
-            </button>
+            <div className="flex gap-2">
+              <button
+                className="px-5 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                onClick={closeIconSelector}
+              >
+                Cancelar
+              </button>
+              <button
+                className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                onClick={() => {
+                  if (selectedIcon) {
+                    selectIcon(selectedIcon);
+                  } else {
+                    closeIconSelector();
+                  }
+                }}
+              >
+                Seleccionar
+              </button>
+            </div>
           </div>
         </motion.div>
       </motion.div>
