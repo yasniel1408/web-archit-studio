@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Square, IconType } from '@/app/components/atoms/square/square';
+import { Square } from '@/app/components/atoms/square/square';
+import { IconType } from '@/app/components/atoms/icon-selector/types';
 import { ConnectionPoint, ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
 
 interface CanvasNodeProps {
@@ -10,6 +11,7 @@ interface CanvasNodeProps {
   position: { x: number; y: number };
   text?: string;
   iconType?: IconType; // Usar el tipo importado
+  backgroundColor?: string; // Añadir la propiedad backgroundColor
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
   onConnectionEnd: (targetNodeId: string) => void;
   onNodeMove: (nodeId: string, position: { x: number, y: number }) => void;
@@ -27,6 +29,7 @@ export function CanvasNode({
   position, 
   text = "",
   iconType,
+  backgroundColor = "#FFFFFF", // Añadir valor por defecto
   onConnectionStart,
   onConnectionEnd,
   onNodeMove,
@@ -79,6 +82,11 @@ export function CanvasNode({
       }
     }
   }, [type]);
+
+  // Debugging para el color de fondo
+  useEffect(() => {
+    console.log(`CanvasNode ${id} - backgroundColor recibido:`, backgroundColor);
+  }, [id, backgroundColor]);
   
   // Limpiar listeners globales al desmontar
   useEffect(() => {
@@ -275,9 +283,20 @@ export function CanvasNode({
     // Notificar al padre del cambio
     console.log("Icono cambiado en nodo:", id, newIcon);
     
+    // Propagar cambio al componente padre - CORREGIR: usar 'icon' en lugar de 'iconType'
+    if (onPropertiesChange) {
+      onPropertiesChange({ icon: newIcon });
+    }
+  };
+
+  // Función para manejar cambios en el color de fondo
+  const handleColorChange = (newColor: string) => {
+    // Notificar al padre del cambio
+    console.log("Color cambiado en nodo:", id, newColor);
+    
     // Propagar cambio al componente padre
     if (onPropertiesChange) {
-      onPropertiesChange({ iconType: newIcon });
+      onPropertiesChange({ backgroundColor: newColor });
     }
   };
 
@@ -323,7 +342,9 @@ export function CanvasNode({
           editable={true} 
           initialText={text} 
           icon={iconType}
+          backgroundColor={backgroundColor} // Pasar la propiedad al componente Square
           onIconChange={handleIconChange}
+          onColorChange={handleColorChange}
         />
       </div>
       

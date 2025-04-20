@@ -5,15 +5,16 @@ import { CanvasNode } from '@/app/components/molecules/canvas-node/canvas-node';
 import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
 import { Arrow } from '@/app/components/atoms/arrow/arrow';
 import { MiniMap } from '@/app/components/molecules/mini-map/mini-map';
-import { IconType } from '@/app/components/atoms/square/square';
+import { IconType } from '@/app/components/atoms/icon-selector/types';
 
-type NodeType = {
+export type NodeType = {
   id: string;
-  type: string;
   position: { x: number; y: number };
+  text: string;
+  type: string;
   size: { width: number; height: number };
-  text?: string;
-  iconType?: IconType;
+  icon?: IconType;
+  backgroundColor?: string;
 };
 
 type ConnectionType = {
@@ -72,376 +73,6 @@ export function DiagramCanvas() {
   
   // Plantillas de ejemplo predefinidas
   const exampleTemplates = [
-    {
-      id: 'microservices',
-      name: 'Arquitectura de Microservicios',
-      description: 'Estructura básica de una aplicación de microservicios con API Gateway, servicios y bases de datos.',
-      image: '/templates/microservices.png',
-      nodes: [
-        {
-          id: 'api-gateway',
-          type: 'square',
-          position: { x: 400, y: 100 },
-          size: { width: 150, height: 80 },
-          text: 'API Gateway',
-          iconType: 'api' as IconType
-        },
-        {
-          id: 'auth-service',
-          type: 'square',
-          position: { x: 200, y: 250 },
-          size: { width: 140, height: 80 },
-          text: 'Auth Service',
-          iconType: 'security' as IconType
-        },
-        {
-          id: 'user-service',
-          type: 'square',
-          position: { x: 400, y: 250 },
-          size: { width: 140, height: 80 },
-          text: 'User Service',
-          iconType: 'user' as IconType
-        },
-        {
-          id: 'product-service',
-          type: 'square',
-          position: { x: 600, y: 250 },
-          size: { width: 140, height: 80 },
-          text: 'Product Service',
-          iconType: 'app' as IconType
-        },
-        {
-          id: 'user-db',
-          type: 'square',
-          position: { x: 400, y: 400 },
-          size: { width: 140, height: 80 },
-          text: 'User DB',
-          iconType: 'database' as IconType
-        },
-        {
-          id: 'product-db',
-          type: 'square',
-          position: { x: 600, y: 400 },
-          size: { width: 140, height: 80 },
-          text: 'Product DB',
-          iconType: 'database' as IconType
-        }
-      ],
-      connections: [
-        {
-          id: 'conn-1',
-          sourceId: 'api-gateway',
-          targetId: 'auth-service',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 425,
-          sourceY: 180,
-          targetX: 250,
-          targetY: 250,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-2',
-          sourceId: 'api-gateway',
-          targetId: 'user-service',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 475,
-          sourceY: 180,
-          targetX: 450,
-          targetY: 250,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-3',
-          sourceId: 'api-gateway',
-          targetId: 'product-service',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 525,
-          sourceY: 180,
-          targetX: 650,
-          targetY: 250,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-4',
-          sourceId: 'user-service',
-          targetId: 'user-db',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 450,
-          sourceY: 330,
-          targetX: 450,
-          targetY: 400,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-5',
-          sourceId: 'product-service',
-          targetId: 'product-db',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 650,
-          sourceY: 330,
-          targetX: 650,
-          targetY: 400,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-6',
-          sourceId: 'auth-service',
-          targetId: 'user-service',
-          sourcePosition: 'right' as ConnectionPosition,
-          targetPosition: 'left' as ConnectionPosition,
-          sourceX: 340,
-          sourceY: 290,
-          targetX: 400,
-          targetY: 290,
-          style: 'dashed' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        }
-      ]
-    },
-    {
-      id: 'aws-architecture',
-      name: 'Arquitectura AWS Serverless',
-      description: 'Arquitectura serverless usando servicios de AWS para aplicaciones escalables y de alta disponibilidad.',
-      image: '/templates/aws-architecture.png',
-      nodes: [
-        {
-          id: 'api-gateway',
-          type: 'square',
-          position: { x: 400, y: 100 },
-          size: { width: 150, height: 80 },
-          text: 'API Gateway',
-          iconType: 'aws-lambda' as IconType
-        },
-        {
-          id: 'lambda-auth',
-          type: 'square',
-          position: { x: 200, y: 250 },
-          size: { width: 140, height: 80 },
-          text: 'Auth Lambda',
-          iconType: 'aws-lambda' as IconType
-        },
-        {
-          id: 'lambda-users',
-          type: 'square',
-          position: { x: 400, y: 250 },
-          size: { width: 140, height: 80 },
-          text: 'Users Lambda',
-          iconType: 'aws-lambda' as IconType
-        },
-        {
-          id: 'lambda-products',
-          type: 'square',
-          position: { x: 600, y: 250 },
-          size: { width: 140, height: 80 },
-          text: 'Products Lambda',
-          iconType: 'aws-lambda' as IconType
-        },
-        {
-          id: 'dynamo-users',
-          type: 'square',
-          position: { x: 400, y: 400 },
-          size: { width: 140, height: 80 },
-          text: 'Users Table',
-          iconType: 'aws-dynamodb' as IconType
-        },
-        {
-          id: 'dynamo-products',
-          type: 'square',
-          position: { x: 600, y: 400 },
-          size: { width: 140, height: 80 },
-          text: 'Products Table',
-          iconType: 'aws-dynamodb' as IconType
-        },
-        {
-          id: 'ec2-background',
-          type: 'square',
-          position: { x: 800, y: 250 },
-          size: { width: 140, height: 80 },
-          text: 'Batch Processing',
-          iconType: 'aws-ec2' as IconType
-        },
-        {
-          id: 'aurora-analytics',
-          type: 'square',
-          position: { x: 800, y: 400 },
-          size: { width: 140, height: 80 },
-          text: 'Analytics DB',
-          iconType: 'aws-aurora' as IconType
-        }
-      ],
-      connections: [
-        {
-          id: 'conn-1',
-          sourceId: 'api-gateway',
-          targetId: 'lambda-auth',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 425,
-          sourceY: 180,
-          targetX: 250,
-          targetY: 250,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-2',
-          sourceId: 'api-gateway',
-          targetId: 'lambda-users',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 475,
-          sourceY: 180,
-          targetX: 450,
-          targetY: 250,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-3',
-          sourceId: 'api-gateway',
-          targetId: 'lambda-products',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 525,
-          sourceY: 180,
-          targetX: 650,
-          targetY: 250,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-4',
-          sourceId: 'lambda-users',
-          targetId: 'dynamo-users',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 450,
-          sourceY: 330,
-          targetX: 450,
-          targetY: 400,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-5',
-          sourceId: 'lambda-products',
-          targetId: 'dynamo-products',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 650,
-          sourceY: 330,
-          targetX: 650,
-          targetY: 400,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-6',
-          sourceId: 'lambda-auth',
-          targetId: 'lambda-users',
-          sourcePosition: 'right' as ConnectionPosition,
-          targetPosition: 'left' as ConnectionPosition,
-          sourceX: 340,
-          sourceY: 290,
-          targetX: 400,
-          targetY: 290,
-          style: 'dashed' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-7',
-          sourceId: 'lambda-products',
-          targetId: 'ec2-background',
-          sourcePosition: 'right' as ConnectionPosition,
-          targetPosition: 'left' as ConnectionPosition,
-          sourceX: 740,
-          sourceY: 290,
-          targetX: 800,
-          targetY: 290,
-          style: 'dashed' as 'solid' | 'dashed' | 'dotted',
-          animation: 'none' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        },
-        {
-          id: 'conn-8',
-          sourceId: 'ec2-background',
-          targetId: 'aurora-analytics',
-          sourcePosition: 'bottom' as ConnectionPosition,
-          targetPosition: 'top' as ConnectionPosition,
-          sourceX: 870,
-          sourceY: 330,
-          targetX: 870,
-          targetY: 400,
-          style: 'solid' as 'solid' | 'dashed' | 'dotted',
-          animation: 'traveling-dot' as 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest',
-          startArrowHead: 'none' as 'none' | 'arrow' | 'circle' | 'diamond',
-          endArrowHead: 'arrow' as 'none' | 'arrow' | 'circle' | 'diamond',
-          color: '#000000',
-          strokeWidth: 2
-        }
-      ]
-    },
     {
       id: 'serverless',
       name: 'Arquitectura Serverless',
@@ -624,8 +255,26 @@ export function DiagramCanvas() {
       if (savedDiagram) {
         const { savedNodes, savedConnections, savedViewport } = JSON.parse(savedDiagram);
         
-        // Cargar nodos
-        setNodes(savedNodes || []);
+        // Cargar nodos, asegurándose de que todos los campos estén presentes
+        const nodesWithCorrectProps = (savedNodes || []).map((node: any) => ({
+          id: node.id,
+          position: node.position,
+          text: node.text || "",
+          type: node.type || "square",
+          size: node.size || { width: 140, height: 80 },
+          // Corregir el mapeo: usar node.icon o node.iconType (para compatibilidad)
+          icon: node.icon || node.iconType || undefined,
+          backgroundColor: node.backgroundColor || undefined
+        }));
+        
+        console.log("Nodos cargados desde localStorage:", nodesWithCorrectProps);
+        nodesWithCorrectProps.forEach(node => {
+          if (node.backgroundColor) {
+            console.log(`Nodo ${node.id} tiene backgroundColor: ${node.backgroundColor}`);
+          }
+        });
+        
+        setNodes(nodesWithCorrectProps);
         
         // Cargar conexiones asegurando que todas las propiedades estén presentes
         const connectionsWithDefaultProps = (savedConnections || []).map((conn: ConnectionType) => ({
@@ -654,7 +303,7 @@ export function DiagramCanvas() {
           setPosition(savedViewport.position || { x: 0, y: 0 });
         }
         
-        logDebug(`Cargados ${savedNodes?.length || 0} nodos y ${connectionsWithDefaultProps.length} conexiones del almacenamiento local`);
+        logDebug(`Cargados ${nodesWithCorrectProps.length} nodos y ${connectionsWithDefaultProps.length} conexiones del almacenamiento local`);
       }
     } catch (error) {
       console.error('Error al cargar diagrama guardado:', error);
@@ -1305,82 +954,45 @@ export function DiagramCanvas() {
 
   // Exportar diagrama a JSON
   const exportDiagram = () => {
-    // Calcular los límites del diagrama completo
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    
-    // Considerar todos los nodos
-    nodes.forEach(node => {
-      minX = Math.min(minX, node.position.x);
-      minY = Math.min(minY, node.position.y);
-      maxX = Math.max(maxX, node.position.x + node.size.width);
-      maxY = Math.max(maxY, node.position.y + node.size.height);
-    });
-    
-    // Considerar también todas las conexiones
-    connections.forEach(conn => {
-      minX = Math.min(minX, conn.sourceX, conn.targetX);
-      minY = Math.min(minY, conn.sourceY, conn.targetY);
-      maxX = Math.max(maxX, conn.sourceX, conn.targetX);
-      maxY = Math.max(maxY, conn.sourceY, conn.targetY);
-    });
-    
-    // Ajustar con un margen de seguridad
-    const padding = 100;
-    minX -= padding;
-    minY -= padding;
-    maxX += padding;
-    maxY += padding;
-    
-    // Crear objeto de diagrama completo con metadatos
+    // Crear objeto de diagrama completo
     const diagram = {
       version: "1.0",
-      nodes,
+      // Asegurar que todos los campos correctos se incluyen en el diagrama exportado
+      nodes: nodes.map(node => ({
+        ...node,
+        // Incluir explícitamente icon y backgroundColor para asegurar la persistencia
+        icon: node.icon,
+        backgroundColor: node.backgroundColor
+      })),
       connections,
       viewport: {
         scale,
         position
       },
-      boundingBox: {
-        minX,
-        minY,
-        maxX,
-        maxY,
-        width: maxX - minX,
-        height: maxY - minY
-      },
       metadata: {
         exportedAt: new Date().toISOString(),
         nodeCount: nodes.length,
-        connectionCount: connections.length,
-        diagramSize: {
-          width: maxX - minX,
-          height: maxY - minY
-        }
+        connectionCount: connections.length
       }
     };
     
-    // Convertir a JSON con formato
+    // Preparar el JSON para descarga
     const jsonString = JSON.stringify(diagram, null, 2);
-    
-    // Crear blob y link de descarga
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     
-    // Crear elemento de enlace para descarga
+    // Crear un enlace de descarga y activarlo automáticamente
     const a = document.createElement('a');
     a.href = url;
-    a.download = `diagrama-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+    a.download = `diagram_${new Date().toISOString().substring(0, 19).replace(/:/g, '-')}.json`;
     document.body.appendChild(a);
     a.click();
-    
-    // Limpiar
     document.body.removeChild(a);
+    
+    // Liberar URL
     URL.revokeObjectURL(url);
     
-    logDebug(`Diagrama exportado: ${nodes.length} nodos, ${connections.length} conexiones, tamaño: ${Math.round(maxX - minX)}x${Math.round(maxY - minY)}`);
+    logDebug("Diagrama exportado a archivo JSON");
   };
   
   // Importar diagrama desde archivo JSON
@@ -1455,13 +1067,25 @@ export function DiagramCanvas() {
     nodeId: string,
     properties: Partial<NodeType>
   ) => {
+    console.log(`Actualizando propiedades del nodo ${nodeId}:`, properties);
+    
+    // Si se está actualizando el color de fondo, log especial
+    if (properties.backgroundColor) {
+      console.log(`Actualizando backgroundColor del nodo ${nodeId} a: ${properties.backgroundColor}`);
+    }
+    
     setNodes(prevNodes =>
-      prevNodes.map(node => 
-        node.id === nodeId ? { ...node, ...properties } : node
-      )
+      prevNodes.map(node => {
+        if (node.id === nodeId) {
+          const updatedNode = { ...node, ...properties };
+          console.log(`Nodo ${nodeId} actualizado:`, updatedNode);
+          return updatedNode;
+        }
+        return node;
+      })
     );
     
-    console.log(`Propiedades del nodo ${nodeId} actualizadas:`, properties);
+    logDebug(`Propiedades del nodo ${nodeId} actualizadas`);
   };
 
   // Función para generar y mostrar el JSON del diagrama
@@ -1507,8 +1131,8 @@ export function DiagramCanvas() {
     if (!template) return;
     
     // Limpiar el diagrama actual
-    setNodes(template.nodes);
-    setConnections(template.connections);
+    setNodes(mapTemplateNodes(template.nodes));
+    setConnections(mapTemplateConnections(template.connections));
     
     // Guardar en localStorage
     localStorage.setItem('architectDiagram', JSON.stringify({
@@ -1527,6 +1151,70 @@ export function DiagramCanvas() {
     logDebug(`Plantilla "${template.name}" cargada`);
   };
 
+  // Buscar donde se definen los tipos NodeType y ConnectionType y modificar NodeType para incluir backgroundColor
+  // La definición de NodeType ya existe al inicio del archivo, no debe duplicarse aquí
+  /* export type NodeType = {
+    id: string;
+    position: { x: number; y: number };
+    text: string;
+    icon?: IconType;
+    backgroundColor?: string;
+  }; */
+
+  // Buscar la función handleNodeChange o similar para añadir soporte para cambio de color
+  const handleNodeIconChange = (nodeId: string, icon: IconType) => {
+    setNodes(prev => prev.map(node => 
+      node.id === nodeId ? { ...node, icon } : node
+    ));
+  };
+
+  const handleNodeColorChange = (nodeId: string, backgroundColor: string) => {
+    setNodes(prev => prev.map(node => 
+      node.id === nodeId ? { ...node, backgroundColor } : node
+    ));
+  };
+
+  // ... existing code ...
+
+  // Función para manejar el cambio de punto de conexión seleccionado en un nodo
+  const handleSelectedConnectionPointChange = (nodeId: string, pointId: string) => {
+    // Esta función se llama cuando el usuario selecciona un punto de conexión en un nodo
+    logDebug(`Punto de conexión seleccionado: ${pointId} en nodo ${nodeId}`);
+    // La implementación puede ampliarse según sea necesario
+  };
+
+  // Función para obtener los puntos de conexión para un nodo específico
+  const getConnectionPointsForNode = (nodeId: string) => {
+    // Puedes personalizar esto según tus necesidades
+    return ['top', 'right', 'bottom', 'left'];
+  };
+
+  // ... existing code ...
+
+  // Para manejar las plantillas cargadas desde ejemplos
+  const mapTemplateNodes = (templateNodes: any[]): NodeType[] => {
+    return templateNodes.map(node => ({
+      id: node.id,
+      position: node.position,
+      text: node.text || "",
+      type: node.type || "square",
+      size: node.size || { width: 140, height: 80 },
+      // Corregir para usar icon en lugar de iconType
+      icon: node.icon || node.iconType,
+      backgroundColor: node.backgroundColor
+    }));
+  };
+
+  // Para manejar la carga de conexiones de plantillas
+  const mapTemplateConnections = (templateConnections: any[]): ConnectionType[] => {
+    return templateConnections.map(conn => ({
+      ...conn,
+      sourcePosition: conn.sourcePosition as ConnectionPosition,
+      targetPosition: conn.targetPosition as ConnectionPosition
+    }));
+  };
+
+  // Buscar donde se renderiza el componente CanvasNode y añadir las nuevas props
   return (
     <div 
       ref={canvasRef}
@@ -1587,21 +1275,22 @@ export function DiagramCanvas() {
         ))}
         
         {/* Renderizar los nodos */}
-        {nodes.map(node => (
-          <CanvasNode 
-            key={node.id} 
-            id={node.id} 
-            type={node.type} 
+        {nodes.map((node) => (
+          <CanvasNode
+            key={node.id}
+            id={node.id}
+            type={node.type || "square"}
             position={node.position}
             text={node.text}
-            iconType={node.iconType}
-            onConnectionStart={isSpacePressed ? undefined : handleConnectionStart}
-            onConnectionEnd={isSpacePressed ? undefined : handleConnectionEnd}
-            onNodeMove={isSpacePressed ? undefined : handleNodeMove}
-            onNodeResize={isSpacePressed ? undefined : handleNodeResize}
-            onDeleteNode={isSpacePressed ? undefined : handleDeleteNode}
-            onPropertiesChange={(props) => updateNodeProperties(node.id, props)}
-            disabled={isSpacePressed}
+            iconType={node.icon}
+            backgroundColor={node.backgroundColor || "#FFFFFF"}
+            onConnectionStart={handleConnectionStart}
+            onConnectionEnd={handleConnectionEnd}
+            onNodeMove={handleNodeMove}
+            onNodeResize={handleNodeResize}
+            onDeleteNode={handleDeleteNode}
+            onPropertiesChange={(properties) => updateNodeProperties(node.id, properties)}
+            disabled={false}
           />
         ))}
       </div>
