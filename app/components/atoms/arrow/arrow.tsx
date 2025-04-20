@@ -522,11 +522,13 @@ export function Arrow({
   };
   
   const handleMouseEnter = () => {
-    setIsMenuOpen(true);
+    // Ya no abrimos el menú flotante al hacer hover
+    // setIsMenuOpen(true);
   };
   
   const handleMouseLeave = () => {
-    setIsMenuOpen(false);
+    // Ya no cerramos el menú flotante al quitar el hover
+    // setIsMenuOpen(false);
   };
   
   const handleArrowClick = (e: React.MouseEvent) => {
@@ -536,26 +538,21 @@ export function Arrow({
       onSelect(id);
     }
     
-    // Abrir el menú de opciones al hacer clic
-    setIsMenuOpen(true);
-    
-    // Cerrar los submenús si están abiertos
-    setIsAnimationsMenuOpen(false);
-  };
-  
-  // Manejador para doble clic que abrirá el modal completo
-  const handleArrowDoubleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    console.log(`Arrow ${id}: Double-clicked. Opening options modal.`);
+    // Abrir el modal completo con un solo clic (antes abríamos el menú de opciones)
     setIsOptionsModalOpen(true);
-    setIsMenuOpen(false); // Cerrar el menú flotante si estaba abierto
-    
-    if (onSelect) {
-      onSelect(id);
-    }
     
     // Añadimos una clase al body para prevenir scroll cuando el modal está abierto
     document.body.classList.add('overflow-hidden');
+    
+    // Cerrar los submenús si están abiertos
+    setIsAnimationsMenuOpen(false);
+    setIsMenuOpen(false);
+  };
+  
+  // Manejador para doble clic que ya no es necesario, pero lo mantenemos por compatibilidad
+  const handleArrowDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Ya no abrimos el modal aquí, sino en el clic simple
   };
 
   // Al cerrar el modal, reestablecemos el scroll
@@ -723,7 +720,7 @@ export function Arrow({
   return (
     <div 
       className="absolute top-0 left-0 w-full h-full pointer-events-none"
-      style={{ zIndex: isMenuOpen || isOptionsModalOpen ? 25 : 5 }}
+      style={{ zIndex: isOptionsModalOpen ? 25 : 5 }} // Eliminamos isMenuOpen de la condición
     >
       <svg 
         width="100%" 
@@ -751,13 +748,13 @@ export function Arrow({
         <path
           d={pathCommand}
           fill="none"
-          stroke={isMenuOpen ? hoverColor : baseColor}
-          strokeWidth={isMenuOpen ? strokeWidth + 0.5 : strokeWidth}
+          stroke={isSelected ? hoverColor : baseColor} // Cambiamos para mostrar el color hover solo si está seleccionado
+          strokeWidth={isSelected ? strokeWidth + 0.5 : strokeWidth} // Cambiamos para aumentar grosor solo si está seleccionado
           strokeDasharray={getDashArray()}
           className={pathClass}
           style={{ 
             transition: 'stroke 0.2s ease, stroke-width 0.2s ease',
-            filter: isMenuOpen ? 'drop-shadow(0 0 2px rgba(0,0,0,0.1))' : 'none',
+            filter: isSelected ? 'drop-shadow(0 0 2px rgba(0,0,0,0.1))' : 'none',
             pointerEvents: 'none'
           }}
         />
@@ -766,7 +763,7 @@ export function Arrow({
         {arrowHeadStart && (
           <path
             d={arrowHeadStart}
-            fill={isMenuOpen ? hoverColor : baseColor}
+            fill={isSelected ? hoverColor : baseColor} // Cambiamos para usar el color hover solo si está seleccionado
             strokeWidth="0"
             className={currentAnimation === 'pulse' ? 'pulsing' : ''}
             style={{ transition: 'fill 0.2s ease', pointerEvents: 'none' }}
@@ -777,7 +774,7 @@ export function Arrow({
         {arrowHeadEnd && (
           <path
             d={arrowHeadEnd}
-            fill={isMenuOpen ? hoverColor : baseColor}
+            fill={isSelected ? hoverColor : baseColor} // Cambiamos para usar el color hover solo si está seleccionado
             strokeWidth="0"
             className={currentAnimation === 'pulse' ? 'pulsing' : ''}
             style={{ transition: 'fill 0.2s ease', pointerEvents: 'none' }}
@@ -790,82 +787,9 @@ export function Arrow({
           currentAnimation === 'traveling-dot-fastest') && renderTravelingDot()}
       </svg>
       
-      {/* Renderizado del menú de opciones - asegurar pointer-events correcto */}
-      {isMenuOpen && (
-        <div 
-          ref={optionsMenuRef}
-          className={optionsMenuClass} 
-          style={{ 
-            left: (Math.max(startX, endX) + Math.min(startX, endX)) / 2, 
-            top: (Math.max(startY, endY) + Math.min(startY, endY)) / 2,
-            zIndex: 100, // Asegurar que está por encima de todo
-            pointerEvents: 'auto' // Importante: permitir interacciones con el menú
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="py-1">
-            <button 
-              className={optionButtonClass}
-              onClick={handleStyleChange}
-            >
-              <span>Estilo de línea: <strong>{getStyleName(currentStyle)}</strong></span>
-              <ArrowPathIcon className="h-4 w-4" />
-            </button>
-            
-            <div className="relative">
-              <button 
-                className={optionButtonClass}
-                onClick={handleAnimationButtonClick}
-              >
-                <span>Animación: <strong>{getAnimationName(currentAnimation)}</strong></span>
-                <ArrowPathIcon className={`h-4 w-4 transform ${isAnimationsMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {isAnimationsMenuOpen && (
-                <div 
-                  ref={animationsMenuRef}
-                  className="absolute left-0 top-full bg-white rounded-md shadow-lg border border-gray-200 w-full z-10 pointer-events-auto"
-                >
-                  {['none', 'dash', 'traveling-dot', 'traveling-dot-fast', 'traveling-dot-fastest'].map((anim) => (
-                    <button 
-                      key={anim}
-                      className={`${optionButtonClass} ${currentAnimation === anim ? 'bg-blue-50 text-blue-600' : ''}`}
-                      onClick={handleAnimationSelect(anim as ArrowAnimation)}
-                    >
-                      <span>{getAnimationName(anim as ArrowAnimation)}</span>
-                      {currentAnimation === anim && (
-                        <CheckIcon className="h-4 w-4 text-blue-600" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <button 
-              className={optionButtonClass}
-              onClick={handleArrowHeadChange}
-            >
-              <span>Punta de flecha: <strong>{getArrowHeadName(currentArrowHead)}</strong></span>
-              <ArrowPathIcon className="h-4 w-4" />
-            </button>
-            
-            <div className="border-t border-gray-200 mt-1">
-              <button 
-                className="w-full px-3 py-2 text-red-600 hover:bg-red-50 flex items-center justify-between"
-                onClick={handleDelete}
-              >
-                <span>Eliminar conexión</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Eliminamos el menú flotante que aparecía al hacer hover */}
       
-      {/* Modal completo de opciones para doble clic - usando portal para asegurar que está sobre todo */}
+      {/* Modal completo de opciones que ahora se muestra con un solo clic */}
       {isOptionsModalOpen && typeof window === 'object' && createPortal(
         <>
           {/* Estilos personalizados para la barra de desplazamiento */}
