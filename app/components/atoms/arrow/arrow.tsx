@@ -4,12 +4,6 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
 import { motion } from 'framer-motion';
 import { createPortal } from 'react-dom';
-import { 
-  PaintBrushIcon, 
-  Square2StackIcon, 
-  ArrowPathIcon,
-  CheckIcon
-} from '@heroicons/react/24/solid';
 
 // Estilos personalizados para la barra de desplazamiento
 const scrollbarStyles = `
