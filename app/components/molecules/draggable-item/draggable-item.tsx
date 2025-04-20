@@ -18,13 +18,13 @@ export function DraggableItem({
   text = ""
 }: DraggableItemProps) {
   return (
-    <DragWrapper id={id} type={type}>
-      <div className="bg-slate-700 p-3 rounded hover:bg-slate-600 transition-colors">
+    <DragWrapper id={id} type={type} text={text}>
+      <div className="bg-slate-700 p-3 rounded hover:bg-slate-600 transition-colors cursor-grab">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8">
-            <Square text={text} />
+          <div className="w-8 h-8 flex-shrink-0">
+            <Square text={label} />
           </div>
-          <span>{label}</span>
+          <span className="truncate">{label}</span>
         </div>
       </div>
     </DragWrapper>

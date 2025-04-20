@@ -10,38 +10,52 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 1rem;
+    --primary: 220 90% 57%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 33% 96%;
+    --secondary-foreground: 222 47% 24%;
+    --muted: 210 40% 97%;
+    --muted-foreground: 214 32% 60%;
+    --accent: 244 79% 60%;
+    --accent-foreground: 0 0% 100%;
+    --border: 216 34% 93%;
+    --input: 216 34% 93%;
+    --ring: 220 90% 57%;
+    --radius: 0.8rem;
+    
+    --glass-background: 210 20% 98% / 0.8;
+    --glass-border: 210 20% 90% / 0.3;
+    --glass-shadow: 0 4px 24px -6px hsla(210, 30%, 10%, 0.1);
+    --node-shadow: 0 2px 8px -2px hsla(220, 70%, 50%, 0.06);
+    --floating-shadow: 0 8px 32px -12px hsla(220, 60%, 40%, 0.12);
+    --grid-color: 220 60% 50% / 0.03;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --background: 222 47% 10%;
+    --foreground: 213 31% 90%;
+    --card: 222 47% 10%;
+    --card-foreground: 213 31% 90%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 213 31% 90%;
+    --primary: 220 90% 57%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 47% 18%;
+    --secondary-foreground: 210 40% 90%;
+    --muted: 223 47% 15%;
+    --muted-foreground: 214 32% 70%;
+    --accent: 244 79% 60%;
+    --accent-foreground: 0 0% 100%;
+    --border: 217 19% 25%;
+    --input: 217 19% 25%;
+    --ring: 220 90% 57%;
+    
+    --glass-background: 222 47% 13% / 0.85;
+    --glass-border: 220 40% 25% / 0.2;
+    --glass-shadow: 0 4px 24px -6px hsla(210, 30%, 0%, 0.2);
+    --node-shadow: 0 2px 12px -2px hsla(220, 70%, 5%, 0.15);
+    --floating-shadow: 0 8px 32px -4px hsla(220, 60%, 10%, 0.3);
+    --grid-color: 210 30% 90% / 0.03;
   }
 }
 
@@ -59,14 +73,20 @@
 .canvas-grid {
   background-size: 20px 20px;
   background-image: 
-    linear-gradient(to right, rgba(128, 128, 128, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(128, 128, 128, 0.05) 1px, transparent 1px);
+    linear-gradient(to right, hsl(var(--grid-color)) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--grid-color)) 1px, transparent 1px);
 }
-.canvas-grid {
-  background-size: 20px 20px;
-  background-image:
-    linear-gradient(to right, rgba(128, 128, 128, 0.1) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(128, 128, 128, 0.1) 1px, transparent 1px);
+
+.glass-panel {
+  background-color: hsla(var(--glass-background));
+  backdrop-filter: blur(12px);
+  border: 1px solid hsla(var(--glass-border));
+  box-shadow: var(--glass-shadow);
+}
+
+.floating-panel {
+  box-shadow: var(--floating-shadow);
+  @apply rounded-xl;
 }
 
 .canvas-container {
@@ -76,13 +96,22 @@
 .canvas-container:active {
   cursor: grabbing;
 }
-.dark .canvas-grid {
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+
+.node {
+  background-color: white;
+  border: 1px solid hsl(var(--border));
+  box-shadow: var(--node-shadow);
+  transition: all 0.2s ease-out;
 }
 
-/* Animation classes */
+.node:hover {
+  box-shadow: var(--floating-shadow);
+}
+
+.dark .node {
+  background-color: hsl(var(--card));
+}
+
 .pulsing {
   animation: pulse 2s infinite;
 }
@@ -92,18 +121,27 @@
   animation: dash 1s linear infinite;
 }
 
+.glow-hover {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.glow-hover:hover {
+  box-shadow: 0 0 15px hsla(var(--primary), 0.3);
+  transform: translateY(-1px);
+}
+
 @keyframes pulse {
   0% {
     opacity: 0.6;
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
   50% {
     opacity: 1;
-    transform: scale(1.02);
+    transform: scale(1.01);
   }
   100% {
     opacity: 0.6;
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
 }
 
@@ -118,4 +156,55 @@
   pointer-events: none;
   z-index: 1000;
   transform: translate(-50%, -50%);
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tooltip {
+  @apply bg-white dark:bg-gray-800 text-sm py-1 px-2 rounded-md shadow-lg;
+  border: 1px solid hsl(var(--border));
+}
+
+.btn-primary {
+  @apply bg-primary text-white rounded-full px-4 py-2 
+    hover:bg-opacity-90 transition-all shadow-md;
+}
+
+.btn-secondary {
+  @apply bg-secondary text-secondary-foreground rounded-full px-4 py-2
+    hover:bg-opacity-80 transition-all border border-secondary-foreground/10;
+}
+
+.btn-icon {
+  @apply rounded-full p-2 flex items-center justify-center 
+    transition-all hover:bg-opacity-90;
+}
+
+/* Añadir estilos para el estado de arrastre */
+body.is-dragging {
+  cursor: grabbing !important;
+}
+
+body.is-dragging * {
+  cursor: grabbing !important;
+}
+
+/* Destacar la zona de soltar cuando se está arrastrando */
+body.is-dragging .flex-1.bg-slate-100 {
+  background-color: rgba(224, 231, 255, 0.5) !important;
+  box-shadow: inset 0 0 0 2px rgba(79, 70, 229, 0.3) !important;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
