@@ -36,18 +36,6 @@ export function SidePanel() {
                 label="Cuadrado" 
                 text=""
               />
-              <DraggableItem 
-                id="test-person" 
-                type="person" 
-                label="Persona" 
-                text="Actor"
-              />
-              <DraggableItem 
-                id="test-database" 
-                type="cylinder" 
-                label="Base de datos" 
-                text="DB"
-              />
             </div>
             
             <div className="mt-8 p-3 bg-blue-50 text-blue-700 border border-blue-100 rounded-lg">
