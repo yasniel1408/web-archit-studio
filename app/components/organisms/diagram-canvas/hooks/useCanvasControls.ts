@@ -51,9 +51,10 @@ export function useCanvasControls() {
     };
   }, [logDebug]);
 
-  // Manejar zoom con rueda del ratón
+  // Manejar zoom y navegación con rueda del ratón o gestos de trackpad
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
+      // Identificar si se trata de un gesto de zoom (Ctrl+rueda o gesto de pellizco en trackpad)
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
         
@@ -76,6 +77,19 @@ export function useCanvasControls() {
         setScale(newScale);
         setPosition(newPosition);
         logDebug(`Zoom: ${Math.round(newScale * 100)}%`);
+      } 
+      // Navegación con dos dedos en trackpad (sin modificadores)
+      else {
+        e.preventDefault();
+        
+        // Mover el canvas basado en el desplazamiento de la rueda
+        // En Mac, los gestos de dos dedos generan eventos wheelX y wheelY
+        const newPosition = {
+          x: position.x - e.deltaX / scale,
+          y: position.y - e.deltaY / scale
+        };
+        
+        setPosition(newPosition);
       }
     };
     

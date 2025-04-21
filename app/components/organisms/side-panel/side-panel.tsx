@@ -20,6 +20,9 @@ export function SidePanel() {
       return `https://www.paypal.com/donate?business=yasnielfajardoegues@icloud.com&item_name=Donaci%C3%B3n%20para%20Archit%20Studio&currency_code=USD`;
   };
 
+  // Detectar si estamos en Mac OS
+  const isMac = typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Contenido de la pestaña activa */}
@@ -41,8 +44,9 @@ export function SidePanel() {
                 1. Arrastra elementos desde aquí al lienzo<br/>
                 2. Haz clic en el elemento para seleccionarlo<br/>
                 3. Con la barra espaciadora puedes moverte por el lienzo<br/>
-                4. Doble click en los nodos para cambiar su Color<br/>
-                5. Click en las lineas para editarlas y agregarles animaciones
+                {isMac && <span>4. En Mac, usa dos dedos en el trackpad para navegar<br/></span>}
+                {isMac ? '5' : '4'}. Doble click en los nodos para cambiar su Color<br/>
+                {isMac ? '6' : '5'}. Click en las lineas para editarlas y agregarles animaciones
               </p>
             </div>
             
