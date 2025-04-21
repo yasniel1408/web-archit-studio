@@ -26,7 +26,9 @@ export function SidePanel() {
               <p className="text-xs">
                 1. Arrastra elementos desde aquí al lienzo<br/>
                 2. Haz clic en el elemento para seleccionarlo<br/>
-                3. Usa el botón X para eliminar elementos
+                3. Con la barra espaciadora puedes moverte por el lienzo
+                4. Doble click en los nodos para cambiar su Color
+                5. Click en las lineas para editarlas y agregarles animaciones
               </p>
             </div>
           </div>
