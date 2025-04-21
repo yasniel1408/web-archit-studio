@@ -1,8 +1,8 @@
 exportar el diagrama como gif
 
-ademas que cuando mueva una square que no tenga retardo que se mueva junto con el mouse, 
+agregarle unos iconos a las opciones de arriba para que se vea mas cool
 
-por otra parte el minimapa cuando lo muevo desde el mismo minimapa como que no esta bien hubicado como que me aparece mas a la derecha cuando el contenido que estoy viendo esta mas la izquierda algo asi creo revisa esto porfavor
+ademas que cuando mueva una square que no tenga retardo que se mueva junto con el mouse, 
 
 asegurate de que todo lo que se configure en el diagrama incluyendo iconos y todo se quede reflejado en el json 
 

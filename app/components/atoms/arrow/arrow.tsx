@@ -464,6 +464,11 @@ export function Arrow({
     return '';
   }
 
+  // Obtener atributo de animación para la exportación GIF
+  function getAnimationAttribute(): string {
+    return currentAnimation !== 'none' ? currentAnimation : '';
+  }
+
   // Clases para el menú de opciones
   const optionsMenuClass = "absolute bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden min-w-[200px] text-xs fade-in z-50 pointer-events-auto";
   const optionButtonClass = "flex items-center justify-between w-full px-3 py-2 text-gray-600 hover:bg-gray-50";
@@ -500,6 +505,8 @@ export function Arrow({
           fill={dotColor} // Color depende de la velocidad
           stroke="#FFFFFF" // Borde blanco para contrastar
           strokeWidth={2}
+          data-animation="traveling-dot"
+          className="animation"
         />
         {/* Resplandor para mejor visibilidad */}
         <circle
@@ -510,6 +517,8 @@ export function Arrow({
           stroke={dotColor}
           strokeWidth={1}
           opacity={0.5}
+          data-animation="traveling-dot"
+          className="animation"
         />
       </>
     );
@@ -746,6 +755,7 @@ export function Arrow({
           strokeWidth={isSelected ? strokeWidth + 0.5 : strokeWidth} // Cambiamos para aumentar grosor solo si está seleccionado
           strokeDasharray={getDashArray()}
           className={pathClass}
+          data-animation={getAnimationAttribute()}
           style={{ 
             transition: 'stroke 0.2s ease, stroke-width 0.2s ease',
             filter: isSelected ? 'drop-shadow(0 0 2px rgba(0,0,0,0.1))' : 'none',
@@ -760,6 +770,7 @@ export function Arrow({
             fill={isSelected ? hoverColor : baseColor} // Cambiamos para usar el color hover solo si está seleccionado
             strokeWidth="0"
             className={currentAnimation === 'pulse' ? 'pulsing' : ''}
+            data-animation={currentAnimation === 'pulse' ? 'pulse' : ''}
             style={{ transition: 'fill 0.2s ease', pointerEvents: 'none' }}
           />
         )}
@@ -771,6 +782,7 @@ export function Arrow({
             fill={isSelected ? hoverColor : baseColor} // Cambiamos para usar el color hover solo si está seleccionado
             strokeWidth="0"
             className={currentAnimation === 'pulse' ? 'pulsing' : ''}
+            data-animation={currentAnimation === 'pulse' ? 'pulse' : ''}
             style={{ transition: 'fill 0.2s ease', pointerEvents: 'none' }}
           />
         )}

@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@types/gif.js": "^0.2.5",
     "canvas": "^3.1.0",
     "clsx": "^2.0.0",
     "framer-motion": "^10.17.0",
+    "gif.js": "^0.2.0",
     "html2canvas": "^1.4.1",
     "lodash": "^4.17.21",
     "next": "^15.0.0",

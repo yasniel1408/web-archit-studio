@@ -1,22 +1,24 @@
 import React from 'react';
 
-type JsonModalProps = {
-  isOpen: boolean;
+export type JsonModalProps = {
+  isOpen?: boolean;
   onClose: () => void;
   json: string;
   onCopy: () => void;
+  className?: string;
 };
 
 export const JsonModal: React.FC<JsonModalProps> = ({
-  isOpen,
+  isOpen = true,
   onClose,
   json,
-  onCopy
+  onCopy,
+  className = ''
 }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${className}`}>
       <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] flex flex-col">
         <div className="flex justify-between items-center p-4 border-b">
           <h3 className="text-lg font-medium">JSON del Diagrama</h3>

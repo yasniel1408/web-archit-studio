@@ -5,6 +5,7 @@ type CanvasToolbarProps = {
   onZoomOut: () => void;
   onResetView: () => void;
   onExport: () => void;
+  onExportGif: () => void;
   onImport: () => void;
   onShowJson: () => void;
   onShowTemplates: () => void;
@@ -16,6 +17,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
   onZoomOut,
   onResetView,
   onExport,
+  onExportGif,
   onImport,
   onShowJson,
   onShowTemplates,
@@ -73,9 +75,17 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
         <button
           className="px-2 py-1 text-xs rounded hover:bg-gray-100"
           onClick={onExport}
-          title="Exportar diagrama"
+          title="Exportar diagrama como JSON"
         >
-          Exportar
+          Exportar JSON
+        </button>
+        
+        <button
+          className="px-2 py-1 text-xs rounded hover:bg-gray-100 text-primary"
+          onClick={onExportGif}
+          title="Exportar diagrama animado como GIF (5 segundos / 30 FPS)"
+        >
+          Exportar GIF (Animado)
         </button>
         
         <button

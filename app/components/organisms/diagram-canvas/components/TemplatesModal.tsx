@@ -1,23 +1,30 @@
 import React from 'react';
 import { TemplateType } from '../types';
 
-type TemplatesModalProps = {
-  isOpen: boolean;
+export type TemplatesModalProps = {
+  isOpen?: boolean;
   onClose: () => void;
   templates: TemplateType[];
-  onSelectTemplate: (template: TemplateType) => void;
+  onSelectTemplate?: (template: TemplateType) => void;
+  onSelect?: (template: TemplateType) => void;
+  className?: string;
 };
 
 export const TemplatesModal: React.FC<TemplatesModalProps> = ({
-  isOpen,
+  isOpen = true,
   onClose,
   templates,
-  onSelectTemplate
+  onSelectTemplate,
+  onSelect,
+  className = ''
 }) => {
   if (!isOpen) return null;
 
+  // Usamos onSelect si está disponible, de lo contrario onSelectTemplate
+  const handleSelect = onSelect || onSelectTemplate;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${className}`}>
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col">
         <div className="flex justify-between items-center p-4 border-b">
           <h3 className="text-lg font-medium">Plantillas de Diagrama</h3>
@@ -36,7 +43,7 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({
             <div 
               key={template.id}
               className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => onSelectTemplate(template)}
+              onClick={() => handleSelect && handleSelect(template)}
             >
               <div className="flex items-center mb-2">
                 <h4 className="font-medium">{template.name}</h4>

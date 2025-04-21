@@ -74,6 +74,7 @@ export function DiagramCanvas() {
     setShowTemplatesModal,
     saveDiagram,
     exportDiagram,
+    exportToGif,
     importDiagram,
     triggerFileInput,
     showDiagramJson,
@@ -272,6 +273,7 @@ export function DiagramCanvas() {
         onZoomOut={zoomOut}
         onResetView={resetView}
         onExport={() => exportDiagram(nodes, connections, getViewport())}
+        onExportGif={() => exportToGif(transformRef, getViewport())}
         onImport={triggerFileInput}
         onShowJson={() => showDiagramJson(nodes, connections, getViewport())}
         onShowTemplates={() => setShowTemplatesModal(true)}
@@ -297,6 +299,7 @@ export function DiagramCanvas() {
         onMouseUp={handleCanvasMouseUp}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
+        data-diagram-export="true"
       >
         {/* Capa de transformación para zoom y pan */}
         <div
@@ -347,44 +350,46 @@ export function DiagramCanvas() {
           ))}
         </div>
 
-        {/* Mini mapa */}
-        <div className="absolute bottom-4 right-4 z-10">
+        {/* Mini-mapa */}
+        <div className="absolute bottom-4 right-4 z-10 ignore-export" data-minimap="true">
           <MiniMap
             nodes={nodes}
             connections={connections}
             scale={scale}
-            position={position}
-            viewportSize={{
-              width: canvasRef.current?.clientWidth || 0,
-              height: canvasRef.current?.clientHeight || 0
-            }}
+            position={{ x: -position.x, y: -position.y }}
+            viewportSize={canvasRef.current ? 
+              { width: canvasRef.current.clientWidth, height: canvasRef.current.clientHeight } : 
+              { width: 0, height: 0 }
+            }
           />
         </div>
       </div>
 
-      {/* Input oculto para importar archivos */}
+      {/* Input oculto para importar archivo */}
       <input
-        ref={fileInputRef}
         type="file"
-        accept=".json"
-        className="hidden"
+        ref={fileInputRef}
         onChange={importDiagram}
+        accept=".json"
+        className="hidden ignore-export"
       />
 
-      {/* Modal para mostrar JSON */}
+      {/* Modal para mostrar el JSON */}
       <JsonModal
         isOpen={showJsonModal}
-        onClose={() => setShowJsonModal(false)}
         json={formattedJson}
+        onClose={() => setShowJsonModal(false)}
         onCopy={copyJsonToClipboard}
+        className="ignore-export"
       />
 
-      {/* Modal para plantillas */}
+      {/* Modal para mostrar las plantillas */}
       <TemplatesModal
         isOpen={showTemplatesModal}
-        onClose={() => setShowTemplatesModal(false)}
         templates={templates}
+        onClose={() => setShowTemplatesModal(false)}
         onSelectTemplate={loadTemplate}
+        className="ignore-export"
       />
     </div>
   );
