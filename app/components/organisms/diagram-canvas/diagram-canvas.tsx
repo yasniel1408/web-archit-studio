@@ -265,6 +265,17 @@ export function DiagramCanvas() {
     updateNodeProperties(nodeId, { backgroundColor });
   };
 
+  // Limpiar el lienzo eliminando todos los nodos y conexiones
+  const clearCanvas = () => {
+    // Mostrar confirmación antes de borrar todo
+    if (window.confirm('¿Estás seguro de que deseas eliminar todos los elementos del lienzo?')) {
+      setNodes([]);
+      setConnections([]);
+      resetView();
+      logDebug('Lienzo limpiado: se eliminaron todos los elementos');
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col">
       {/* Barra de herramientas */}
@@ -277,6 +288,7 @@ export function DiagramCanvas() {
         onImport={triggerFileInput}
         onShowJson={() => showDiagramJson(nodes, connections, getViewport())}
         onShowTemplates={() => setShowTemplatesModal(true)}
+        onClearCanvas={clearCanvas}
         scale={scale}
       />
 

@@ -29,17 +29,33 @@ export function useDiagramPersistence(
       if (savedDiagram) {
         const { savedNodes, savedConnections, savedViewport } = JSON.parse(savedDiagram);
         
-        // Cargar nodos, asegurándose de que todos los campos estén presentes
-        const nodesWithCorrectProps = (savedNodes || []).map((node: any) => ({
-          id: node.id,
-          position: node.position,
-          text: node.text || "",
-          type: node.type || "square",
-          size: node.size || { width: 140, height: 80 },
-          // Corregir el mapeo: usar node.icon o node.iconType (para compatibilidad)
-          icon: node.icon || node.iconType || undefined,
-          backgroundColor: node.backgroundColor || undefined
-        }));
+        // Crear un mapa para detectar IDs duplicados
+        const idMap = new Map<string, number>();
+        
+        // Cargar nodos, asegurándose de que todos los campos estén presentes y los IDs sean únicos
+        const nodesWithCorrectProps = (savedNodes || []).map((node: any) => {
+          // Verificar si este ID ya existe en nuestro mapa
+          let uniqueId = node.id;
+          if (idMap.has(uniqueId)) {
+            // Si existe, actualizamos el ID para hacerlo único
+            uniqueId = `${node.id}-${Date.now()}-${idMap.get(uniqueId)}`;
+            console.log(`ID duplicado detectado: ${node.id}, generando nuevo ID: ${uniqueId}`);
+          }
+          
+          // Registrar este ID en el mapa (incremantando el contador para este ID)
+          idMap.set(node.id, (idMap.get(node.id) || 0) + 1);
+          
+          return {
+            id: uniqueId, // Usar el ID único (ya sea el original o el modificado)
+            position: node.position,
+            text: node.text || "",
+            type: node.type || "square",
+            size: node.size || { width: 140, height: 80 },
+            // Corregir el mapeo: usar node.icon o node.iconType (para compatibilidad)
+            icon: node.icon || node.iconType || undefined,
+            backgroundColor: node.backgroundColor || undefined
+          };
+        });
         
         console.log("Nodos cargados desde localStorage:", nodesWithCorrectProps);
         nodesWithCorrectProps.forEach(node => {
@@ -50,11 +66,17 @@ export function useDiagramPersistence(
         
         setNodes(nodesWithCorrectProps);
         
-        // Cargar conexiones asegurando que todas las propiedades estén presentes
+        // También necesitamos actualizar las referencias a los nodos en las conexiones
+        const nodeIdMapping = new Map<string, string>();
+        savedNodes.forEach((originalNode: any, index: number) => {
+          nodeIdMapping.set(originalNode.id, nodesWithCorrectProps[index].id);
+        });
+        
+        // Cargar conexiones asegurando que todas las propiedades estén presentes y los IDs de nodos sean correctos
         const connectionsWithDefaultProps = (savedConnections || []).map((conn: ConnectionType) => ({
           id: conn.id,
-          sourceId: conn.sourceId,
-          targetId: conn.targetId,
+          sourceId: nodeIdMapping.get(conn.sourceId) || conn.sourceId, // Usar el ID actualizado si existe
+          targetId: nodeIdMapping.get(conn.targetId) || conn.targetId, // Usar el ID actualizado si existe
           sourcePosition: conn.sourcePosition,
           targetPosition: conn.targetPosition,
           sourceX: conn.sourceX,

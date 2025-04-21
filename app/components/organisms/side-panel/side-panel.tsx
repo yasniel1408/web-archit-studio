@@ -31,7 +31,7 @@ export function SidePanel() {
             <h3 className="text-sm uppercase font-medium text-gray-500 mb-2">Componentes</h3>
             <div className="space-y-2">
               <DraggableItem 
-                id="test-square" 
+                id={`square-${Date.now()}`} 
                 type="square" 
                 label="Tarjeta" 
                 text=""

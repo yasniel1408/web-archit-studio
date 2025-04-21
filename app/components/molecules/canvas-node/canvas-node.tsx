@@ -102,10 +102,14 @@ export function CanvasNode({
         if (nodeRef.current) {
           nodeRef.current.style.left = `${newX}px`;
           nodeRef.current.style.top = `${newY}px`;
+          
+          // Notificar al padre sobre el movimiento en tiempo real
+          // Esto permite que otros componentes que dependan de la posición se actualicen
+          onNodeMove(id, { x: newX, y: newY });
         }
         
-        // Solo guardar la posición en el estado cuando se libera el ratón
-        // Esto evita rerenders innecesarios durante el arrastre
+        // También actualizar el estado para mantener la coherencia interna
+        setPos({ x: newX, y: newY });
       } else if (isResizing && resizeStartRef.current) {
         e.preventDefault();
         handleResizeMove(e);
@@ -114,36 +118,31 @@ export function CanvasNode({
 
     const handleGlobalMouseUp = () => {
       if (isDragging && dragStartRef.current && nodeRef.current) {
-        // En el mouseUp, actualizar el estado y notificar al padre
-        // Obtener las posiciones directamente del DOM
-        const left = parseInt(nodeRef.current.style.left, 10) || pos.x;
-        const top = parseInt(nodeRef.current.style.top, 10) || pos.y;
+        // En el mouseUp, solo necesitamos limpiar el estado de arrastre
+        // ya que las posiciones ya se han actualizado en tiempo real
         
-        const newPos = { x: left, y: top };
-        setPos(newPos);
-        onNodeMove(id, newPos);
+        // Quitar la clase de arrastre para restaurar la apariencia normal
+        if (nodeRef.current) {
+          nodeRef.current.classList.remove('dragging');
+          
+          // Agregar una pequeña animación de "asentamiento" para feedback visual
+          nodeRef.current.classList.add('drag-end');
+          
+          // Quitar la clase después de un breve tiempo
+          setTimeout(() => {
+            if (nodeRef.current) {
+              nodeRef.current.classList.remove('drag-end');
+            }
+          }, 200);
+        }
         
         setIsDragging(false);
         dragStartRef.current = null;
       }
       
       if (isResizing && resizeStartRef.current && nodeRef.current) {
-        // Al finalizar el redimensionado, obtener valores del DOM y actualizar estado
-        const left = parseInt(nodeRef.current.style.left, 10) || pos.x;
-        const top = parseInt(nodeRef.current.style.top, 10) || pos.y;
-        const width = parseInt(nodeRef.current.style.width, 10) || size.width;
-        const height = parseInt(nodeRef.current.style.height, 10) || size.height;
-        
-        const newPos = { x: left, y: top };
-        const newSize = { width, height };
-        
-        setPos(newPos);
-        setSize(newSize);
-        
-        // Notificar al padre
-        onNodeMove(id, newPos);
-        onNodeResize(id, newSize);
-        
+        // Al finalizar el redimensionado, solo necesitamos limpiar el estado
+        // ya que las dimensiones y posiciones ya se actualizaron en tiempo real
         setIsResizing(null);
         resizeStartRef.current = null;
       }
@@ -181,6 +180,11 @@ export function CanvasNode({
     
     e.stopPropagation();
     e.preventDefault();
+    
+    // Agregar una clase al nodo cuando comienza el arrastre para mejorar el aspecto visual
+    if (nodeRef.current) {
+      nodeRef.current.classList.add('dragging');
+    }
     
     dragStartRef.current = { x: e.clientX, y: e.clientY, startX: pos.x, startY: pos.y };
     setIsDragging(true);
@@ -237,8 +241,13 @@ export function CanvasNode({
     nodeRef.current.style.width = `${newWidth}px`;
     nodeRef.current.style.height = `${newHeight}px`;
     
-    // No actualizamos el estado aquí para evitar rerenders innecesarios
-    // El estado se actualizará en el mouseUp
+    // Actualizar el estado en tiempo real para mantener la coherencia
+    setPos({ x: newPosX, y: newPosY });
+    setSize({ width: newWidth, height: newHeight });
+    
+    // Notificar al padre en tiempo real
+    onNodeMove(id, { x: newPosX, y: newPosY });
+    onNodeResize(id, { width: newWidth, height: newHeight });
   };
   
   const handleMouseEnter = () => {
@@ -339,20 +348,23 @@ export function CanvasNode({
     ${isDragging || isResizing ? 'z-30' : (isHovered ? 'z-20 shadow-md' : 'z-10')}
     ${disabled ? 'opacity-80 pointer-events-none filter grayscale' : ''}
   `;
+  
+  // Estilos adicionales aplicados directamente en el style
+  const nodeStyle = {
+    left: `${pos.x}px`, 
+    top: `${pos.y}px`,
+    width: `${size.width}px`,
+    height: `${size.height}px`,
+    touchAction: 'none',
+    userSelect: 'none' as 'none',
+    overflow: 'visible',
+  };
 
   return (
     <div
       ref={nodeRef}
       className={nodeClasses}
-      style={{ 
-        left: `${pos.x}px`, 
-        top: `${pos.y}px`,
-        width: `${size.width}px`,
-        height: `${size.height}px`,
-        touchAction: 'none',
-        userSelect: 'none',
-        overflow: 'visible',
-      }}
+      style={nodeStyle}
       onMouseDown={handleMouseDown} // Inicia el arrastre del nodo
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

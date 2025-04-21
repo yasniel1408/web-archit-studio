@@ -51,49 +51,59 @@ export function useNodeManagement() {
     connections: ConnectionType[],
     setConnections: React.Dispatch<React.SetStateAction<ConnectionType[]>>
   ) => {
-    let nodeUpdated = false;
+    // Primero actualizamos el nodo en una operación separada
     let updatedNode: NodeType | null = null;
 
     setNodes(prevNodes => {
-      return prevNodes.map(node => {
+      const updatedNodes = prevNodes.map(node => {
         if (node.id === nodeId) {
-          nodeUpdated = true;
           updatedNode = { ...node, position: newPosition };
           return updatedNode;
         }
         return node;
       });
-    });
+      
+      // Si encontramos el nodo, calculamos inmediatamente las nuevas posiciones
+      // para las conexiones para evitar retardos en la actualización
+      if (updatedNode) {
+        // Encontrar todas las conexiones relacionadas a este nodo
+        const connectedConnections = connections.filter(
+          conn => conn.sourceId === nodeId || conn.targetId === nodeId
+        );
 
-    // Si encontramos y actualizamos el nodo, actualizar también sus conexiones
-    if (nodeUpdated && updatedNode) {
-      const connectedConnections = connections.filter(
-        conn => conn.sourceId === nodeId || conn.targetId === nodeId
-      );
-
-      if (connectedConnections.length > 0) {
-        setConnections(prevConnections => {
-          return prevConnections.map(conn => {
-            if (conn.sourceId === nodeId) {
-              // Calcular nuevas coordenadas para el punto de conexión de origen
-              return {
-                ...conn,
-                sourceX: calculateConnectionPoint(updatedNode!, conn.sourcePosition).x,
-                sourceY: calculateConnectionPoint(updatedNode!, conn.sourcePosition).y
-              };
-            } else if (conn.targetId === nodeId) {
-              // Calcular nuevas coordenadas para el punto de conexión de destino
-              return {
-                ...conn,
-                targetX: calculateConnectionPoint(updatedNode!, conn.targetPosition).x,
-                targetY: calculateConnectionPoint(updatedNode!, conn.targetPosition).y
-              };
+        if (connectedConnections.length > 0) {
+          // Actualizar las conexiones relacionadas a este nodo
+          // de forma inmediata para evitar desincronización visual
+          const updatedConnections = [...connections];
+          
+          connectedConnections.forEach(conn => {
+            const connIndex = updatedConnections.findIndex(c => c.id === conn.id);
+            if (connIndex >= 0) {
+              const updatedConn = { ...conn };
+              
+              if (conn.sourceId === nodeId) {
+                // Actualizar las coordenadas de origen
+                updatedConn.sourceX = calculateConnectionPoint(updatedNode!, conn.sourcePosition).x;
+                updatedConn.sourceY = calculateConnectionPoint(updatedNode!, conn.sourcePosition).y;
+              } 
+              
+              if (conn.targetId === nodeId) {
+                // Actualizar las coordenadas de destino  
+                updatedConn.targetX = calculateConnectionPoint(updatedNode!, conn.targetPosition).x;
+                updatedConn.targetY = calculateConnectionPoint(updatedNode!, conn.targetPosition).y;
+              }
+              
+              updatedConnections[connIndex] = updatedConn;
             }
-            return conn;
           });
-        });
+          
+          // Actualizar todas las conexiones a la vez para evitar renderizados parciales
+          setConnections(updatedConnections);
+        }
       }
-    }
+      
+      return updatedNodes;
+    });
   }, []);
 
   // Actualizar el tamaño de un nodo
@@ -103,49 +113,59 @@ export function useNodeManagement() {
     connections: ConnectionType[],
     setConnections: React.Dispatch<React.SetStateAction<ConnectionType[]>>
   ) => {
-    let nodeUpdated = false;
+    // Actualizamos el nodo en una operación atómica
     let updatedNode: NodeType | null = null;
 
     setNodes(prevNodes => {
-      return prevNodes.map(node => {
+      const updatedNodes = prevNodes.map(node => {
         if (node.id === nodeId) {
-          nodeUpdated = true;
           updatedNode = { ...node, size: newSize };
           return updatedNode;
         }
         return node;
       });
-    });
+      
+      // Si encontramos el nodo, calculamos inmediatamente las nuevas posiciones
+      // para las conexiones para evitar retardos en la actualización
+      if (updatedNode) {
+        // Encontrar todas las conexiones relacionadas a este nodo
+        const connectedConnections = connections.filter(
+          conn => conn.sourceId === nodeId || conn.targetId === nodeId
+        );
 
-    // Si encontramos y actualizamos el nodo, actualizar también sus conexiones
-    if (nodeUpdated && updatedNode) {
-      const connectedConnections = connections.filter(
-        conn => conn.sourceId === nodeId || conn.targetId === nodeId
-      );
-
-      if (connectedConnections.length > 0) {
-        setConnections(prevConnections => {
-          return prevConnections.map(conn => {
-            if (conn.sourceId === nodeId) {
-              // Calcular nuevas coordenadas para el punto de conexión de origen
-              return {
-                ...conn,
-                sourceX: calculateConnectionPoint(updatedNode!, conn.sourcePosition).x,
-                sourceY: calculateConnectionPoint(updatedNode!, conn.sourcePosition).y
-              };
-            } else if (conn.targetId === nodeId) {
-              // Calcular nuevas coordenadas para el punto de conexión de destino
-              return {
-                ...conn,
-                targetX: calculateConnectionPoint(updatedNode!, conn.targetPosition).x,
-                targetY: calculateConnectionPoint(updatedNode!, conn.targetPosition).y
-              };
+        if (connectedConnections.length > 0) {
+          // Actualizar las conexiones relacionadas a este nodo
+          // de forma inmediata para evitar desincronización visual
+          const updatedConnections = [...connections];
+          
+          connectedConnections.forEach(conn => {
+            const connIndex = updatedConnections.findIndex(c => c.id === conn.id);
+            if (connIndex >= 0) {
+              const updatedConn = { ...conn };
+              
+              if (conn.sourceId === nodeId) {
+                // Actualizar las coordenadas de origen
+                updatedConn.sourceX = calculateConnectionPoint(updatedNode!, conn.sourcePosition).x;
+                updatedConn.sourceY = calculateConnectionPoint(updatedNode!, conn.sourcePosition).y;
+              } 
+              
+              if (conn.targetId === nodeId) {
+                // Actualizar las coordenadas de destino  
+                updatedConn.targetX = calculateConnectionPoint(updatedNode!, conn.targetPosition).x;
+                updatedConn.targetY = calculateConnectionPoint(updatedNode!, conn.targetPosition).y;
+              }
+              
+              updatedConnections[connIndex] = updatedConn;
             }
-            return conn;
           });
-        });
+          
+          // Actualizar todas las conexiones a la vez para evitar renderizados parciales
+          setConnections(updatedConnections);
+        }
       }
-    }
+      
+      return updatedNodes;
+    });
   }, []);
 
   // Actualizar propiedades de un nodo (texto, icono, color, etc.)

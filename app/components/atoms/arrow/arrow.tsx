@@ -150,13 +150,14 @@ export function Arrow({
     const lenStart = Math.sqrt(dirXStart * dirXStart + dirYStart * dirYStart) || 1;
     const lenEnd = Math.sqrt(dirXEnd * dirXEnd + dirYEnd * dirYEnd) || 1;
     
-    // Inicializar puntos de control en los puntos de inicio/fin
+    // Inicializar puntos de control en los puntos de inicio/fin exactos
+    // para garantizar que la curva comience y termine exactamente en los puntos dados
     let controlPoint1X = startX;
     let controlPoint1Y = startY;
     let controlPoint2X = endX;
     let controlPoint2Y = endY;
     
-    // Ajustar punto de control según la posición de inicio
+    // Ajustar punto de control según la posición de inicio - manteniendo el punto de partida exacto
     switch (startPosition) {
       case 'top':
         // Si sale por arriba, mover punto de control hacia arriba
@@ -180,7 +181,7 @@ export function Arrow({
         break;
     }
     
-    // Ajustar punto de control según la posición final
+    // Ajustar punto de control según la posición final - manteniendo el punto final exacto
     switch (endPosition) {
       case 'top':
         // Si entra por arriba, mover punto de control hacia arriba
@@ -205,7 +206,7 @@ export function Arrow({
     }
     
     // Caso especial: si los puntos están casi alineados horizontal o verticalmente,
-    // ajustar para evitar curvas demasiado planas
+    // ajustar para evitar curvas demasiado planas, pero mantener los extremos exactos
     if (dx < dy * 0.1) { // Casi vertical
       controlPoint1X -= controlDistance * 0.5;
       controlPoint2X += controlDistance * 0.5;
@@ -250,46 +251,60 @@ export function Arrow({
   ) => {
     if (type === 'none') return null;
     
-    // Dirección según el punto de conexión
+    // Dirección según el punto de conexión - Corregir para que apunte correctamente
     let dx = 0;
     let dy = 0;
     
     switch (position) {
       case 'top':
-        dy = isStart ? 1 : -1;
+        dy = 1; // Apuntar hacia abajo (hacia el nodo)
         break;
       case 'right':
-        dx = isStart ? -1 : 1;
+        dx = -1; // Apuntar hacia la izquierda (hacia el nodo)
         break;
       case 'bottom':
-        dy = isStart ? -1 : 1;
+        dy = -1; // Apuntar hacia arriba (hacia el nodo)
         break;
       case 'left':
-        dx = isStart ? 1 : -1;
+        dx = 1; // Apuntar hacia la derecha (hacia el nodo)
         break;
     }
     
-    const arrowSize = 10;
+    // Incrementamos el tamaño para mayor visibilidad
+    const arrowSize = 18; // Aumentado de 14 a 18 para mayor visibilidad
     const angle = Math.atan2(dy, dx);
+    
+    // Aseguramos que el punto exacto sea el extremo de la línea
+    const exactX = x;
+    const exactY = y;
     
     // Render arrowhead based on type
     switch (type) {
       case 'arrow': {
-        // Puntos para la punta de flecha clásica
+        // Puntos para la punta de flecha clásica - optimizada para mejor estética
+        // Modificamos los ángulos para una flecha más estilizada
         const point1 = {
-          x: x - arrowSize * Math.cos(angle - Math.PI/6),
-          y: y - arrowSize * Math.sin(angle - Math.PI/6)
+          x: exactX - arrowSize * Math.cos(angle - Math.PI/5),
+          y: exactY - arrowSize * Math.sin(angle - Math.PI/5)
         };
         
         const point2 = {
-          x: x - arrowSize * Math.cos(angle + Math.PI/6),
-          y: y - arrowSize * Math.sin(angle + Math.PI/6)
+          x: exactX - arrowSize * Math.cos(angle + Math.PI/5),
+          y: exactY - arrowSize * Math.sin(angle + Math.PI/5)
         };
         
         return (
           <polygon 
-            points={`${x},${y} ${point1.x},${point1.y} ${point2.x},${point2.y}`} 
-            fill={color} 
+            points={`${exactX},${exactY} ${point1.x},${point1.y} ${point2.x},${point2.y}`} 
+            fill={color}
+            stroke={color}
+            strokeWidth="2"
+            strokeLinejoin="round"
+            style={{
+              zIndex: 60, 
+              filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.2))'
+            }}
+            data-animation={currentAnimation}
             key={`${id}-arrowhead-${type}`}
           />
         );
@@ -298,41 +313,58 @@ export function Arrow({
       case 'circle': {
         return (
           <circle 
-            cx={x} 
-            cy={y} 
+            cx={exactX} 
+            cy={exactY} 
             r={arrowSize/2} 
-            fill={color} 
+            fill={color}
+            stroke={color}
+            strokeWidth="2"
+            style={{
+              zIndex: 60,
+              filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.2))'
+            }}
+            data-animation={currentAnimation}
             key={`${id}-arrowhead-${type}`}
           />
         );
       }
       
       case 'diamond': {
-        // Puntos para un diamante
+        // Puntos para un diamante - ajustados para mejor apariencia
+        const diamondSize = arrowSize * 0.8; // Ajuste del tamaño para mejor proporción
+        
         const point1 = {
-          x: x - arrowSize/2 * Math.cos(angle),
-          y: y - arrowSize/2 * Math.sin(angle)
+          x: exactX - diamondSize * Math.cos(angle),
+          y: exactY - diamondSize * Math.sin(angle)
         };
         
         const point2 = {
-          x: x - arrowSize/2 * Math.cos(angle - Math.PI/2),
-          y: y - arrowSize/2 * Math.sin(angle - Math.PI/2)
+          x: exactX - diamondSize * Math.cos(angle - Math.PI/2),
+          y: exactY - diamondSize * Math.sin(angle - Math.PI/2)
         };
         
         const point3 = {
-          x: x - arrowSize/2 * Math.cos(angle - Math.PI),
-          y: y - arrowSize/2 * Math.sin(angle - Math.PI)
+          x: exactX - diamondSize * Math.cos(angle - Math.PI),
+          y: exactY - diamondSize * Math.sin(angle - Math.PI)
         };
         
         const point4 = {
-          x: x - arrowSize/2 * Math.cos(angle - 3*Math.PI/2),
-          y: y - arrowSize/2 * Math.sin(angle - 3*Math.PI/2)
+          x: exactX - diamondSize * Math.cos(angle - 3*Math.PI/2),
+          y: exactY - diamondSize * Math.sin(angle - 3*Math.PI/2)
         };
         
         return (
           <polygon 
             points={`${point1.x},${point1.y} ${point2.x},${point2.y} ${point3.x},${point3.y} ${point4.x},${point4.y}`} 
-            fill={color} 
+            fill={color}
+            stroke={color}
+            strokeWidth="2"
+            strokeLinejoin="round"
+            style={{
+              zIndex: 60,
+              filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.2))'
+            }}
+            data-animation={currentAnimation}
             key={`${id}-arrowhead-${type}`}
           />
         );
@@ -372,64 +404,73 @@ export function Arrow({
 
   // Función auxiliar para calcular path de cabeza de flecha
   function calculateArrowHead(position: ConnectionPosition, x: number, y: number, isStart: boolean, type: ArrowHeadType): string {
-    // Dirección según el punto de conexión
+    // Dirección según el punto de conexión - Corregir para que apunte correctamente
     let dx = 0;
     let dy = 0;
     
     switch (position) {
       case 'top':
-        dy = isStart ? 1 : -1;
+        dy = 1; // Apuntar hacia abajo (hacia el nodo)
         break;
       case 'right':
-        dx = isStart ? -1 : 1;
+        dx = -1; // Apuntar hacia la izquierda (hacia el nodo)
         break;
       case 'bottom':
-        dy = isStart ? -1 : 1;
+        dy = -1; // Apuntar hacia arriba (hacia el nodo)
         break;
       case 'left':
-        dx = isStart ? 1 : -1;
+        dx = 1; // Apuntar hacia la derecha (hacia el nodo)
         break;
     }
     
-    const arrowSize = 10;
+    // Mantener coherencia con el tamaño en getArrowHead
+    const arrowSize = 18;
     const angle = Math.atan2(dy, dx);
+    
+    // Aseguramos que el punto exacto sea el extremo de la línea
+    const exactX = x;
+    const exactY = y;
     
     switch (type) {
       case 'arrow': {
         const point1 = {
-          x: x - arrowSize * Math.cos(angle - Math.PI/6),
-          y: y - arrowSize * Math.sin(angle - Math.PI/6)
+          x: exactX - arrowSize * Math.cos(angle - Math.PI/5),
+          y: exactY - arrowSize * Math.sin(angle - Math.PI/5)
         };
         
         const point2 = {
-          x: x - arrowSize * Math.cos(angle + Math.PI/6),
-          y: y - arrowSize * Math.sin(angle + Math.PI/6)
+          x: exactX - arrowSize * Math.cos(angle + Math.PI/5),
+          y: exactY - arrowSize * Math.sin(angle + Math.PI/5)
         };
         
-        return `M ${x},${y} L ${point1.x},${point1.y} L ${point2.x},${point2.y} Z`;
+        return `M ${exactX},${exactY} L ${point1.x},${point1.y} L ${point2.x},${point2.y} Z`;
       }
       case 'circle': {
-        return `M ${x},${y} m ${-arrowSize/2},0 a ${arrowSize/2},${arrowSize/2} 0 1,0 ${arrowSize},0 a ${arrowSize/2},${arrowSize/2} 0 1,0 ${-arrowSize},0`;
+        // Aumentamos el tamaño y mejoramos el trazo para circle
+        return `M ${exactX},${exactY} m ${-arrowSize/2},0 a ${arrowSize/2},${arrowSize/2} 0 1,0 ${arrowSize},0 a ${arrowSize/2},${arrowSize/2} 0 1,0 ${-arrowSize},0`;
       }
       case 'diamond': {
+        // Ajustamos el tamaño y proporciones del diamante para mejor estética
+        const diamondSize = arrowSize * 0.8; // Ajuste del tamaño para mejor proporción
+        
         const point1 = {
-          x: x - arrowSize/2 * Math.cos(angle),
-          y: y - arrowSize/2 * Math.sin(angle)
+          x: exactX - diamondSize * Math.cos(angle),
+          y: exactY - diamondSize * Math.sin(angle)
         };
         
         const point2 = {
-          x: x - arrowSize/2 * Math.cos(angle - Math.PI/2),
-          y: y - arrowSize/2 * Math.sin(angle - Math.PI/2)
+          x: exactX - diamondSize * Math.cos(angle - Math.PI/2),
+          y: exactY - diamondSize * Math.sin(angle - Math.PI/2)
         };
         
         const point3 = {
-          x: x - arrowSize/2 * Math.cos(angle - Math.PI),
-          y: y - arrowSize/2 * Math.sin(angle - Math.PI)
+          x: exactX - diamondSize * Math.cos(angle - Math.PI),
+          y: exactY - diamondSize * Math.sin(angle - Math.PI)
         };
         
         const point4 = {
-          x: x - arrowSize/2 * Math.cos(angle - 3*Math.PI/2),
-          y: y - arrowSize/2 * Math.sin(angle - 3*Math.PI/2)
+          x: exactX - diamondSize * Math.cos(angle - 3*Math.PI/2),
+          y: exactY - diamondSize * Math.sin(angle - 3*Math.PI/2)
         };
         
         return `M ${point1.x},${point1.y} L ${point2.x},${point2.y} L ${point3.x},${point3.y} L ${point4.x},${point4.y} Z`;
@@ -475,50 +516,54 @@ export function Arrow({
 
   const pathClass = `${getStrokeAnimation()} pointer-events-none ${isSelected ? 'connection-selected' : ''}`;
 
-  // Render traveling dot animation
+  // Renderizar punto viajero para las animaciones de tipo traveling-dot
   const renderTravelingDot = () => {
     if (currentAnimation !== 'traveling-dot' && 
-        currentAnimation !== 'traveling-dot-fast' &&
-        currentAnimation !== 'traveling-dot-fastest') return null;
-    
-    // Calcular posición actual del punto
-    const { x, y } = getPointOnCurve(dotPosition);
-    
-    // Color basado en velocidad
-    let dotColor = "#FF0000"; // Rojo para normal
-    
-    if (currentAnimation === 'traveling-dot-fast') {
-      dotColor = "#FF9500"; // Naranja para 2x
-    } else if (currentAnimation === 'traveling-dot-fastest') {
-      dotColor = "#FFCB00"; // Amarillo para 4x
+        currentAnimation !== 'traveling-dot-fast' && 
+        currentAnimation !== 'traveling-dot-fastest') {
+      return null;
     }
     
-    console.log(`Arrow ${id}: Rendering dot at position ${dotPosition}, coords: ${x}, ${y}`);
+    // Calcular la posición del punto en la curva
+    const dotPos = getPointOnCurve(dotPosition);
+    
+    // Determinar color del punto basado en la velocidad
+    let dotColor = baseColor;
+    if (currentAnimation === 'traveling-dot-fast') {
+      dotColor = '#4F46E5'; // Índigo para velocidad rápida
+    } else if (currentAnimation === 'traveling-dot-fastest') {
+      dotColor = '#EF4444'; // Rojo para velocidad muy rápida
+    }
+    
+    // Aumentar el tamaño del punto para mayor visibilidad
+    const dotSize = strokeWidth * 2.5; // Aumentamos considerablemente el tamaño del punto
+    const shadowSize = dotSize + 2; // Sombra ligeramente más grande que el punto
     
     return (
       <>
-        {/* Punto grande para asegurar visibilidad */}
+        {/* Sombra del punto para mejor visibilidad */}
         <circle
-          cx={x}
-          cy={y}
-          r={8} // Aumentado considerablemente
-          fill={dotColor} // Color depende de la velocidad
-          stroke="#FFFFFF" // Borde blanco para contrastar
-          strokeWidth={2}
-          data-animation="traveling-dot"
-          className="animation"
+          cx={dotPos.x}
+          cy={dotPos.y}
+          r={shadowSize}
+          fill="#FFFFFF"
+          opacity={0.6}
+          style={{ zIndex: 45 }}
+          data-animation={currentAnimation}
+          className="traveling-dot-shadow"
         />
-        {/* Resplandor para mejor visibilidad */}
+        {/* Punto principal */}
         <circle
-          cx={x}
-          cy={y}
-          r={12}
-          fill="none"
-          stroke={dotColor}
-          strokeWidth={1}
-          opacity={0.5}
-          data-animation="traveling-dot"
-          className="animation"
+          cx={dotPos.x}
+          cy={dotPos.y}
+          r={dotSize}
+          fill={dotColor}
+          style={{ 
+            zIndex: 50,
+            filter: 'drop-shadow(0 0 3px rgba(0,0,0,0.3))'
+          }}
+          data-animation={currentAnimation}
+          className="traveling-dot"
         />
       </>
     );
@@ -723,23 +768,26 @@ export function Arrow({
   return (
     <div 
       className="absolute top-0 left-0 w-full h-full pointer-events-none"
-      style={{ zIndex: isOptionsModalOpen ? 25 : 5 }} // Eliminamos isMenuOpen de la condición
+      style={{ zIndex: isOptionsModalOpen ? 25 : 15 }} // Aumentamos el z-index base
     >
       <svg 
         width="100%" 
         height="100%" 
-        className="pointer-events-none" 
-        overflow="visible"
+        className={`pointer-events-none absolute top-0 left-0 ${isSelected ? 'z-40' : 'z-35'}`}
+        style={{ 
+          overflow: 'visible',
+          filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.3))'
+        }}
         preserveAspectRatio="none"
       >
-        {/* Trazo invisible más ancho para facilitar la selección - solo permite eventos en el propio trazo */}
+        {/* Área invisible más ancha para facilitar clic/interacción */}
         <path
           id={`arrow-path-${id}`}
           d={pathCommand}
-          fill="none"
           stroke="transparent"
-          strokeWidth={Math.max(strokeWidth + 10, 12)}
-          style={{ cursor: 'pointer' }}
+          strokeWidth={Math.max(strokeWidth + 14, 18)}
+          fill="none"
+          style={{ cursor: 'pointer', pointerEvents: 'stroke', zIndex: 30 }}
           className="pointer-events-auto"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -747,50 +795,82 @@ export function Arrow({
           onDoubleClick={handleArrowDoubleClick}
         />
         
-        {/* Trazo visible de la flecha */}
+        {/* Efecto de resplandor/sombra para la flecha */}
         <path
           d={pathCommand}
           fill="none"
-          stroke={isSelected ? hoverColor : baseColor} // Cambiamos para mostrar el color hover solo si está seleccionado
-          strokeWidth={isSelected ? strokeWidth + 0.5 : strokeWidth} // Cambiamos para aumentar grosor solo si está seleccionado
+          stroke="#ffffff"
+          strokeWidth={isSelected ? strokeWidth + 3 : strokeWidth + 2} 
+          strokeOpacity="0.5"
+          strokeDasharray={getDashArray()}
+          style={{ 
+            pointerEvents: 'none',
+            zIndex: 39
+          }}
+        />
+        
+        {/* Trazo visible de la flecha - Línea más fina */}
+        <path
+          d={pathCommand}
+          fill="none"
+          stroke={isSelected ? hoverColor : baseColor}
+          strokeWidth={isSelected ? strokeWidth + 0.5 : strokeWidth} // Línea más fina
+          strokeLinecap="round"
+          strokeLinejoin="round"
           strokeDasharray={getDashArray()}
           className={pathClass}
           data-animation={getAnimationAttribute()}
           style={{ 
             transition: 'stroke 0.2s ease, stroke-width 0.2s ease',
-            filter: isSelected ? 'drop-shadow(0 0 2px rgba(0,0,0,0.1))' : 'none',
-            pointerEvents: 'none'
+            filter: isSelected ? 'drop-shadow(0 0 3px rgba(0,0,0,0.3))' : 'drop-shadow(0 0 2px rgba(0,0,0,0.2))',
+            pointerEvents: 'none',
+            zIndex: 40
           }}
         />
         
-        {/* Flecha de inicio */}
-        {arrowHeadStart && (
-          <path
-            d={arrowHeadStart}
-            fill={isSelected ? hoverColor : baseColor} // Cambiamos para usar el color hover solo si está seleccionado
-            strokeWidth="0"
-            className={currentAnimation === 'pulse' ? 'pulsing' : ''}
-            data-animation={currentAnimation === 'pulse' ? 'pulse' : ''}
-            style={{ transition: 'fill 0.2s ease', pointerEvents: 'none' }}
-          />
-        )}
-        
-        {/* Flecha de fin */}
-        {arrowHeadEnd && (
-          <path
-            d={arrowHeadEnd}
-            fill={isSelected ? hoverColor : baseColor} // Cambiamos para usar el color hover solo si está seleccionado
-            strokeWidth="0"
-            className={currentAnimation === 'pulse' ? 'pulsing' : ''}
-            data-animation={currentAnimation === 'pulse' ? 'pulse' : ''}
-            style={{ transition: 'fill 0.2s ease', pointerEvents: 'none' }}
-          />
-        )}
-        
-        {/* Punto viajero para animación traveling-dot */}
-        {(currentAnimation === 'traveling-dot' || 
-          currentAnimation === 'traveling-dot-fast' || 
-          currentAnimation === 'traveling-dot-fastest') && renderTravelingDot()}
+        {/* Grupo de primer plano para los elementos animados y flechas */}
+        <g style={{ zIndex: 50 }}>
+          {/* Flecha de inicio */}
+          {arrowHeadStart && (
+            <path
+              d={arrowHeadStart}
+              fill={isSelected ? hoverColor : baseColor}
+              stroke={isSelected ? hoverColor : baseColor}
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+              className={currentAnimation === 'pulse' ? 'pulsing' : ''}
+              data-animation={currentAnimation}
+              style={{ 
+                transition: 'fill 0.2s ease', 
+                pointerEvents: 'none', 
+                zIndex: 55
+              }}
+            />
+          )}
+          
+          {/* Flecha de fin */}
+          {arrowHeadEnd && (
+            <path
+              d={arrowHeadEnd}
+              fill={isSelected ? hoverColor : baseColor}
+              stroke={isSelected ? hoverColor : baseColor}
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+              className={currentAnimation === 'pulse' ? 'pulsing' : ''}
+              data-animation={currentAnimation}
+              style={{ 
+                transition: 'fill 0.2s ease', 
+                pointerEvents: 'none', 
+                zIndex: 55
+              }}
+            />
+          )}
+          
+          {/* Punto viajero para animación traveling-dot */}
+          {(currentAnimation === 'traveling-dot' || 
+            currentAnimation === 'traveling-dot-fast' || 
+            currentAnimation === 'traveling-dot-fastest') && renderTravelingDot()}
+        </g>
       </svg>
       
       {/* Eliminamos el menú flotante que aparecía al hacer hover */}
@@ -988,12 +1068,19 @@ export function Arrow({
                         <button
                           key={headOption}
                           className={`py-3 px-2 border rounded-md connection-option transition-colors ${currentStartArrowHead === headOption ? 'bg-blue-50 border-blue-300' : 'hover:bg-gray-50'}`}
-                          onClick={() => handleStartArrowHeadChange(headOption)}
+                          onClick={() => {
+                            setCurrentStartArrowHead(headOption);
+                            if (onPropertiesChange) {
+                              onPropertiesChange({ startArrowHead: headOption });
+                            }
+                          }}
                         >
-                          <div className="flex items-center justify-center h-6 text-lg">
-                            {headOption === 'none' ? '⊘' :
-                             headOption === 'arrow' ? '←' :
-                             headOption === 'circle' ? '◯' : '◇'}
+                          <div className="flex items-center justify-center h-6">
+                            {/* Icono representativo de la punta */}
+                            {headOption === 'none' && <span className="h-1 w-16 bg-gray-700"></span>}
+                            {headOption === 'arrow' && <span className="text-lg">→</span>}
+                            {headOption === 'circle' && <span className="text-lg">◯</span>}
+                            {headOption === 'diamond' && <span className="text-lg">♦</span>}
                           </div>
                           <div className="text-sm mt-2 text-center">{getArrowHeadName(headOption)}</div>
                         </button>
@@ -1002,7 +1089,7 @@ export function Arrow({
                   </div>
                   
                   {/* Selector de punta final */}
-                  <div>
+                  <div className="mt-6">
                     <label className="block text-sm font-medium text-gray-700 mb-3">Punta final</label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {(['none', 'arrow', 'circle', 'diamond'] as ArrowHeadType[]).map((headOption) => (
@@ -1016,83 +1103,24 @@ export function Arrow({
                             }
                           }}
                         >
-                          <div className="flex items-center justify-center h-6 text-lg">
-                            {headOption === 'none' ? '⊘' :
-                             headOption === 'arrow' ? '→' :
-                             headOption === 'circle' ? '◯' : '◇'}
+                          <div className="flex items-center justify-center h-6">
+                            {/* Icono representativo de la punta */}
+                            {headOption === 'none' && <span className="h-1 w-16 bg-gray-700"></span>}
+                            {headOption === 'arrow' && <span className="text-lg">→</span>}
+                            {headOption === 'circle' && <span className="text-lg">◯</span>}
+                            {headOption === 'diamond' && <span className="text-lg">♦</span>}
                           </div>
                           <div className="text-sm mt-2 text-center">{getArrowHeadName(headOption)}</div>
                         </button>
                       ))}
                     </div>
                   </div>
-                  
-                  {/* Sección para opciones adicionales en el futuro */}
-                  <div className="border-t border-dashed border-gray-200 pt-5">
-                    <div className="flex items-center gap-3 text-gray-500 text-sm">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                      <span>Espacio reservado para opciones adicionales</span>
-                    </div>
-                  </div>
                 </motion.div>
               </div>
-              
-              {/* Pie fijo */}
-              <motion.div 
-                className="p-4 sm:p-5 border-t border-gray-200 bg-gray-50 sticky bottom-0 rounded-b-lg z-10"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-                  <motion.button
-                    className="px-5 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                    onClick={handleDelete}
-                    title="Eliminar esta conexión"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    Eliminar
-                  </motion.button>
-                  
-                  <div className="flex space-x-3 justify-end">
-                    <motion.button
-                      className="px-5 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-                      onClick={closeModal}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      Cancelar
-                    </motion.button>
-                    <motion.button
-                      className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                      onClick={() => {
-                        // Aplicar todos los cambios
-                        if (onPropertiesChange) {
-                          onPropertiesChange({
-                            style: currentStyle,
-                            animation: currentAnimation,
-                            startArrowHead: currentStartArrowHead,
-                            endArrowHead: currentArrowHead
-                          });
-                        }
-                        closeModal();
-                      }}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      Aplicar
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
             </motion.div>
           </motion.div>
-        </>,
-        document.body
-      )}
+        </>
+      , document.body)}
     </div>
   );
 }

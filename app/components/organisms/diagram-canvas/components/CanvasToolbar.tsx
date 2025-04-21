@@ -9,6 +9,7 @@ type CanvasToolbarProps = {
   onImport: () => void;
   onShowJson: () => void;
   onShowTemplates: () => void;
+  onClearCanvas: () => void;
   scale: number;
 };
 
@@ -21,6 +22,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
   onImport,
   onShowJson,
   onShowTemplates,
+  onClearCanvas,
   scale
 }) => {
   return (
@@ -118,6 +120,17 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
             <path d="M3 0h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3zm0 8h10a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H3z"/>
           </svg>
           <span>Plantillas</span>
+        </button>
+        
+        <button
+          className="px-3 py-1.5 text-xs rounded-md hover:bg-red-100 text-red-600 hover:text-red-700 transition-colors flex items-center gap-1.5 ml-2"
+          onClick={onClearCanvas}
+          title="Eliminar todos los elementos del lienzo"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+          </svg>
+          <span>Limpiar Lienzo</span>
         </button>
       </div>
     </div>

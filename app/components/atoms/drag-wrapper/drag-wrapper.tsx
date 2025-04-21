@@ -13,11 +13,13 @@ export function DragWrapper({ id, type, text, children }: DragWrapperProps) {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragStart = (e: React.DragEvent) => {
-    console.log('Iniciando arrastre', { id, type, text });
+    // Generar un ID único para este drag-and-drop
+    const uniqueId = `${id}-${Date.now()}`;
+    console.log('Iniciando arrastre', { id: uniqueId, type, text });
     
     try {
-      // Configurar datos para transferir
-      const data = JSON.stringify({ id, type, text });
+      // Configurar datos para transferir con el ID único
+      const data = JSON.stringify({ id: uniqueId, type, text });
       
       // Usar múltiples formatos para mayor compatibilidad
       // Se intenta primero text/plain porque algunos navegadores tienen problemas con tipos personalizados

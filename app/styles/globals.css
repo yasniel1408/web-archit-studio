@@ -1,0 +1,80 @@
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  /* Estilos para nodos arrastrables */
+  .node.dragging {
+    transform: scale(1.02);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    z-index: 50 !important;
+    opacity: 0.95;
+  }
+
+  .node.drag-end {
+    transition: all 0.2s ease-out;
+    transform: scale(1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Estilos para flechas y líneas */
+  .animate-dash {
+    stroke-dasharray: 8, 4;
+    animation: dash-animation 20s linear infinite;
+  }
+
+  .animate-flow {
+    stroke-dasharray: 8, 4;
+    animation: flow-animation 15s linear infinite;
+  }
+
+  .pulsing {
+    animation: pulse-animation 2s ease-in-out infinite;
+  }
+
+  @keyframes dash-animation {
+    to {
+      stroke-dashoffset: 240;
+    }
+  }
+
+  @keyframes flow-animation {
+    to {
+      stroke-dashoffset: -240;
+    }
+  }
+
+  @keyframes pulse-animation {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Estilos para el punto viajero */
+  .traveling-dot {
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.4));
+  }
+
+  .traveling-dot-shadow {
+    animation: dot-shadow-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes dot-shadow-pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.6; }
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground shadow hover:bg-primary/90;
+  }
+} 
