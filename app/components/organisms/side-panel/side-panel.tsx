@@ -30,7 +30,7 @@ export function SidePanel() {
               <DraggableItem 
                 id="test-square" 
                 type="square" 
-                label="Cuadrado" 
+                label="Tarjeta" 
                 text=""
               />
             </div>

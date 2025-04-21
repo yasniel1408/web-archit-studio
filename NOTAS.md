@@ -1,6 +1,4 @@
-que el modal del cambio de color del square de abr al darle doble click
-
-exportar el diagrama como gift
+exportar el diagrama como gif
 
 ademas que cuando mueva una square que no tenga retardo que se mueva junto con el mouse, 
 
@@ -15,5 +13,3 @@ deberiamos tener un square que sea de tipo contenedor igual que el otro pero sin
 sitio para dispositivos mobiles
 
 en mac con 2 dedos deberia poder moverme por el lieanzo
-
-boton para donar
