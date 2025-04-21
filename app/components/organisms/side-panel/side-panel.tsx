@@ -3,8 +3,22 @@
 import React, { useState } from 'react';
 import { DraggableItem } from '@/app/components/molecules/draggable-item/draggable-item';
 
+// Configuración para el botón de donación
+const PAYPAL_CONFIG = {
+  // Cambia estas variables con tu información real
+  email: "tu.email@ejemplo.com",
+  username: "tuUsuarioPayPal",
+  projectName: "Archit Studio"
+};
+
 export function SidePanel() {
   const [activeTab, setActiveTab] = useState<'components' | 'templates'>('components');
+
+  // Función para generar enlaces de PayPal
+  const generatePayPalLink = () => {
+      // Para donate sí usamos el correo completo
+      return `https://www.paypal.com/donate?business=yasnielfajardoegues@icloud.com&item_name=Donaci%C3%B3n%20para%20Archit%20Studio&currency_code=USD`;
+  };
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -26,10 +40,31 @@ export function SidePanel() {
               <p className="text-xs">
                 1. Arrastra elementos desde aquí al lienzo<br/>
                 2. Haz clic en el elemento para seleccionarlo<br/>
-                3. Con la barra espaciadora puedes moverte por el lienzo
-                4. Doble click en los nodos para cambiar su Color
+                3. Con la barra espaciadora puedes moverte por el lienzo<br/>
+                4. Doble click en los nodos para cambiar su Color<br/>
                 5. Click en las lineas para editarlas y agregarles animaciones
               </p>
+            </div>
+            
+            {/* Botón de Donación */}
+            <div className="mt-4 space-y-3">
+              <h4 className="text-xs uppercase font-medium text-gray-500 text-center">¿Te gusta {PAYPAL_CONFIG.projectName}?</h4>
+              
+              <a 
+                href={generatePayPalLink()}
+                target="_blank"
+                rel="noopener noreferrer" 
+                className="flex items-center justify-center w-full py-1.5 px-3 bg-[#3eaf7c] hover:bg-[#318f64] text-white rounded-md transition-colors duration-200 shadow-sm text-xs"
+              >
+                <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 10h18v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8zm0-4a2 2 0 012-2h14a2 2 0 012 2v2H3V6zm4 10a1 1 0 110-2 1 1 0 010 2zm4 0a1 1 0 110-2 1 1 0 010 2z"></path>
+                </svg>
+                Donar con tarjeta
+              </a>
+              
+              <div className="text-center text-xs text-gray-500 mt-1">
+                Tu apoyo permite seguir mejorando 🙌
+              </div>
             </div>
           </div>
       </div>
