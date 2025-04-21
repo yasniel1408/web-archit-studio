@@ -9,11 +9,12 @@ interface CanvasNodeProps {
   id: string;
   type: string;
   position: { x: number; y: number };
+  size?: { width: number; height: number };
   text?: string;
   iconType?: IconType; // Usar el tipo importado
   backgroundColor?: string; // Añadir la propiedad backgroundColor
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
-  onConnectionEnd: (targetNodeId: string) => void;
+  onConnectionEnd: (targetNodeId: string, targetPosition: ConnectionPosition, x: number, y: number) => void;
   onNodeMove: (nodeId: string, position: { x: number, y: number }) => void;
   onNodeResize: (nodeId: string, size: { width: number, height: number }) => void;
   onDeleteNode?: (nodeId: string) => void;
@@ -27,6 +28,7 @@ export function CanvasNode({
   id, 
   type, 
   position, 
+  size: initialSize = { width: 120, height: 120 },
   text = "",
   iconType,
   backgroundColor = "#FFFFFF", // Añadir valor por defecto
@@ -39,7 +41,7 @@ export function CanvasNode({
   disabled = false
 }: CanvasNodeProps) {
   const [pos, setPos] = useState(position);
-  const [size, setSize] = useState({ width: 120, height: 120 });
+  const [size, setSize] = useState(initialSize);
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState<ResizeHandle | null>(null);
@@ -274,7 +276,26 @@ export function CanvasNode({
     if (disabled || !onConnectionEnd) return;
     
     if (!isDragging && !isResizing) { // Solo finalizar conexión si no estábamos arrastrando/redimensionando
-        onConnectionEnd(id);
+      // Determinar la posición de conexión más cercana al ratón
+      // Por ahora usamos 'top' por defecto, pero idealmente deberíamos calcular la más cercana
+      const connectionPosition: ConnectionPosition = 'top';
+      let connectionX = pos.x;
+      let connectionY = pos.y;
+      
+      // Ajustar las coordenadas según la posición de conexión
+      if (connectionPosition === 'top') {
+        connectionX += size.width / 2;
+      } else if (connectionPosition === 'right') {
+        connectionX += size.width;
+        connectionY += size.height / 2;
+      } else if (connectionPosition === 'bottom') {
+        connectionX += size.width / 2;
+        connectionY += size.height;
+      } else if (connectionPosition === 'left') {
+        connectionY += size.height / 2;
+      }
+      
+      onConnectionEnd(id, connectionPosition, connectionX, connectionY);
     }
   };
 

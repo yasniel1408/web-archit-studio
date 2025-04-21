@@ -283,8 +283,8 @@ export function MiniMap({
     const y = e.clientY - rect.top;
     
     // Calcular la posición correspondiente en el diagrama
-    const miniMapWidth = 140;
-    const miniMapHeight = 140;
+    const miniMapWidth = 250;
+    const miniMapHeight = 250;
     
     const scaleX = miniMapWidth / bounds.width;
     const scaleY = miniMapHeight / bounds.height;
@@ -317,8 +317,8 @@ export function MiniMap({
       <div className="relative">
         <canvas 
           ref={canvasRef} 
-          width={140} 
-          height={140}
+          width={250} 
+          height={200}
           className="bg-white/70"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}

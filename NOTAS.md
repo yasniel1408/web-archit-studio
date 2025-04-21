@@ -13,3 +13,7 @@ desarolla plantillas de ejemplo que las personas puedan ver el potencial de arch
 deberiamos tener un square que sea de tipo contenedor igual que el otro pero sin fondo y ademas que el texto este alado del icono
 
 sitio para dispositivos mobiles
+
+en mac con 2 dedos deberia poder moverme por el lieanzo
+
+boton para donar
