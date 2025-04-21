@@ -1,8 +1,4 @@
-exportar el diagrama como gif
-
-agregarle unos iconos a las opciones de arriba para que se vea mas cool
-
-ademas que cuando mueva una square que no tenga retardo que se mueva junto con el mouse, 
+que cuando mueva una square que no tenga retardo que se mueva junto con el mouse cuando lo seleccione
 
 asegurate de que todo lo que se configure en el diagrama incluyendo iconos y todo se quede reflejado en el json 
 
