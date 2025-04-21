@@ -111,12 +111,47 @@ export function useDiagramPersistence(
     connections: ConnectionType[], 
     viewport: ViewportType
   ) => {
+    // Verificar que los nodos tengan todas sus propiedades
+    const completedNodes = nodes.map(node => ({
+      ...node,
+      type: node.type || "square",
+      text: node.text || "",
+      size: node.size || { width: 140, height: 80 },
+      icon: node.icon || undefined,
+      backgroundColor: node.backgroundColor || undefined
+    }));
+    
+    // Verificar que las conexiones tengan todas sus propiedades
+    const completedConnections = connections.map(conn => ({
+      ...conn,
+      style: conn.style || 'solid',
+      animation: conn.animation || 'none',
+      startArrowHead: conn.startArrowHead || 'none',
+      endArrowHead: conn.endArrowHead || 'arrow',
+      color: conn.color || '#000000',
+      strokeWidth: conn.strokeWidth || 2
+    }));
+    
+    // Guardar en localStorage
     localStorage.setItem('architectDiagram', JSON.stringify({
-      savedNodes: nodes,
-      savedConnections: connections,
+      savedNodes: completedNodes,
+      savedConnections: completedConnections,
       savedViewport: viewport
     }));
-    logDebug('Diagrama guardado en almacenamiento local');
+    
+    // Log para verificación (versión resumida para no saturar la consola)
+    logDebug(`Diagrama guardado: ${completedNodes.length} nodos, ${completedConnections.length} conexiones`);
+    
+    // Log detallado de algunos nodos y conexiones para verificar propiedades
+    if (completedNodes.length > 0) {
+      const sampleNode = completedNodes[0];
+      logDebug(`Ejemplo nodo: id=${sampleNode.id}, tipo=${sampleNode.type}, icono=${sampleNode.icon || 'ninguno'}, color=${sampleNode.backgroundColor || 'default'}`);
+    }
+    
+    if (completedConnections.length > 0) {
+      const sampleConn = completedConnections[0];
+      logDebug(`Ejemplo conexión: id=${sampleConn.id}, estilo=${sampleConn.style}, animación=${sampleConn.animation}, punta inicio=${sampleConn.startArrowHead}, punta fin=${sampleConn.endArrowHead}`);
+    }
   }, [logDebug]);
 
   // Exportar el diagrama a un JSON
@@ -126,15 +161,36 @@ export function useDiagramPersistence(
     viewport: ViewportType
   ) => {
     try {
+      // Completar propiedades de nodos
+      const completedNodes = nodes.map(node => ({
+        ...node,
+        type: node.type || "square",
+        text: node.text || "",
+        size: node.size || { width: 140, height: 80 },
+        icon: node.icon || undefined,
+        backgroundColor: node.backgroundColor || undefined
+      }));
+      
+      // Completar propiedades de conexiones
+      const completedConnections = connections.map(conn => ({
+        ...conn,
+        style: conn.style || 'solid',
+        animation: conn.animation || 'none',
+        startArrowHead: conn.startArrowHead || 'none',
+        endArrowHead: conn.endArrowHead || 'arrow',
+        color: conn.color || '#000000',
+        strokeWidth: conn.strokeWidth || 2
+      }));
+      
       const diagramData = {
         version: "1.0",
-        nodes,
-        connections,
+        nodes: completedNodes,
+        connections: completedConnections,
         viewport,
         metadata: {
           exportedAt: new Date().toISOString(),
-          nodeCount: nodes.length,
-          connectionCount: connections.length
+          nodeCount: completedNodes.length,
+          connectionCount: completedConnections.length
         }
       };
       
@@ -150,7 +206,7 @@ export function useDiagramPersistence(
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
-      logDebug('Diagrama exportado correctamente');
+      logDebug('Diagrama exportado correctamente con todas las propiedades');
     } catch (error) {
       console.error('Error al exportar diagrama:', error);
       logDebug('Error al exportar diagrama');
@@ -430,51 +486,73 @@ export function useDiagramPersistence(
   // Importar un diagrama desde un archivo JSON
   const importDiagram = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const file = event.target.files?.[0];
-      if (!file) return;
+      if (!event.target.files || event.target.files.length === 0) {
+        return;
+      }
       
+      const file = event.target.files[0];
       const reader = new FileReader();
+      
       reader.onload = (e) => {
         try {
-          const json = e.target?.result as string;
-          const data = JSON.parse(json);
+          const content = e.target?.result as string;
+          const data = JSON.parse(content);
           
           if (!data.nodes || !Array.isArray(data.nodes)) {
-            throw new Error('Formato de archivo inválido: No se encontraron nodos');
+            throw new Error('Formato JSON inválido: no contiene una lista de nodos');
           }
           
-          // Normalizar nodos
-          const importedNodes: NodeType[] = (data.nodes || []).map((node: any) => ({
-            id: node.id,
-            position: node.position,
+          // Procesar nodos garantizando todas las propiedades necesarias
+          const importedNodes = data.nodes.map((node: any) => ({
+            id: node.id || `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            position: node.position || { x: 0, y: 0 },
             text: node.text || "",
             type: node.type || "square",
             size: node.size || { width: 140, height: 80 },
-            icon: node.icon || node.iconType || undefined,
+            icon: node.icon || undefined,
             backgroundColor: node.backgroundColor || undefined
           }));
           
-          // Normalizar conexiones
-          const importedConnections: ConnectionType[] = (data.connections || []).map((conn: any) => ({
-            id: conn.id,
-            sourceId: conn.sourceId,
-            targetId: conn.targetId,
-            sourcePosition: conn.sourcePosition,
-            targetPosition: conn.targetPosition,
-            sourceX: conn.sourceX,
-            sourceY: conn.sourceY,
-            targetX: conn.targetX,
-            targetY: conn.targetY,
-            style: conn.style || 'solid',
-            animation: conn.animation || 'none',
-            startArrowHead: conn.startArrowHead || 'none',
-            endArrowHead: conn.endArrowHead || 'arrow',
-            color: conn.color || '#000000',
-            strokeWidth: conn.strokeWidth || 2
-          }));
+          // Crear un mapa para detectar IDs duplicados
+          const idMap = new Map<string, number>();
+          
+          // Verificar IDs duplicados 
+          importedNodes.forEach((node: NodeType, index: number) => {
+            if (idMap.has(node.id)) {
+              // Si existe un duplicado, generar un nuevo ID
+              const newId = `${node.id}-${Date.now()}-${index}`;
+              importedNodes[index].id = newId;
+              logDebug(`ID duplicado detectado: ${node.id}, generado nuevo ID: ${newId}`);
+            }
+            idMap.set(node.id, 1);
+          });
           
           setNodes(importedNodes);
-          setConnections(importedConnections);
+          
+          // Procesar conexiones con actualización de referencias y garantizar propiedades
+          if (data.connections && Array.isArray(data.connections)) {
+            const importedConnections = data.connections.map((conn: any) => ({
+              id: conn.id || `conn-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              sourceId: conn.sourceId,
+              targetId: conn.targetId,
+              sourcePosition: conn.sourcePosition || 'right',
+              targetPosition: conn.targetPosition || 'left',
+              sourceX: conn.sourceX || 0,
+              sourceY: conn.sourceY || 0,
+              targetX: conn.targetX || 0,
+              targetY: conn.targetY || 0,
+              style: conn.style || 'solid',
+              animation: conn.animation || 'none',
+              startArrowHead: conn.startArrowHead || 'none',
+              endArrowHead: conn.endArrowHead || 'arrow',
+              color: conn.color || '#000000',
+              strokeWidth: conn.strokeWidth || 2
+            }));
+            
+            setConnections(importedConnections);
+          } else {
+            setConnections([]);
+          }
           
           // Importar viewport si existe
           if (data.viewport) {
@@ -483,7 +561,7 @@ export function useDiagramPersistence(
             setViewport({ scale: 1, position: { x: 0, y: 0 } });
           }
           
-          logDebug(`Importados ${importedNodes.length} nodos y ${importedConnections.length} conexiones`);
+          logDebug(`Importados ${importedNodes.length} nodos y ${data.connections ? data.connections.length : 0} conexiones`);
         } catch (error) {
           console.error('Error al procesar archivo JSON:', error);
           logDebug('Error al procesar archivo JSON');
@@ -514,21 +592,43 @@ export function useDiagramPersistence(
     viewport: ViewportType
   ) => {
     try {
+      // Completar propiedades de nodos
+      const completedNodes = nodes.map(node => ({
+        ...node,
+        type: node.type || "square",
+        text: node.text || "",
+        size: node.size || { width: 140, height: 80 },
+        icon: node.icon || undefined,
+        backgroundColor: node.backgroundColor || undefined
+      }));
+      
+      // Completar propiedades de conexiones
+      const completedConnections = connections.map(conn => ({
+        ...conn,
+        style: conn.style || 'solid',
+        animation: conn.animation || 'none',
+        startArrowHead: conn.startArrowHead || 'none',
+        endArrowHead: conn.endArrowHead || 'arrow',
+        color: conn.color || '#000000',
+        strokeWidth: conn.strokeWidth || 2
+      }));
+      
       const diagramData = {
         version: "1.0",
-        nodes,
-        connections,
+        nodes: completedNodes,
+        connections: completedConnections,
         viewport,
         metadata: {
           exportedAt: new Date().toISOString(),
-          nodeCount: nodes.length,
-          connectionCount: connections.length
+          nodeCount: completedNodes.length,
+          connectionCount: completedConnections.length
         }
       };
       
       const json = JSON.stringify(diagramData, null, 2);
       setFormattedJson(json);
       setShowJsonModal(true);
+      logDebug('JSON generado con todas las propiedades del diagrama');
     } catch (error) {
       console.error('Error al generar JSON:', error);
       logDebug('Error al generar JSON del diagrama');

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Arrow } from '@/app/components/atoms/arrow/arrow';
-import { ConnectionType, ActiveConnectionType } from '../types';
+import { ConnectionType, ActiveConnectionType, ConnectionPropertiesType } from '../types';
 
 type CanvasConnectionsProps = {
   connections: ConnectionType[];
@@ -9,6 +9,7 @@ type CanvasConnectionsProps = {
   scale: number;
   onConnectionSelect: (connectionId: string) => void;
   selectedConnectionId: string | null;
+  onConnectionPropertiesChange?: (connectionId: string, properties: ConnectionPropertiesType) => void;
 };
 
 export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
@@ -17,7 +18,8 @@ export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
   canvasRef,
   scale,
   onConnectionSelect,
-  selectedConnectionId
+  selectedConnectionId,
+  onConnectionPropertiesChange
 }) => {
   return (
     <>
@@ -40,6 +42,7 @@ export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
           strokeWidth={connection.strokeWidth || 2}
           isSelected={selectedConnectionId === connection.id}
           onSelect={onConnectionSelect}
+          onPropertiesChange={onConnectionPropertiesChange ? (properties) => onConnectionPropertiesChange(connection.id, properties) : undefined}
         />
       ))}
       

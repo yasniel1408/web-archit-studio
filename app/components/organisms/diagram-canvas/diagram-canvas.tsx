@@ -14,7 +14,7 @@ import { JsonModal } from './components/JsonModal';
 import { TemplatesModal } from './components/TemplatesModal';
 import { CanvasConnections } from './components/CanvasConnections';
 import { IconType } from '@/app/components/atoms/icon-selector/types';
-import { NodeType } from './types';
+import { NodeType, ConnectionPropertiesType } from './types';
 
 export function DiagramCanvas() {
   // Hooks para el manejo de nodos y conexiones
@@ -255,6 +255,12 @@ export function DiagramCanvas() {
     selectConnection(connectionId);
   };
 
+  // Manejar cambios en las propiedades de una conexión
+  const handleConnectionPropertiesChange = (connectionId: string, properties: ConnectionPropertiesType) => {
+    updateConnectionProperties(connectionId, properties);
+    logDebug(`Propiedades de conexión actualizadas: ${connectionId} - ${JSON.stringify(properties)}`);
+  };
+
   // Cambiar el icono de un nodo
   const handleNodeIconChange = (nodeId: string, icon: IconType) => {
     updateNodeProperties(nodeId, { icon });
@@ -332,6 +338,7 @@ export function DiagramCanvas() {
             scale={scale}
             onConnectionSelect={handleConnectionSelect}
             selectedConnectionId={selectedConnectionId}
+            onConnectionPropertiesChange={handleConnectionPropertiesChange}
           />
 
           {/* Nodos */}

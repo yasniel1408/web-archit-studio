@@ -376,7 +376,7 @@ export function Arrow({
   };
   
   // Obtener color base y calcular color de hover
-  const baseColor = useMemo(() => isSelected ? "#3B82F6" : (color || 'rgba(99, 102, 241, 0.8)'), [color, isSelected]);
+  const baseColor = useMemo(() => isSelected ? "#3B82F6" : '#000000', [isSelected]); // Siempre negro si no está seleccionado
   const hoverColor = useMemo(() => {
     if (baseColor.startsWith('#')) {
       // Convertir color hexadecimal a rgba
@@ -667,20 +667,35 @@ export function Arrow({
   // Log de las props calculadas antes de renderizar
   console.log(`Arrow ${id}: Calculated strokeWidth=${strokeWidth}, strokeDasharray='${getDashArray()}', pathAnimVariants=${getStrokeAnimation()}`);
 
+  // Actualizar estado local cuando cambian las props
+  useEffect(() => {
+    // Sincronizar estado local con las props
+    if (style !== currentStyle) setCurrentStyle(style);
+    if (animation !== currentAnimation) setCurrentAnimation(animation);
+    if (endArrowHead !== currentArrowHead) setCurrentArrowHead(endArrowHead);
+    if (startArrowHead !== currentStartArrowHead) setCurrentStartArrowHead(startArrowHead);
+    
+    console.log(`Arrow ${id}: Props actualizadas - style=${style}, animation=${animation}, startArrowHead=${startArrowHead}, endArrowHead=${endArrowHead}`);
+  }, [id, style, animation, startArrowHead, endArrowHead]);
+
   // Efecto para actualizar propiedades cuando cambian
   useEffect(() => {
     if (onPropertiesChange && (
       currentStyle !== style || 
       currentAnimation !== animation || 
-      currentArrowHead !== endArrowHead
+      currentArrowHead !== endArrowHead ||
+      currentStartArrowHead !== startArrowHead
     )) {
+      console.log(`Arrow ${id}: Enviando cambios al componente padre - style=${currentStyle}, animation=${currentAnimation}, startArrowHead=${currentStartArrowHead}, endArrowHead=${currentArrowHead}`);
+      
       onPropertiesChange({
         style: currentStyle,
         animation: currentAnimation,
-        endArrowHead: currentArrowHead
+        endArrowHead: currentArrowHead,
+        startArrowHead: currentStartArrowHead
       });
     }
-  }, [currentStyle, currentAnimation, currentArrowHead, style, animation, endArrowHead, onPropertiesChange]);
+  }, [currentStyle, currentAnimation, currentArrowHead, currentStartArrowHead, style, animation, endArrowHead, startArrowHead, onPropertiesChange, id]);
 
   // Manejadores para los botones de opciones
   const handleStyleChange = (e: React.MouseEvent) => {
