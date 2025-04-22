@@ -47,6 +47,7 @@ export function CanvasNode({
   const [isResizing, setIsResizing] = useState<ResizeHandle | null>(null);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
+  const [showControls, setShowControls] = useState(false);
   
   const nodeRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef<{ x: number; y: number; startX: number; startY: number } | null>(null);
@@ -254,10 +255,16 @@ export function CanvasNode({
   
   const handleMouseEnter = () => {
     setIsHovered(true);
+    // Solo mostrar controles si no hay operaciones en curso
+    if (!isDragging && !isResizing && !isColorPickerOpen && !isIconSelectorOpen) {
+      setShowControls(true);
+    }
   };
   
   const handleMouseLeave = () => {
     setIsHovered(false);
+    // No ocultamos automáticamente los controles al salir para mejorar UX
+    // Se ocultarán al hacer clic fuera del nodo
   };
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -366,6 +373,31 @@ export function CanvasNode({
     setIsColorPickerOpen(false);
   };
 
+  // Manejar clics fuera del nodo para ocultar los controles
+  useEffect(() => {
+    function handleOutsideClick(e: MouseEvent) {
+      if (nodeRef.current && !nodeRef.current.contains(e.target as Node)) {
+        setShowControls(false);
+      }
+    }
+
+    // Solo añadir el listener si los controles están visibles
+    if (showControls && !isDragging && !isResizing && !isColorPickerOpen && !isIconSelectorOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [showControls, isDragging, isResizing, isColorPickerOpen, isIconSelectorOpen]);
+
+  // Sincronizar el estado showControls con isHovered para mantener compatibilidad
+  useEffect(() => {
+    if (isHovered && !isDragging && !isResizing) {
+      setShowControls(true);
+    }
+  }, [isHovered, isDragging, isResizing]);
+
   // Determinar las clases CSS para el nodo según su estado
   const nodeClasses = `
     absolute 
@@ -421,8 +453,8 @@ export function CanvasNode({
         />
       </div>
       
-      {/* Mostrar puntos de conexión cuando el ratón está sobre el nodo, pero no durante operaciones */}
-      {isHovered && !isDragging && !isResizing && !isColorPickerOpen && !isIconSelectorOpen && (
+      {/* Mostrar puntos de conexión solo cuando los controles están visibles */}
+      {showControls && !isDragging && !isResizing && !isColorPickerOpen && !isIconSelectorOpen && (
         <>
           <ConnectionPoint position="top" onConnectionStart={handleConnectionStart} />
           <ConnectionPoint position="right" onConnectionStart={handleConnectionStart} />
@@ -440,8 +472,8 @@ export function CanvasNode({
         </>
       )}
       
-      {/* Controladores de redimensionamiento - ocultarlos durante operaciones */}
-      {isHovered && !isDragging && !isResizing && !isColorPickerOpen && !isIconSelectorOpen && (
+      {/* Controladores de redimensionamiento - solo mostrarlos cuando los controles están visibles */}
+      {showControls && !isDragging && !isResizing && !isColorPickerOpen && !isIconSelectorOpen && (
         <>
           {[{'top-left': {top: -4, left: -4}}, {'top-right': {top: -4, right: -4}}, {'bottom-left': {bottom: -4, left: -4}}, {'bottom-right': {bottom: -4, right: -4}}].map(handleObj => {
             const handle = Object.keys(handleObj)[0] as ResizeHandle;
