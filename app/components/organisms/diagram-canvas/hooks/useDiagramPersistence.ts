@@ -45,11 +45,20 @@ export function useDiagramPersistence(
           // Registrar este ID en el mapa (incremantando el contador para este ID)
           idMap.set(node.id, (idMap.get(node.id) || 0) + 1);
           
+          // Asegurar que el tamaño del nodo esté incluido en su tipo si es un nodo square
+          let nodeType = node.type || "square";
+          const hasDefinedSize = node.size && (node.size.width && node.size.height);
+          
+          // Solo agregamos el tamaño al tipo si no está ya incluido y tenemos dimensiones
+          if (hasDefinedSize && nodeType === "square" && !nodeType.includes("size:")) {
+            nodeType = `${nodeType} size:${node.size.width}x${node.size.height}`;
+          }
+          
           return {
             id: uniqueId, // Usar el ID único (ya sea el original o el modificado)
             position: node.position,
             text: node.text || "",
-            type: node.type || "square",
+            type: nodeType,
             size: node.size || { width: 140, height: 80 },
             // Corregir el mapeo: usar node.icon o node.iconType (para compatibilidad)
             icon: node.icon || node.iconType || undefined,
@@ -112,14 +121,25 @@ export function useDiagramPersistence(
     viewport: ViewportType
   ) => {
     // Verificar que los nodos tengan todas sus propiedades
-    const completedNodes = nodes.map(node => ({
-      ...node,
-      type: node.type || "square",
-      text: node.text || "",
-      size: node.size || { width: 140, height: 80 },
-      icon: node.icon || undefined,
-      backgroundColor: node.backgroundColor || undefined
-    }));
+    const completedNodes = nodes.map(node => {
+      // Asegurar que el tamaño del nodo esté incluido en su tipo si es un nodo square
+      let nodeType = node.type || "square";
+      const hasDefinedSize = node.size && (node.size.width && node.size.height);
+      
+      // Solo agregamos el tamaño al tipo si no está ya incluido y tenemos dimensiones
+      if (hasDefinedSize && nodeType === "square" && !nodeType.includes("size:")) {
+        nodeType = `${nodeType} size:${node.size.width}x${node.size.height}`;
+      }
+      
+      return {
+        ...node,
+        type: nodeType,
+        text: node.text || "",
+        size: node.size || { width: 140, height: 80 },
+        icon: node.icon || undefined,
+        backgroundColor: node.backgroundColor || undefined
+      };
+    });
     
     // Verificar que las conexiones tengan todas sus propiedades
     const completedConnections = connections.map(conn => ({
@@ -162,14 +182,25 @@ export function useDiagramPersistence(
   ) => {
     try {
       // Completar propiedades de nodos
-      const completedNodes = nodes.map(node => ({
-        ...node,
-        type: node.type || "square",
-        text: node.text || "",
-        size: node.size || { width: 140, height: 80 },
-        icon: node.icon || undefined,
-        backgroundColor: node.backgroundColor || undefined
-      }));
+      const completedNodes = nodes.map(node => {
+        // Asegurar que el tamaño del nodo esté incluido en su tipo si es un nodo square
+        let nodeType = node.type || "square";
+        const hasDefinedSize = node.size && (node.size.width && node.size.height);
+        
+        // Solo agregamos el tamaño al tipo si no está ya incluido y tenemos dimensiones
+        if (hasDefinedSize && nodeType === "square" && !nodeType.includes("size:")) {
+          nodeType = `${nodeType} size:${node.size.width}x${node.size.height}`;
+        }
+        
+        return {
+          ...node,
+          type: nodeType,
+          text: node.text || "",
+          size: node.size || { width: 140, height: 80 },
+          icon: node.icon || undefined,
+          backgroundColor: node.backgroundColor || undefined
+        };
+      });
       
       // Completar propiedades de conexiones
       const completedConnections = connections.map(conn => ({
@@ -503,15 +534,26 @@ export function useDiagramPersistence(
           }
           
           // Procesar nodos garantizando todas las propiedades necesarias
-          const importedNodes = data.nodes.map((node: any) => ({
-            id: node.id || `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            position: node.position || { x: 0, y: 0 },
-            text: node.text || "",
-            type: node.type || "square",
-            size: node.size || { width: 140, height: 80 },
-            icon: node.icon || undefined,
-            backgroundColor: node.backgroundColor || undefined
-          }));
+          const importedNodes = data.nodes.map((node: any) => {
+            // Asegurar que el tamaño del nodo esté incluido en su tipo si es un nodo square
+            let nodeType = node.type || "square";
+            const hasDefinedSize = node.size && (node.size.width && node.size.height);
+            
+            // Solo agregamos el tamaño al tipo si no está ya incluido y tenemos dimensiones
+            if (hasDefinedSize && nodeType === "square" && !nodeType.includes("size:")) {
+              nodeType = `${nodeType} size:${node.size.width}x${node.size.height}`;
+            }
+            
+            return {
+              id: node.id || `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              position: node.position || { x: 0, y: 0 },
+              text: node.text || "",
+              type: nodeType,
+              size: node.size || { width: 140, height: 80 },
+              icon: node.icon || undefined,
+              backgroundColor: node.backgroundColor || undefined
+            };
+          });
           
           // Crear un mapa para detectar IDs duplicados
           const idMap = new Map<string, number>();
@@ -593,14 +635,25 @@ export function useDiagramPersistence(
   ) => {
     try {
       // Completar propiedades de nodos
-      const completedNodes = nodes.map(node => ({
-        ...node,
-        type: node.type || "square",
-        text: node.text || "",
-        size: node.size || { width: 140, height: 80 },
-        icon: node.icon || undefined,
-        backgroundColor: node.backgroundColor || undefined
-      }));
+      const completedNodes = nodes.map(node => {
+        // Asegurar que el tamaño del nodo esté incluido en su tipo si es un nodo square
+        let nodeType = node.type || "square";
+        const hasDefinedSize = node.size && (node.size.width && node.size.height);
+        
+        // Solo agregamos el tamaño al tipo si no está ya incluido y tenemos dimensiones
+        if (hasDefinedSize && nodeType === "square" && !nodeType.includes("size:")) {
+          nodeType = `${nodeType} size:${node.size.width}x${node.size.height}`;
+        }
+        
+        return {
+          ...node,
+          type: nodeType,
+          text: node.text || "",
+          size: node.size || { width: 140, height: 80 },
+          icon: node.icon || undefined,
+          backgroundColor: node.backgroundColor || undefined
+        };
+      });
       
       // Completar propiedades de conexiones
       const completedConnections = connections.map(conn => ({
@@ -646,21 +699,32 @@ export function useDiagramPersistence(
     }
   }, [formattedJson, logDebug]);
 
-  // Convertir plantilla a nodos
+  // Función auxiliar para mapear nodos de un template
   const mapTemplateNodes = useCallback((templateNodes: any[]): NodeType[] => {
-    return templateNodes.map(node => ({
-      id: node.id,
-      position: node.position,
-      text: node.text || "",
-      type: node.type || "square",
-      size: node.size || { width: 140, height: 80 },
-      icon: node.icon || node.iconType || undefined,
-      backgroundColor: node.backgroundColor || undefined
-    }));
+    return templateNodes.map(node => {
+      // Si el nodo tiene un tipo definido y es square, verificar si necesitamos incluir el tamaño
+      const hasDefinedSize = node.size && (node.size.width && node.size.height);
+      let nodeType = node.type || "square";
+      
+      // Solo agregamos el tamaño al tipo si no está ya incluido y tenemos dimensiones
+      if (hasDefinedSize && nodeType === "square" && !nodeType.includes("size:")) {
+        nodeType = `${nodeType} size:${node.size.width}x${node.size.height}`;
+      }
+      
+      return {
+        id: node.id || `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        position: node.position || { x: 0, y: 0 },
+        text: node.text || "",
+        type: nodeType,
+        size: node.size || { width: 140, height: 80 },
+        icon: node.icon || node.iconType || undefined,
+        backgroundColor: node.backgroundColor || undefined
+      };
+    });
   }, []);
 
   // Convertir plantilla a conexiones
-  const mapTemplateConnections = useCallback((templateConnections: any[]): ConnectionType[] => {
+  const mapTemplateConnections = useCallback((templateConnections: any[], nodes: NodeType[]): ConnectionType[] => {
     return templateConnections.map(conn => ({
       id: conn.id,
       sourceId: conn.sourceId,
@@ -680,28 +744,40 @@ export function useDiagramPersistence(
     }));
   }, []);
 
-  // Cargar una plantilla predefinida
-  const loadTemplate = useCallback((
-    template: TemplateType
-  ) => {
+  // Función para cargar una plantilla
+  const loadTemplate = useCallback((template: TemplateType) => {
     try {
-      const templateNodes = mapTemplateNodes(template.nodes);
-      const templateConnections = mapTemplateConnections(template.connections);
+      if (!template) return;
       
-      setNodes(templateNodes);
-      setConnections(templateConnections);
+      // Mapear los nodos de la plantilla
+      const mappedNodes = mapTemplateNodes(template.nodes || []);
+      setNodes(mappedNodes);
       
+      // Mapear las conexiones de la plantilla
+      const mappedConnections = mapTemplateConnections(template.connections || [], mappedNodes);
+      setConnections(mappedConnections);
+      
+      // Configurar el viewport si existe
       if (template.viewport) {
-        setViewport(template.viewport);
+        setTimeout(() => {
+          if (template.viewport.scale) {
+            setViewport(template.viewport);
+          }
+          if (template.viewport.position) {
+            setViewport(template.viewport);
+          }
+        }, 100);
       }
       
       setShowTemplatesModal(false);
       logDebug(`Plantilla "${template.name}" cargada correctamente`);
+      return { nodes: mappedNodes, connections: mappedConnections };
     } catch (error) {
-      console.error('Error al cargar plantilla:', error);
+      console.error("Error al cargar la plantilla:", error);
       logDebug('Error al cargar plantilla');
+      return null;
     }
-  }, [setNodes, setConnections, setViewport, mapTemplateNodes, mapTemplateConnections, logDebug]);
+  }, [mapTemplateNodes, mapTemplateConnections, setNodes, setConnections, setViewport, logDebug, setShowTemplatesModal]);
 
   return {
     fileInputRef,

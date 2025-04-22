@@ -201,10 +201,13 @@ export function DiagramCanvas() {
       type = type.replace(/\s*icon:\w+/, '');
     }
     
-    // Crear el nuevo nodo
-    addNode(id, type, text, { x: dropX, y: dropY }, size, icon);
+    // Asegurar que el tipo incluya el tamaño para que se conserve al guardar/cargar
+    const finalType = `${type} size:${size.width}x${size.height}`;
     
-    logDebug(`Nodo añadido: ${id} (${type}) en posición ${Math.round(dropX)},${Math.round(dropY)}`);
+    // Crear el nuevo nodo
+    addNode(id, finalType, text, { x: dropX, y: dropY }, size, icon);
+    
+    logDebug(`Nodo añadido: ${id} (${finalType}) en posición ${Math.round(dropX)},${Math.round(dropY)}`);
   };
 
   // Manejar inicio de conexión desde un punto de conexión

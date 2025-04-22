@@ -119,7 +119,20 @@ export function useNodeManagement() {
     setNodes(prevNodes => {
       const updatedNodes = prevNodes.map(node => {
         if (node.id === nodeId) {
-          updatedNode = { ...node, size: newSize };
+          // Actualizar el tipo para incluir el nuevo tamaño
+          let nodeType = node.type || "square";
+          
+          // Primero eliminar cualquier información de tamaño existente
+          nodeType = nodeType.replace(/\s*size:\d+x\d+/, '');
+          
+          // Luego añadir el nuevo tamaño
+          nodeType = `${nodeType} size:${newSize.width}x${newSize.height}`;
+          
+          updatedNode = { 
+            ...node, 
+            size: newSize,
+            type: nodeType
+          };
           return updatedNode;
         }
         return node;
