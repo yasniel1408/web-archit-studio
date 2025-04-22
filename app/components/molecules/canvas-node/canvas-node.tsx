@@ -45,6 +45,8 @@ export function CanvasNode({
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState<ResizeHandle | null>(null);
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
   
   const nodeRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef<{ x: number; y: number; startX: number; startY: number } | null>(null);
@@ -345,6 +347,9 @@ export function CanvasNode({
     if (onPropertiesChange) {
       onPropertiesChange({ icon: newIcon });
     }
+    
+    // Actualizar estado para rastrear cuando el selector está abierto
+    setIsIconSelectorOpen(false);
   };
 
   // Función para manejar cambios en el color de fondo
@@ -356,6 +361,9 @@ export function CanvasNode({
     if (onPropertiesChange) {
       onPropertiesChange({ backgroundColor: newColor });
     }
+    
+    // Actualizar estado para rastrear cuando el selector está abierto
+    setIsColorPickerOpen(false);
   };
 
   // Determinar las clases CSS para el nodo según su estado
@@ -406,20 +414,24 @@ export function CanvasNode({
           backgroundColor={backgroundColor} // Pasar la propiedad al componente Square
           onIconChange={handleIconChange}
           onColorChange={handleColorChange}
+          onColorPickerOpen={() => setIsColorPickerOpen(true)}
+          onColorPickerClose={() => setIsColorPickerOpen(false)}
+          onIconSelectorOpen={() => setIsIconSelectorOpen(true)}
+          onIconSelectorClose={() => setIsIconSelectorOpen(false)}
         />
       </div>
       
-      {/* Mostrar puntos de conexión cuando el ratón está sobre el nodo */}
-      {isHovered && !isDragging && !isResizing && (
+      {/* Mostrar puntos de conexión cuando el ratón está sobre el nodo, pero no durante operaciones */}
+      {isHovered && !isDragging && !isResizing && !isColorPickerOpen && !isIconSelectorOpen && (
         <>
           <ConnectionPoint position="top" onConnectionStart={handleConnectionStart} />
           <ConnectionPoint position="right" onConnectionStart={handleConnectionStart} />
           <ConnectionPoint position="bottom" onConnectionStart={handleConnectionStart} />
           <ConnectionPoint position="left" onConnectionStart={handleConnectionStart} />
           
-          {/* Botón de eliminar */}
+          {/* Botón de eliminar - Posición más separada para mejor visibilidad */}
           <button
-            className="absolute -top-3 -right-3 bg-red-400 hover:bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors shadow-sm"
+            className="absolute -top-4 -right-4 bg-red-400 hover:bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors shadow-sm border border-white"
             onClick={handleDelete}
             title="Eliminar nodo"
           >
@@ -428,8 +440,8 @@ export function CanvasNode({
         </>
       )}
       
-      {/* Controladores de redimensionamiento */}
-      {isHovered && !isDragging && !isResizing && (
+      {/* Controladores de redimensionamiento - ocultarlos durante operaciones */}
+      {isHovered && !isDragging && !isResizing && !isColorPickerOpen && !isIconSelectorOpen && (
         <>
           {[{'top-left': {top: -4, left: -4}}, {'top-right': {top: -4, right: -4}}, {'bottom-left': {bottom: -4, left: -4}}, {'bottom-right': {bottom: -4, right: -4}}].map(handleObj => {
             const handle = Object.keys(handleObj)[0] as ResizeHandle;

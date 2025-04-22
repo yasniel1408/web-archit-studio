@@ -61,6 +61,10 @@ interface SquareProps {
   backgroundColor?: string;
   onIconChange?: (icon: IconType) => void;
   onColorChange?: (color: string) => void;
+  onColorPickerOpen?: () => void;
+  onColorPickerClose?: () => void;
+  onIconSelectorOpen?: () => void;
+  onIconSelectorClose?: () => void;
 }
 
 interface ColorPickerProps {
@@ -203,7 +207,11 @@ export function Square({
   icon = "none",
   backgroundColor = "#FFFFFF",
   onIconChange,
-  onColorChange
+  onColorChange,
+  onColorPickerOpen,
+  onColorPickerClose,
+  onIconSelectorOpen,
+  onIconSelectorClose
 }: SquareProps) {
   // Log al iniciar o re-renderizar el componente
   console.log(`Square renderizado con backgroundColor=${backgroundColor}, icon=${icon}`);
@@ -238,6 +246,9 @@ export function Square({
     if (editable) {
       e.stopPropagation();
       setShowIconSelector(true);
+      if (onIconSelectorOpen) {
+        onIconSelectorOpen();
+      }
     }
   };
 
@@ -251,6 +262,9 @@ export function Square({
     if (editable) {
       e.stopPropagation();
       setShowColorPicker(true);
+      if (onColorPickerOpen) {
+        onColorPickerOpen();
+      }
       console.log("Square - Abriendo selector de color por doble clic");
     }
   };
@@ -258,16 +272,38 @@ export function Square({
   const handleIconChange = (newIcon: IconType) => {
     console.log("Square - Cambiando icono a:", newIcon);
     setSelectedIcon(newIcon);
+    setShowIconSelector(false);
     if (onIconChange) {
       onIconChange(newIcon);
+    }
+    if (onIconSelectorClose) {
+      onIconSelectorClose();
     }
   };
 
   const handleColorChange = (newColor: string) => {
     console.log("Square - Cambiando color a:", newColor);
     setSelectedColor(newColor);
+    setShowColorPicker(false);
     if (onColorChange) {
       onColorChange(newColor);
+    }
+    if (onColorPickerClose) {
+      onColorPickerClose();
+    }
+  };
+
+  const handleCloseColorPicker = () => {
+    setShowColorPicker(false);
+    if (onColorPickerClose) {
+      onColorPickerClose();
+    }
+  };
+
+  const handleCloseIconSelector = () => {
+    setShowIconSelector(false);
+    if (onIconSelectorClose) {
+      onIconSelectorClose();
     }
   };
 
@@ -336,7 +372,7 @@ export function Square({
       {/* Selector de iconos (modal) */}
       <IconSelector 
         isOpen={showIconSelector}
-        onClose={() => setShowIconSelector(false)}
+        onClose={handleCloseIconSelector}
         onSelect={handleIconChange}
         initialIcon={selectedIcon}
       />
@@ -344,7 +380,7 @@ export function Square({
       {/* Selector de color (modal) */}
       <ColorPicker
         isOpen={showColorPicker}
-        onClose={() => setShowColorPicker(false)}
+        onClose={handleCloseColorPicker}
         onSelect={handleColorChange}
         initialColor={selectedColor}
       />
