@@ -203,6 +203,8 @@ export function useCanvasControls() {
     zoomOut,
     setViewport,
     getViewport,
-    logDebug
+    logDebug,
+    dragStart,
+    setPosition
   };
 } 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { CanvasNode } from '@/app/components/molecules/canvas-node/canvas-node';
 import { MiniMap } from '@/app/components/molecules/mini-map/mini-map';
 import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
@@ -61,7 +61,9 @@ export function DiagramCanvas() {
     zoomOut,
     setViewport,
     getViewport,
-    logDebug
+    logDebug,
+    dragStart,
+    setPosition
   } = useCanvasControls();
 
   // Hook para persistencia de datos
@@ -282,6 +284,76 @@ export function DiagramCanvas() {
     }
   };
 
+  // Actualizar la posición de la conexión activa
+  const handleUpdateActiveConnection = (e: React.MouseEvent) => {
+    // Actualizar la posición actual de una conexión en progreso
+    if (activeConnection) {
+      // Calcular la posición real en el canvas considerando el zoom y posición
+      const canvasRect = canvasRef.current?.getBoundingClientRect();
+      if (canvasRect) {
+        const relativeX = e.clientX - canvasRect.left;
+        const relativeY = e.clientY - canvasRect.top;
+        
+        // Convertir coordenadas de pantalla a coordenadas del canvas
+        const canvasX = (relativeX / scale) - position.x;
+        const canvasY = (relativeY / scale) - position.y;
+        
+        // Actualizar la posición actual de la conexión
+        setActiveConnection(prev => {
+          if (prev) {
+            return {
+              ...prev,
+              currentX: canvasX,
+              currentY: canvasY
+            };
+          }
+          return prev;
+        });
+      }
+    }
+  };
+
+  // Envolver los eventos de mouse para combinar comportamientos
+  const handleCanvasMouseMoveWrapper = (e: React.MouseEvent) => {
+    // Primero manejar el arrastre del canvas con el hook
+    handleCanvasMouseMove(e);
+    // Luego actualizar la conexión activa si existe
+    handleUpdateActiveConnection(e);
+  };
+
+  // Manejar clics en el canvas para cancelar conexiones activas
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    // Verificar si se está haciendo clic directamente en el canvas (no en un nodo)
+    const target = e.target as HTMLElement;
+    const isClickOnCanvas = target === canvasRef.current || target === transformRef.current;
+    
+    // Si hay una conexión activa y se hace clic en un área vacía del canvas
+    if (activeConnection && (isClickOnCanvas || target.classList.contains('flex-1') || target.classList.contains('absolute'))) {
+      // Cancelar la conexión activa
+      cancelConnection();
+      logDebug('Conexión cancelada: clic en área vacía');
+      e.stopPropagation();
+    }
+  };
+
+  // Modificar el handler de mouseUp para cancelar conexiones si se suelta en área vacía
+  const handleCanvasMouseUpWrapper = (e: React.MouseEvent) => {
+    // Primero manejar el comportamiento normal de mouseUp (sin pasar el evento)
+    handleCanvasMouseUp();
+    
+    // Luego, si hay una conexión activa y se suelta en un área vacía, cancelarla
+    if (activeConnection) {
+      const target = e.target as HTMLElement;
+      const isClickOnCanvas = target === canvasRef.current || target === transformRef.current;
+      
+      if (isClickOnCanvas || target.classList.contains('flex-1') || target.classList.contains('absolute')) {
+        cancelConnection();
+        logDebug('Conexión cancelada: soltar en área vacía');
+        e.stopPropagation();
+      }
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col">
       {/* Barra de herramientas */}
@@ -313,8 +385,9 @@ export function DiagramCanvas() {
         className="flex-1 border rounded overflow-hidden relative bg-gray-50 cursor-grab"
         style={{ cursor: isDraggingCanvas ? 'grabbing' : isSpacePressed ? 'grab' : 'default' }}
         onMouseDown={handleCanvasMouseDown}
-        onMouseMove={handleCanvasMouseMove}
-        onMouseUp={handleCanvasMouseUp}
+        onMouseMove={handleCanvasMouseMoveWrapper}
+        onMouseUp={handleCanvasMouseUpWrapper}
+        onClick={handleCanvasClick}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         data-diagram-export="true"
@@ -339,6 +412,7 @@ export function DiagramCanvas() {
             onConnectionSelect={handleConnectionSelect}
             selectedConnectionId={selectedConnectionId}
             onConnectionPropertiesChange={handleConnectionPropertiesChange}
+            onDeleteConnection={deleteConnection}
           />
 
           {/* Nodos */}

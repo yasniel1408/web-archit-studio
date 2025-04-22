@@ -281,13 +281,41 @@ export function CanvasNode({
   };
   
   // Cuando soltamos el ratón sobre este nodo, puede ser el destino de una conexión
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: React.MouseEvent) => {
     if (disabled || !onConnectionEnd) return;
     
     if (!isDragging && !isResizing) { // Solo finalizar conexión si no estábamos arrastrando/redimensionando
-      // Determinar la posición de conexión más cercana al ratón
-      // Por ahora usamos 'top' por defecto, pero idealmente deberíamos calcular la más cercana
-      const connectionPosition: ConnectionPosition = 'top';
+      // Determinar la posición de conexión más cercana al punto donde se soltó el ratón
+      const rect = nodeRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      
+      // Obtener la posición relativa del ratón respecto al nodo
+      const relX = e.clientX - rect.left;
+      const relY = e.clientY - rect.top;
+      
+      // Calcular distancias a cada lado
+      const distToTop = relY;
+      const distToRight = rect.width - relX;
+      const distToBottom = rect.height - relY;
+      const distToLeft = relX;
+      
+      // Determinar cuál es el más cercano
+      const minDist = Math.min(distToTop, distToRight, distToBottom, distToLeft);
+      let connectionPosition: ConnectionPosition;
+      
+      if (minDist === distToTop) {
+        connectionPosition = 'top';
+      } else if (minDist === distToRight) {
+        connectionPosition = 'right';
+      } else if (minDist === distToBottom) {
+        connectionPosition = 'bottom';
+      } else {
+        connectionPosition = 'left';
+      }
+      
+      console.log(`Node ${id}: Conexión terminada en posición ${connectionPosition}`);
+      
+      // Calcular las coordenadas exactas del punto de conexión
       let connectionX = pos.x;
       let connectionY = pos.y;
       

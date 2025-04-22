@@ -10,6 +10,7 @@ type CanvasConnectionsProps = {
   onConnectionSelect: (connectionId: string) => void;
   selectedConnectionId: string | null;
   onConnectionPropertiesChange?: (connectionId: string, properties: ConnectionPropertiesType) => void;
+  onDeleteConnection?: (connectionId: string) => void;
 };
 
 export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
@@ -19,7 +20,8 @@ export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
   scale,
   onConnectionSelect,
   selectedConnectionId,
-  onConnectionPropertiesChange
+  onConnectionPropertiesChange,
+  onDeleteConnection
 }) => {
   return (
     <>
@@ -43,6 +45,7 @@ export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
           isSelected={selectedConnectionId === connection.id}
           onSelect={onConnectionSelect}
           onPropertiesChange={onConnectionPropertiesChange ? (properties) => onConnectionPropertiesChange(connection.id, properties) : undefined}
+          onDelete={onDeleteConnection ? () => onDeleteConnection(connection.id) : undefined}
         />
       ))}
       
@@ -55,9 +58,24 @@ export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
           endX={activeConnection.currentX}
           endY={activeConnection.currentY}
           startPosition={activeConnection.sourcePosition}
-          endPosition={activeConnection.sourcePosition === 'top' ? 'bottom' : 
-                       activeConnection.sourcePosition === 'right' ? 'left' : 
-                       activeConnection.sourcePosition === 'bottom' ? 'top' : 'right'}
+          endPosition={
+            // Determinar automáticamente la mejor posición para la punta de flecha
+            // basado en la dirección general del movimiento
+            (() => {
+              // Calcular la dirección general del movimiento
+              const dx = activeConnection.currentX - activeConnection.sourceX;
+              const dy = activeConnection.currentY - activeConnection.sourceY;
+              
+              // Determinar la dirección predominante
+              if (Math.abs(dx) > Math.abs(dy)) {
+                // Movimiento principalmente horizontal
+                return dx > 0 ? 'left' : 'right';
+              } else {
+                // Movimiento principalmente vertical
+                return dy > 0 ? 'top' : 'bottom';
+              }
+            })()
+          }
           style="dashed"
           animation="none"
           startArrowHead="none"
