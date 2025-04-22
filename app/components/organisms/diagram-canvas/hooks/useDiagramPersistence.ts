@@ -315,10 +315,10 @@ export function useDiagramPersistence(
         logDebug('Minimapa ocultado para la exportación');
       }
       
-      // Configuración para la animación
-      const fps = 30; // Frames por segundo
-      const duration = 5; // Duración en segundos
-      const totalFrames = fps * duration; // Total de frames a capturar
+      // Configuración para la animación - OPTIMIZADO para mejorar rendimiento
+      const fps = 15; // Reducido a la mitad (antes 30) para menos frames
+      const duration = 3; // Reducido de 5 a 3 segundos
+      const totalFrames = fps * duration; // Menos frames en total
       const frameDelay = Math.round(100 / fps); // Delay entre frames en centésimas de segundo
       
       // Creamos un div para mostrar progreso
@@ -349,13 +349,18 @@ export function useDiagramPersistence(
       const containerWidth = diagramContainer.clientWidth;
       const containerHeight = diagramContainer.clientHeight;
       
-      // Inicializamos el generador de GIF con opciones de alta calidad
+      // Ajustamos la escala para obtener mayor calidad
+      const scale = 0.92; // Aumentamos la escala (antes 0.85) para mejorar calidad
+      const scaledWidth = Math.floor(containerWidth * scale);
+      const scaledHeight = Math.floor(containerHeight * scale);
+      
+      // Inicializamos el generador de GIF con opciones de alta calidad manteniendo buen rendimiento
       const gif = new GIF({
-        workers: 4,              // Cantidad de workers para procesamiento paralelo
-        quality: 1,              // Menor valor = mejor calidad (pero archivo más grande)
+        workers: 4,              // Mantener 4 workers para procesamiento paralelo
+        quality: 2,              // Mejoramos la calidad (1=mejor calidad, 20=menor calidad)
         workerScript: '/gif.worker.js', // Worker script path
-        width: containerWidth,
-        height: containerHeight,
+        width: scaledWidth,      // Ancho con mejor calidad
+        height: scaledHeight,    // Alto con mejor calidad
         dither: false,          // Sin dithering para mantener colores limpios
         background: '#FFFFFF',  // Fondo blanco
       } as any); // Utilizamos as any para evitar errores de tipado
@@ -400,19 +405,15 @@ export function useDiagramPersistence(
             }
           });
           
-          // Opciones para captura de alta calidad y visualización actual
+          // Opciones para captura optimizada
           const options = {
             backgroundColor: '#FFFFFF',
-            scale: 1,             // Usamos escala 1 porque queremos exactamente lo que se ve
+            scale: 1,            // Mantenemos escala 1 para el html2canvas
             useCORS: true,
             allowTaint: true,
             logging: false,
-            // Estas configuraciones son cruciales para respetar el transform:
-            // NO debemos aplicar ninguna transformación adicional
-            // html2canvas debe capturar exactamente lo que está en pantalla
             width: containerWidth,
             height: containerHeight,
-            // No modificamos nada - esto es esencial
             ignoreElements: (element: Element) => {
               // Ignorar elementos marcados explícitamente y el minimapa
               return element.classList.contains('ignore-export') || 
@@ -426,8 +427,22 @@ export function useDiagramPersistence(
           // Capturar el frame actual
           const canvas = await html2canvas(diagramContainer as HTMLElement, options);
           
-          // Añadir frame al GIF
-          gif.addFrame(canvas, { copy: true, delay: frameDelay * 10 }); // delay en ms
+          // Crear un canvas más pequeño para reducir el tamaño del GIF
+          const scaledCanvas = document.createElement('canvas');
+          scaledCanvas.width = scaledWidth;
+          scaledCanvas.height = scaledHeight;
+          const ctx = scaledCanvas.getContext('2d');
+          
+          if (ctx) {
+            // Dibujar el canvas original reducido
+            ctx.drawImage(canvas, 0, 0, scaledWidth, scaledHeight);
+            
+            // Añadir el canvas redimensionado al GIF
+            gif.addFrame(scaledCanvas, { copy: true, delay: frameDelay * 10 }); // delay en ms
+          } else {
+            // Si falla la creación del contexto, usar el canvas original como fallback
+            gif.addFrame(canvas, { copy: true, delay: frameDelay * 10 });
+          }
           
           // Si aún faltan frames, programar el siguiente
           if (frameIndex < totalFrames - 1) {
