@@ -48,7 +48,7 @@ export function MiniMap({
   const MINI_MAP_HEIGHT = 200;
   
   // Factor de escala adicional para reducir elementos
-  const ZOOM_OUT_FACTOR = 0.3; // Reducir el tamaño de los elementos en un 30%
+  const ZOOM_OUT_FACTOR = 0.1; // Reducir el tamaño de los elementos en un 30%
   
   // Calcular los límites del diagrama
   useEffect(() => {
