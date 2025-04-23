@@ -1,4 +1,3 @@
-"use client";
 import { SidePanel } from "@/app/components/organisms/side-panel/side-panel";
 import { DiagramCanvas } from "@/app/components/organisms/diagram-canvas/diagram-canvas";
 

@@ -3,24 +3,11 @@
 import React, { useState } from 'react';
 import { DraggableItem } from '@/app/components/molecules/draggable-item/draggable-item';
 
-// Configuración para el botón de donación
-const PAYPAL_CONFIG = {
-  // Cambia estas variables con tu información real
-  email: "tu.email@ejemplo.com",
-  username: "tuUsuarioPayPal",
-  projectName: "Archit Studio"
-};
-
 export function SidePanel() {
-  const [activeTab, setActiveTab] = useState<'components' | 'templates'>('components');
-
-  // Función para generar enlaces de PayPal
   const generatePayPalLink = () => {
-      // Para donate sí usamos el correo completo
       return `https://www.paypal.com/donate?business=yasnielfajardoegues@icloud.com&item_name=Donaci%C3%B3n%20para%20Archit%20Studio&currency_code=USD`;
   };
 
-  // Detectar si estamos en Mac OS
   const isMac = typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
   return (
@@ -43,16 +30,17 @@ export function SidePanel() {
               <p className="text-xs">
                 1. Arrastra elementos desde aquí al lienzo<br/>
                 2. Haz clic en el elemento para seleccionarlo<br/>
-                3. Con la barra espaciadora puedes moverte por el lienzo<br/>
+                3. Con 2 clicks encima de una tarjeta puedes cambiar su color<br/>
+                4. Con la barra espaciadora puedes moverte por el lienzo<br/>
                 {isMac && <span>4. En Mac, usa dos dedos en el trackpad para navegar<br/></span>}
-                {isMac ? '5' : '4'}. Doble click en los nodos para cambiar su Color<br/>
-                {isMac ? '6' : '5'}. Click en las lineas para editarlas y agregarles animaciones
+                {isMac ? '6' : '5'}. Doble click en los nodos para cambiar su Color<br/>
+                {isMac ? '7' : '6'}. Click en las lineas para editarlas y agregarles animaciones
               </p>
             </div>
             
             {/* Botón de Donación */}
             <div className="mt-4 space-y-3">
-              <h4 className="text-xs uppercase font-medium text-gray-500 text-center">¿Te gusta {PAYPAL_CONFIG.projectName}?</h4>
+              <h4 className="text-xs uppercase font-medium text-gray-500 text-center">¿Te gusta Archit Studio?</h4>
               
               <a 
                 href={generatePayPalLink()}
