@@ -463,7 +463,7 @@ export function CanvasNode({
           
           {/* Botón de eliminar - Posición más separada para mejor visibilidad */}
           <button
-            className="absolute -top-4 -right-4 bg-red-400 hover:bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors shadow-sm border border-white"
+            className="absolute -top-6 -right-6 bg-red-400 hover:bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors shadow-sm border border-white"
             onClick={handleDelete}
             title="Eliminar nodo"
           >

@@ -35,7 +35,7 @@ type MiniMapProps = {
 export function MiniMap({
   nodes = [],
   connections = [],
-  scale = 1,
+  scale = 15,
   position = { x: 0, y: 0 },
   viewportSize = { width: 0, height: 0 }
 }: MiniMapProps) {
@@ -48,7 +48,7 @@ export function MiniMap({
   const MINI_MAP_HEIGHT = 200;
   
   // Factor de escala adicional para reducir elementos
-  const ZOOM_OUT_FACTOR = 0.7; // Reducir el tamaño de los elementos en un 30%
+  const ZOOM_OUT_FACTOR = 0.3; // Reducir el tamaño de los elementos en un 30%
   
   // Calcular los límites del diagrama
   useEffect(() => {
@@ -68,7 +68,7 @@ export function MiniMap({
     });
     
     // Añadir margen extra para poder ver más contexto
-    const margin = 150; // Incrementado para mostrar más contexto
+    const margin = 10; // Incrementado para mostrar más contexto
     minX -= margin;
     minY -= margin;
     maxX += margin;
@@ -263,15 +263,16 @@ export function MiniMap({
     
     // Dibujar el viewport visible
     if (viewportSize.width > 0 && viewportSize.height > 0) {
-      // Convertir las coordenadas del viewport al minimapa
-      const vpX = (-position.x - bounds.minX) * minimapScale + offsetX;
-      const vpY = (-position.y - bounds.minY) * minimapScale + offsetY;
+      // CORREGIDO: Invierte el signo de position para que se mueva en la misma dirección
+      const vpX = (position.x - bounds.minX) * minimapScale + offsetX;
+      const vpY = (position.y - bounds.minY) * minimapScale + offsetY;
+      
       const vpWidth = (viewportSize.width / scale) * minimapScale;
       const vpHeight = (viewportSize.height / scale) * minimapScale;
       
       // Dibujar un borde con efecto de "glow"
       ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)'; // Color indigo transparente
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 4;
       ctx.strokeRect(vpX, vpY, vpWidth, vpHeight);
       
       // Borde más definido
@@ -298,22 +299,27 @@ export function MiniMap({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
-    // Calcular la escala para ajustar el contenido al minimapa con zoom reducido
+    // Calcular la escala para ajustar el contenido al minimapa
     const scaleX = (MINI_MAP_WIDTH / bounds.width) * ZOOM_OUT_FACTOR;
     const scaleY = (MINI_MAP_HEIGHT / bounds.height) * ZOOM_OUT_FACTOR;
     const minimapScale = Math.min(scaleX, scaleY);
     
-    // Calcular posición central en el canvas para centrar el contenido
+    // Calcular offset
     const offsetX = (MINI_MAP_WIDTH - bounds.width * minimapScale) / 2;
     const offsetY = (MINI_MAP_HEIGHT - bounds.height * minimapScale) / 2;
     
-    // Calcular la posición en el diagrama completo
+    // Calcular el punto central donde se hizo clic en coordenadas del diagrama
     const diagramX = bounds.minX + ((x - offsetX) / minimapScale);
     const diagramY = bounds.minY + ((y - offsetY) / minimapScale);
     
-    // Disparar un evento personalizado para que el DiagramCanvas pueda escucharlo
+    // CORREGIDO: Invertir nuevamente el cálculo para que funcione correctamente
+    // El signo aquí es crucial y depende de cómo está implementado el manejo de posición en el canvas
+    const viewportX = -diagramX * scale + viewportSize.width / 2;
+    const viewportY = -diagramY * scale + viewportSize.height / 2;
+    
+    // Disparar el evento con la posición corregida
     const event = new CustomEvent('minimap-navigation', {
-      detail: { x: diagramX, y: diagramY }
+      detail: { x: viewportX, y: viewportY }
     });
     
     window.dispatchEvent(event);
