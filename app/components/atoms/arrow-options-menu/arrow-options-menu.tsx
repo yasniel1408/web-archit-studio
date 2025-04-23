@@ -1,17 +1,23 @@
 "use client";
 
 import React from 'react';
-import { ArrowStyle, ArrowAnimation, ArrowHeadType } from '@/app/components/atoms/arrow/arrow';
-
-interface ArrowOptionsMenuProps {
-  connectionId: string;
-  x: number;
-  y: number;
-  onStyleChange: (id: string, style: ArrowStyle) => void;
-  onAnimationChange: (id: string, animation: ArrowAnimation) => void;
-  onArrowHeadChange: (id: string, position: 'start' | 'end', type: ArrowHeadType) => void;
-  onClose: () => void;
-}
+import { ArrowStyle, ArrowAnimation, ArrowHeadType } from '@/app/components/atoms/arrow/types';
+import { 
+  backdropClass, 
+  menuContainerClass, 
+  menuHeaderClass, 
+  menuTitleClass,
+  closeButtonClass,
+  buttonGroupClass,
+  buttonGridClass,
+  sectionContainerClass
+} from './styles';
+import { useMenuPosition } from './hooks/useMenuPosition';
+import { StyleButton } from './components/style-button';
+import { AnimationButton } from './components/animation-button';
+import { ArrowHeadButton } from './components/arrow-head-button';
+import { MenuSection } from './components/menu-section';
+import { ArrowOptionsMenuProps } from './types';
 
 export function ArrowOptionsMenu({
   connectionId,
@@ -23,12 +29,11 @@ export function ArrowOptionsMenu({
   onClose
 }: ArrowOptionsMenuProps) {
   const styleOptions: ArrowStyle[] = ['solid', 'dashed', 'dotted'];
-  const animationOptions: ArrowAnimation[] = ['none', 'pulse', 'flow', 'dash'];
+  const animationOptions: ArrowAnimation[] = ['none', 'pulse', 'flow', 'dash', 'traveling-dot', 'traveling-dot-fast', 'traveling-dot-fastest'];
   const arrowHeadOptions: ArrowHeadType[] = ['none', 'arrow', 'circle', 'diamond'];
   
-  // Para evitar que el menú se salga de la pantalla
-  const menuX = Math.min(x, window.innerWidth - 300);
-  const menuY = Math.min(y, window.innerHeight - 400);
+  // Calculamos la posición para que el menú no se salga de la pantalla
+  const menuPosition = useMenuPosition({ x, y });
   
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -38,99 +43,77 @@ export function ArrowOptionsMenu({
   
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center"
+      className={backdropClass}
       onClick={handleBackdropClick}
     >
       <div 
-        className="bg-white rounded-lg shadow-xl p-4 w-72"
-        style={{
-          position: 'absolute',
-          left: `${menuX}px`,
-          top: `${menuY}px`
-        }}
+        className={menuContainerClass}
+        style={menuPosition}
       >
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium">Opciones de conexión</h3>
+        <div className={menuHeaderClass}>
+          <h3 className={menuTitleClass}>Opciones de conexión</h3>
           <button 
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className={closeButtonClass}
           >
             ✕
           </button>
         </div>
         
-        <div className="space-y-4">
+        <div className={sectionContainerClass}>
           {/* Estilos de línea */}
-          <div>
-            <h4 className="font-medium mb-2">Estilo de línea</h4>
-            <div className="flex space-x-2">
+          <MenuSection title="Estilo de línea">
+            <div className={buttonGroupClass}>
               {styleOptions.map(style => (
-                <button 
+                <StyleButton 
                   key={style}
+                  style={style}
                   onClick={() => onStyleChange(connectionId, style)}
-                  className="flex-1 py-2 px-2 border rounded hover:bg-gray-100"
-                >
-                  <div className={`w-full h-0.5 bg-black ${
-                    style === 'dashed' ? 'border-dashed border-t border-black h-0' : 
-                    style === 'dotted' ? 'border-dotted border-t border-black h-0' : ''
-                  }`}></div>
-                </button>
+                />
               ))}
             </div>
-          </div>
+          </MenuSection>
           
           {/* Animaciones */}
-          <div>
-            <h4 className="font-medium mb-2">Animación</h4>
-            <div className="grid grid-cols-2 gap-2">
+          <MenuSection title="Animación">
+            <div className={buttonGridClass}>
               {animationOptions.map(anim => (
-                <button 
+                <AnimationButton 
                   key={anim}
+                  animation={anim}
                   onClick={() => onAnimationChange(connectionId, anim)}
-                  className="py-2 px-3 border rounded hover:bg-gray-100"
-                >
-                  {anim === 'none' ? 'Ninguna' : 
-                   anim === 'pulse' ? 'Pulso' : 
-                   anim === 'flow' ? 'Flujo' : 'Discontinua'}
-                </button>
+                />
               ))}
             </div>
-          </div>
+          </MenuSection>
           
-          {/* Flechas */}
-          <div>
-            <h4 className="font-medium mb-2">Flecha inicial</h4>
-            <div className="grid grid-cols-2 gap-2">
+          {/* Flecha inicial */}
+          <MenuSection title="Flecha inicial">
+            <div className={buttonGridClass}>
               {arrowHeadOptions.map(arrow => (
-                <button 
+                <ArrowHeadButton 
                   key={`start-${arrow}`}
+                  arrowHead={arrow}
+                  position="start"
                   onClick={() => onArrowHeadChange(connectionId, 'start', arrow)}
-                  className="py-2 px-3 border rounded hover:bg-gray-100 flex items-center justify-center"
-                >
-                  {arrow === 'none' ? 'Ninguna' : 
-                   arrow === 'arrow' ? '←' : 
-                   arrow === 'circle' ? '◯' : '◇'}
-                </button>
+                />
               ))}
             </div>
-          </div>
+          </MenuSection>
           
-          <div>
-            <h4 className="font-medium mb-2">Flecha final</h4>
-            <div className="grid grid-cols-2 gap-2">
+          {/* Flecha final */}
+          <MenuSection title="Flecha final">
+            <div className={buttonGridClass}>
               {arrowHeadOptions.map(arrow => (
-                <button 
+                <ArrowHeadButton 
                   key={`end-${arrow}`}
+                  arrowHead={arrow}
+                  position="end"
                   onClick={() => onArrowHeadChange(connectionId, 'end', arrow)}
-                  className="py-2 px-3 border rounded hover:bg-gray-100 flex items-center justify-center"
-                >
-                  {arrow === 'none' ? 'Ninguna' : 
-                   arrow === 'arrow' ? '→' : 
-                   arrow === 'circle' ? '◯' : '◇'}
-                </button>
+                />
               ))}
             </div>
-          </div>
+          </MenuSection>
         </div>
       </div>
     </div>
