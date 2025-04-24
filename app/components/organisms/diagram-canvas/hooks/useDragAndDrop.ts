@@ -108,7 +108,7 @@ export function useDragAndDrop({
     logDebug(`Posición final calculada: ${dropX}, ${dropY}`);
     
     // Extraer tamaño del tipo si se especifica (ej: "square size:200x150")
-    let size = { width: 180, height: 100 }; // Tamaño predeterminado
+    let size = { width: 220, height: 120 }; // Tamaño predeterminado
     const sizeMatch = type.match(/size:(\d+)x(\d+)/);
     
     if (sizeMatch) {
