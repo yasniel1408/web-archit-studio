@@ -971,7 +971,7 @@ export function Arrow({
                       {/* Punta inicial */}
                       {currentStartArrowHead !== 'none' && (
                         <path
-                          d={calculateArrowHead('left', 50, 30, true, currentStartArrowHead)}
+                          d={calculateArrowHead('right', 50, 30, true, currentStartArrowHead)}
                           fill={baseColor}
                           strokeWidth="0"
                         />
@@ -980,7 +980,7 @@ export function Arrow({
                       {/* Punta final */}
                       {currentArrowHead !== 'none' && (
                         <path
-                          d={calculateArrowHead('right', 250, 30, false, currentArrowHead)}
+                          d={calculateArrowHead('left', 250, 30, false, currentArrowHead)}
                           fill={baseColor}
                           strokeWidth="0"
                         />
@@ -995,7 +995,7 @@ export function Arrow({
                           cy={30}
                           r={5}
                           fill={currentAnimation === 'traveling-dot-fastest' ? "#FFCB00" : 
-                                currentAnimation === 'traveling-dot-fast' ? "#FF9500" : "#FF0000"}
+                                currentAnimation === 'traveling-dot-fast' ? "#FF9500" : "#000000"}
                           stroke="#FFFFFF"
                           strokeWidth={1}
                         />

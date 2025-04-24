@@ -96,9 +96,10 @@ export function useDragAndDrop({
     const relativeY = e.clientY - canvasRect.top;
     
     // Convertir coordenadas de pantalla a coordenadas del canvas
-    // La fórmula correcta: dividir por scale para el zoom y sumar el offset del canvas
-    const dropX = relativeX / scale + position.x;
-    const dropY = relativeY / scale + position.y;
+    // En esta aplicación, position representa el desplazamiento del canvas que se aplica
+    // después del zoom, por lo que la fórmula correcta es:
+    const dropX = relativeX / scale - position.x;
+    const dropY = relativeY / scale - position.y;
     
     logDebug(`Posición de drop: clientX=${e.clientX}, clientY=${e.clientY}`);
     logDebug(`Canvas rect: left=${canvasRect.left}, top=${canvasRect.top}`);
@@ -107,7 +108,7 @@ export function useDragAndDrop({
     logDebug(`Posición final calculada: ${dropX}, ${dropY}`);
     
     // Extraer tamaño del tipo si se especifica (ej: "square size:200x150")
-    let size = { width: 140, height: 80 }; // Tamaño predeterminado
+    let size = { width: 180, height: 100 }; // Tamaño predeterminado
     const sizeMatch = type.match(/size:(\d+)x(\d+)/);
     
     if (sizeMatch) {
