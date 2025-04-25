@@ -42,7 +42,26 @@ export type IconType =
   // Iconos AWS Storage
   | 'aws-s3'
   | 'aws-efs'
-  | 'aws-glacier';
+  | 'aws-glacier'
+  // Iconos GCP Compute
+  | 'gcp-compute-engine'
+  | 'gcp-kubernetes-engine'
+  | 'gcp-app-engine'
+  | 'gcp-cloud-functions'
+  | 'gcp-cloud-run'
+  // Iconos GCP Database
+  | 'gcp-cloud-sql'
+  | 'gcp-cloud-bigtable'
+  | 'gcp-cloud-spanner'
+  | 'gcp-cloud-firestore'
+  | 'gcp-cloud-memorystore'
+  // Iconos GCP Storage
+  | 'gcp-cloud-storage'
+  | 'gcp-persistent-disk'
+  // Iconos GCP Networking
+  | 'gcp-cloud-cdn'
+  | 'gcp-cloud-load-balancing'
+  | 'gcp-cloud-vpn';
 
 // Metadatos de los iconos para búsqueda y etiquetas
 export interface IconMetadata {
@@ -100,9 +119,32 @@ export const iconsMetadata: IconMetadata[] = [
   { id: 'aws-direct-connect', name: 'AWS Direct Connect', category: 'AWS Networking', tags: ['aws', 'amazon', 'direct', 'connect', 'conexión', 'dedicada'] },
   
   // AWS Storage
-  { id: 'aws-s3', name: 'AWS S3', category: 'AWS Storage', tags: ['aws', 'amazon', 's3', 'simple', 'storage', 'service'] },
+  { id: 'aws-s3', name: 'AWS S3', category: 'AWS Storage', tags: ['aws', 'amazon', 's3', 'storage', 'bucket', 'object'] },
   { id: 'aws-efs', name: 'AWS EFS', category: 'AWS Storage', tags: ['aws', 'amazon', 'efs', 'elastic', 'file', 'system'] },
-  { id: 'aws-glacier', name: 'AWS Glacier', category: 'AWS Storage', tags: ['aws', 'amazon', 'glacier', 'archivo', 'backup', 'largo plazo'] },
+  { id: 'aws-glacier', name: 'AWS Glacier', category: 'AWS Storage', tags: ['aws', 'amazon', 'glacier', 'archive', 'backup', 'storage'] },
+  
+  // GCP Compute
+  { id: 'gcp-compute-engine', name: 'GCP Compute Engine', category: 'GCP Compute', tags: ['gcp', 'google', 'compute', 'engine', 'vm', 'virtual machine'] },
+  { id: 'gcp-kubernetes-engine', name: 'GCP Kubernetes Engine', category: 'GCP Compute', tags: ['gcp', 'google', 'kubernetes', 'gke', 'container', 'k8s'] },
+  { id: 'gcp-app-engine', name: 'GCP App Engine', category: 'GCP Compute', tags: ['gcp', 'google', 'app', 'engine', 'paas', 'platform'] },
+  { id: 'gcp-cloud-functions', name: 'GCP Cloud Functions', category: 'GCP Compute', tags: ['gcp', 'google', 'cloud', 'functions', 'serverless', 'function'] },
+  { id: 'gcp-cloud-run', name: 'GCP Cloud Run', category: 'GCP Compute', tags: ['gcp', 'google', 'cloud', 'run', 'container', 'serverless'] },
+  
+  // GCP Database
+  { id: 'gcp-cloud-sql', name: 'GCP Cloud SQL', category: 'GCP Database', tags: ['gcp', 'google', 'cloud', 'sql', 'database', 'relational'] },
+  { id: 'gcp-cloud-bigtable', name: 'GCP Cloud Bigtable', category: 'GCP Database', tags: ['gcp', 'google', 'cloud', 'bigtable', 'nosql', 'database'] },
+  { id: 'gcp-cloud-spanner', name: 'GCP Cloud Spanner', category: 'GCP Database', tags: ['gcp', 'google', 'cloud', 'spanner', 'database', 'sql'] },
+  { id: 'gcp-cloud-firestore', name: 'GCP Cloud Firestore', category: 'GCP Database', tags: ['gcp', 'google', 'cloud', 'firestore', 'nosql', 'database'] },
+  { id: 'gcp-cloud-memorystore', name: 'GCP Cloud Memorystore', category: 'GCP Database', tags: ['gcp', 'google', 'cloud', 'memorystore', 'redis', 'cache'] },
+  
+  // GCP Storage
+  { id: 'gcp-cloud-storage', name: 'GCP Cloud Storage', category: 'GCP Storage', tags: ['gcp', 'google', 'cloud', 'storage', 'bucket', 'object'] },
+  { id: 'gcp-persistent-disk', name: 'GCP Persistent Disk', category: 'GCP Storage', tags: ['gcp', 'google', 'persistent', 'disk', 'storage', 'volume'] },
+  
+  // GCP Networking
+  { id: 'gcp-cloud-cdn', name: 'GCP Cloud CDN', category: 'GCP Networking', tags: ['gcp', 'google', 'cloud', 'cdn', 'content', 'delivery'] },
+  { id: 'gcp-cloud-load-balancing', name: 'GCP Cloud Load Balancing', category: 'GCP Networking', tags: ['gcp', 'google', 'cloud', 'load', 'balancing', 'traffic'] },
+  { id: 'gcp-cloud-vpn', name: 'GCP Cloud VPN', category: 'GCP Networking', tags: ['gcp', 'google', 'cloud', 'vpn', 'virtual', 'private'] },
 ];
 
 // Función para obtener categorías únicas
@@ -110,4 +152,4 @@ export const getCategories = (): string[] => {
   const categories = new Set<string>();
   iconsMetadata.forEach(icon => categories.add(icon.category));
   return Array.from(categories);
-}; 
+};

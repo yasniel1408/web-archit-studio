@@ -144,8 +144,46 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/aws/efs.svg" className={className} alt="AWS EFS" style={{borderRadius: '7px'}} />;
     case 'aws-glacier':
       return <img src="/assets/icons/aws/glacier.svg" className={className} alt="AWS Glacier" style={{borderRadius: '7px'}} />;
+    
+    // Iconos GCP Compute
+    case 'gcp-compute-engine':
+      return <img src="/assets/icons/gcp/compute_engine/compute_engine.svg" className={className} alt="GCP Compute Engine" style={{borderRadius: '7px'}} />;
+    case 'gcp-kubernetes-engine':
+      return <img src="/assets/icons/gcp/google_kubernetes_engine/google_kubernetes_engine.svg" className={className} alt="GCP Kubernetes Engine" style={{borderRadius: '7px'}} />;
+    case 'gcp-app-engine':
+      return <img src="/assets/icons/gcp/app_engine/app_engine.svg" className={className} alt="GCP App Engine" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-functions':
+      return <img src="/assets/icons/gcp/cloud_functions/cloud_functions.svg" className={className} alt="GCP Cloud Functions" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-run':
+      return <img src="/assets/icons/gcp/cloud_run/cloud_run.svg" className={className} alt="GCP Cloud Run" style={{borderRadius: '7px'}} />;
+    
+    // Iconos GCP Database
+    case 'gcp-cloud-sql':
+      return <img src="/assets/icons/gcp/cloud_sql/cloud_sql.svg" className={className} alt="GCP Cloud SQL" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-bigtable':
+      return <img src="/assets/icons/gcp/bigtable/bigtable.svg" className={className} alt="GCP Cloud Bigtable" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-spanner':
+      return <img src="/assets/icons/gcp/cloud_spanner/cloud_spanner.svg" className={className} alt="GCP Cloud Spanner" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-firestore':
+      return <img src="/assets/icons/gcp/firestore/firestore.svg" className={className} alt="GCP Cloud Firestore" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-memorystore':
+      return <img src="/assets/icons/gcp/memorystore/memorystore.svg" className={className} alt="GCP Cloud Memorystore" style={{borderRadius: '7px'}} />;
+    
+    // Iconos GCP Storage
+    case 'gcp-cloud-storage':
+      return <img src="/assets/icons/gcp/cloud_storage/cloud_storage.svg" className={className} alt="GCP Cloud Storage" style={{borderRadius: '7px'}} />;
+    case 'gcp-persistent-disk':
+      return <img src="/assets/icons/gcp/persistent_disk/persistent_disk.svg" className={className} alt="GCP Persistent Disk" style={{borderRadius: '7px'}} />;
+    
+    // Iconos GCP Networking
+    case 'gcp-cloud-cdn':
+      return <img src="/assets/icons/gcp/cloud_cdn/cloud_cdn.svg" className={className} alt="GCP Cloud CDN" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-load-balancing':
+      return <img src="/assets/icons/gcp/cloud_load_balancing/cloud_load_balancing.svg" className={className} alt="GCP Cloud Load Balancing" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-vpn':
+      return <img src="/assets/icons/gcp/cloud_vpn/cloud_vpn.svg" className={className} alt="GCP Cloud VPN" style={{borderRadius: '7px'}} />;
       
     default:
       return null;
   }
-} 
+}
