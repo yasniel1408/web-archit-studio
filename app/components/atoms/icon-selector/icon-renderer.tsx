@@ -182,6 +182,75 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/gcp/cloud_load_balancing/cloud_load_balancing.svg" className={className} alt="GCP Cloud Load Balancing" style={{borderRadius: '7px'}} />;
     case 'gcp-cloud-vpn':
       return <img src="/assets/icons/gcp/cloud_vpn/cloud_vpn.svg" className={className} alt="GCP Cloud VPN" style={{borderRadius: '7px'}} />;
+    
+    // Iconos GCP AI & ML
+    case 'gcp-ai-platform':
+      return <img src="/assets/icons/gcp/ai_platform/ai_platform.svg" className={className} alt="GCP AI Platform" style={{borderRadius: '7px'}} />;
+    case 'gcp-automl':
+      return <img src="/assets/icons/gcp/automl/automl.svg" className={className} alt="GCP AutoML" style={{borderRadius: '7px'}} />;
+    case 'gcp-vision-ai':
+      return <img src="/assets/icons/gcp/vision_ai/vision_ai.svg" className={className} alt="GCP Vision AI" style={{borderRadius: '7px'}} />;
+    case 'gcp-speech-to-text':
+      return <img src="/assets/icons/gcp/speech-to-text/speech-to-text.svg" className={className} alt="GCP Speech-to-Text" style={{borderRadius: '7px'}} />;
+    case 'gcp-text-to-speech':
+      return <img src="/assets/icons/gcp/text-to-speech/text-to-speech.svg" className={className} alt="GCP Text-to-Speech" style={{borderRadius: '7px'}} />;
+    case 'gcp-natural-language':
+      return <img src="/assets/icons/gcp/cloud_natural_language_api/cloud_natural_language_api.svg" className={className} alt="GCP Natural Language" style={{borderRadius: '7px'}} />;
+    case 'gcp-translation':
+      return <img src="/assets/icons/gcp/cloud_translation_api/cloud_translation_api.svg" className={className} alt="GCP Translation" style={{borderRadius: '7px'}} />;
+    case 'gcp-dialogflow':
+      return <img src="/assets/icons/gcp/dialogflow/dialogflow.svg" className={className} alt="GCP Dialogflow" style={{borderRadius: '7px'}} />;
+    case 'gcp-document-ai':
+      return <img src="/assets/icons/gcp/document_ai/document_ai.svg" className={className} alt="GCP Document AI" style={{borderRadius: '7px'}} />;
+    case 'gcp-contact-center-ai':
+      return <img src="/assets/icons/gcp/contact_center_ai/contact_center_ai.svg" className={className} alt="GCP Contact Center AI" style={{borderRadius: '7px'}} />;
+    case 'gcp-healthcare-nlp-api':
+      return <img src="/assets/icons/gcp/healthcare_nlp_api/healthcare_nlp_api.svg" className={className} alt="GCP Healthcare NLP API" style={{borderRadius: '7px'}} />;
+    case 'gcp-recommendations-ai':
+      return <img src="/assets/icons/gcp/recommendations_ai/recommendations_ai.svg" className={className} alt="GCP Recommendations AI" style={{borderRadius: '7px'}} />;
+    case 'gcp-retail-api':
+      return <img src="/assets/icons/gcp/retail_api/retail_api.svg" className={className} alt="GCP Retail API" style={{borderRadius: '7px'}} />;
+    case 'gcp-media-translation-api':
+      return <img src="/assets/icons/gcp/media_translation_api/media_translation_api.svg" className={className} alt="GCP Media Translation API" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-inference-api':
+      return <img src="/assets/icons/gcp/cloud_inference_api/cloud_inference_api.svg" className={className} alt="GCP Cloud Inference API" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-vision-api':
+      return <img src="/assets/icons/gcp/cloud_vision_api/cloud_vision_api.svg" className={className} alt="GCP Cloud Vision API" style={{borderRadius: '7px'}} />;
+    
+    // Iconos GCP Big Data
+    case 'gcp-bigquery':
+      return <img src="/assets/icons/gcp/bigquery/bigquery.svg" className={className} alt="GCP BigQuery" style={{borderRadius: '7px'}} />;
+    case 'gcp-dataflow':
+      return <img src="/assets/icons/gcp/dataflow/dataflow.svg" className={className} alt="GCP Dataflow" style={{borderRadius: '7px'}} />;
+    case 'gcp-dataproc':
+      return <img src="/assets/icons/gcp/dataproc/dataproc.svg" className={className} alt="GCP Dataproc" style={{borderRadius: '7px'}} />;
+    case 'gcp-pubsub':
+      return <img src="/assets/icons/gcp/pubsub/pubsub.svg" className={className} alt="GCP Pub/Sub" style={{borderRadius: '7px'}} />;
+    case 'gcp-data-catalog':
+      return <img src="/assets/icons/gcp/data_catalog/data_catalog.svg" className={className} alt="GCP Data Catalog" style={{borderRadius: '7px'}} />;
+    case 'gcp-datalab':
+      return <img src="/assets/icons/gcp/datalab/datalab.svg" className={className} alt="GCP Datalab" style={{borderRadius: '7px'}} />;
+    
+    // Iconos GCP IoT
+    case 'gcp-iot-core':
+      return <img src="/assets/icons/gcp/iot_core/iot_core.svg" className={className} alt="GCP IoT Core" style={{borderRadius: '7px'}} />;
+    
+    // Iconos GCP Security
+    case 'gcp-security-command-center':
+      return <img src="/assets/icons/gcp/security_command_center/security_command_center.svg" className={className} alt="GCP Security Command Center" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-armor':
+      return <img src="/assets/icons/gcp/cloud_armor/cloud_armor.svg" className={className} alt="GCP Cloud Armor" style={{borderRadius: '7px'}} />;
+    case 'gcp-identity-platform':
+      return <img src="/assets/icons/gcp/identity_platform/identity_platform.svg" className={className} alt="GCP Identity Platform" style={{borderRadius: '7px'}} />;
+    
+    // Iconos GCP DevOps
+    case 'gcp-cloud-build':
+      return <img src="/assets/icons/gcp/cloud_build/cloud_build.svg" className={className} alt="GCP Cloud Build" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-source-repositories':
+      return <img src="/assets/icons/gcp/cloud_source_repository.svg" className={className} alt="GCP Cloud Source Repositories" style={{borderRadius: '7px'}} />;
+      // Nota: Ruta corregida para el icono de Cloud Source Repositories
+    case 'gcp-artifact-registry':
+      return <img src="/assets/icons/gcp/artifact_registry/artifact_registry.svg" className={className} alt="GCP Artifact Registry" style={{borderRadius: '7px'}} />;
       
     default:
       return null;

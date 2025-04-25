@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
+  <defs>
+    <style>
+      .cls-1{fill:#4285f4;}
+      .cls-2{fill:#669df6;}
+      .cls-3{fill:#aecbfa;}
+    </style>
+  </defs>
+  <title>GCP Cloud Source Repositories</title>
+  <g data-name="Product Icons">
+    <path class="cls-1" d="M12,2,3,7v10l9,5,9-5V7L12,2z M19,15.5L12,19,5,15.5V8.5L12,5l7,3.5V15.5z"/>
+    <path class="cls-2" d="M12,15.5l4-2v-3l-4,2V15.5z"/>
+    <path class="cls-3" d="M12,15.5l-4-2v-3l4,2V15.5z"/>
+    <path class="cls-2" d="M8,10.5l4-2l4,2l-4,2L8,10.5z"/>
+  </g>
+</svg>
