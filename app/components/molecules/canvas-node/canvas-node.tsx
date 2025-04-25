@@ -98,20 +98,24 @@ export function CanvasNode({
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (isDragging && dragStartRef.current) {
         e.preventDefault();
-        const newX = dragStartRef.current.startX + (e.clientX - dragStartRef.current.x);
-        const newY = dragStartRef.current.startY + (e.clientY - dragStartRef.current.y);
         
-        // Actualizar directamente el DOM para movimiento sin lag
+        // Cálculo directo para posicionamiento instantáneo
+        const dx = e.clientX - dragStartRef.current.x;
+        const dy = e.clientY - dragStartRef.current.y;
+        const newX = dragStartRef.current.startX + dx;
+        const newY = dragStartRef.current.startY + dy;
+        
+        // Actualizar DOM directamente sin ningún tipo de transformación o animación
         if (nodeRef.current) {
+          // Asignación directa de posiciones usando left/top
           nodeRef.current.style.left = `${newX}px`;
           nodeRef.current.style.top = `${newY}px`;
           
-          // Notificar al padre sobre el movimiento en tiempo real
-          // Esto permite que otros componentes que dependan de la posición se actualicen
+          // Notificar al padre
           onNodeMove(id, { x: newX, y: newY });
         }
         
-        // También actualizar el estado para mantener la coherencia interna
+        // Actualizar estado
         setPos({ x: newX, y: newY });
       } else if (isResizing && resizeStartRef.current) {
         e.preventDefault();
@@ -119,26 +123,10 @@ export function CanvasNode({
       }
     };
 
-    const handleGlobalMouseUp = () => {
+    const handleGlobalMouseUp = (e: MouseEvent) => {
       if (isDragging && dragStartRef.current && nodeRef.current) {
-        // En el mouseUp, solo necesitamos limpiar el estado de arrastre
-        // ya que las posiciones ya se han actualizado en tiempo real
-        
-        // Quitar la clase de arrastre para restaurar la apariencia normal
-        if (nodeRef.current) {
-          nodeRef.current.classList.remove('dragging');
-          
-          // Agregar una pequeña animación de "asentamiento" para feedback visual
-          nodeRef.current.classList.add('drag-end');
-          
-          // Quitar la clase después de un breve tiempo
-          setTimeout(() => {
-            if (nodeRef.current) {
-              nodeRef.current.classList.remove('drag-end');
-            }
-          }, 200);
-        }
-        
+        // Simplemente limpiar el estado
+        nodeRef.current.classList.remove('dragging');
         setIsDragging(false);
         dragStartRef.current = null;
       }
@@ -210,7 +198,7 @@ export function CanvasNode({
     setIsResizing(handle);
   };
 
-  const handleResizeMove = (moveEvent: MouseEvent) => {
+  const handleResizeMove = (moveEvent: MouseEvent | PointerEvent) => {
     if (!resizeStartRef.current || !nodeRef.current) return;
     
     const { handle, x, y, width, height, startX, startY } = resizeStartRef.current;
@@ -409,11 +397,9 @@ export function CanvasNode({
     backdrop-blur-md
     border 
     border-border/40
-    transition-all
-    duration-250
     select-none
-    ${isDragging ? 'cursor-grabbing shadow-md' : 'cursor-move glow-hover'}
-    ${isDragging || isResizing ? 'z-30' : (isHovered ? 'z-20 shadow-md' : 'z-10')}
+    ${isDragging ? 'cursor-grabbing' : 'cursor-move'}
+    ${isDragging || isResizing ? 'z-30' : (isHovered ? 'z-20' : 'z-10')}
     ${disabled ? 'opacity-80 pointer-events-none filter grayscale' : ''}
   `;
   
@@ -426,6 +412,8 @@ export function CanvasNode({
     touchAction: 'none',
     userSelect: 'none' as 'none',
     overflow: 'visible',
+    transition: 'none',
+    animation: 'none',
   };
 
   return (
@@ -433,23 +421,24 @@ export function CanvasNode({
       ref={nodeRef}
       className={nodeClasses}
       style={nodeStyle}
-      onMouseDown={handleMouseDown} // Inicia el arrastre del nodo
+      onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onMouseUp={handleMouseUp} // Podría finalizar una conexión
+      onMouseUp={handleMouseUp}
     >
-      <div className="w-full h-full p-2 overflow-hidden rounded-md">
+      <div className="w-full h-full p-2 overflow-hidden rounded-md" style={{ transition: 'none' }}>
         <Square 
           editable={true} 
           initialText={text} 
           icon={iconType}
-          backgroundColor={backgroundColor} // Pasar la propiedad al componente Square
+          backgroundColor={backgroundColor}
           onIconChange={handleIconChange}
           onColorChange={handleColorChange}
           onColorPickerOpen={() => setIsColorPickerOpen(true)}
           onColorPickerClose={() => setIsColorPickerOpen(false)}
           onIconSelectorOpen={() => setIsIconSelectorOpen(true)}
           onIconSelectorClose={() => setIsIconSelectorOpen(false)}
+          className="no-transitions"
         />
       </div>
       

@@ -50,10 +50,17 @@ export function Square({
     onColorPickerClose
   });
   
+  // Estilo sin transiciones para asegurar movimiento instantáneo
+  const noTransitionStyle = {
+    backgroundColor: selectedColor,
+    transition: 'none',
+    animation: 'none',
+  };
+  
   return (
     <div 
       className={`${squareStyles.container} ${className}`}
-      style={{ backgroundColor: selectedColor }}
+      style={noTransitionStyle}
       onClick={handleSquareClick}
       onDoubleClick={handleSquareDoubleClick}
     >
@@ -62,6 +69,7 @@ export function Square({
         <div 
           className={`${squareStyles.icon} ${editable ? squareStyles.iconClickable : ''}`} 
           onClick={handleIconClick}
+          style={{ transition: 'none' }}
         >
           <IconRenderer iconType={selectedIcon} className="w-9 h-9" />
         </div>
@@ -72,6 +80,7 @@ export function Square({
         <div 
           className={squareStyles.addIconButton}
           onClick={handleIconClick}
+          style={{ transition: 'none' }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className={squareStyles.addIconSvg} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -81,15 +90,15 @@ export function Square({
       
       {/* Indicador de color personalizado */}
       {editable && selectedColor !== "#FFFFFF" && (
-        <div className={squareStyles.colorIndicator}>
+        <div className={squareStyles.colorIndicator} style={{ transition: 'none' }}>
           <div
             className={squareStyles.colorDot}
-            style={{ backgroundColor: selectedColor }}
+            style={{ backgroundColor: selectedColor, transition: 'none' }}
           ></div>
         </div>
       )}
       
-      <div className={squareStyles.contentContainer}>
+      <div className={squareStyles.contentContainer} style={{ transition: 'none' }}>
         {editable ? (
           <input
             type="text"
@@ -99,10 +108,10 @@ export function Square({
             onMouseDown={e => e.stopPropagation()}
             className={`${squareStyles.input} square-text-element`}
             placeholder="Texto aquí"
-            style={{ backgroundColor: 'transparent' }}
+            style={{ backgroundColor: 'transparent', transition: 'none' }}
           />
         ) : (
-          <div className={`${squareStyles.text} square-text-element`}>
+          <div className={`${squareStyles.text} square-text-element`} style={{ transition: 'none' }}>
             {innerText || text}
           </div>
         )}
