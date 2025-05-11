@@ -10,7 +10,7 @@ export default function Home() {
         <div className="py-5 px-5 border-b border-border/30 bg-gradient-to-r from-primary/5 to-white">
           <h1 className="font-bold text-gray-800 text-xl flex items-center">
             <span className="text-primary">Archit</span>Studio
-            <span className="ml-2 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-medium">v1.0</span>
+            <span className="ml-2 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-medium">v1.1</span>
           </h1>
         </div>
         

@@ -23,6 +23,13 @@ export function SidePanel() {
                 label="Tarjeta" 
                 text=""
               />
+              
+              <DraggableItem 
+                id={`container-${Date.now()}`} 
+                type="container" 
+                label="Contenedor" 
+                text="Contenedor"
+              />
             </div>
             
             <div className="mt-8 p-3 bg-blue-50 text-blue-700 border border-blue-100 rounded-lg">
@@ -32,31 +39,25 @@ export function SidePanel() {
                 2. Haz clic en el elemento para seleccionarlo<br/>
                 3. Con 2 clicks encima de una tarjeta puedes cambiar su color<br/>
                 4. Con la barra espaciadora puedes moverte por el lienzo<br/>
-                {isMac && <span>4. En Mac, usa dos dedos en el trackpad para navegar<br/></span>}
+                {isMac && <span>5. En Mac, usa dos dedos en el trackpad para navegar<br/></span>}
                 {isMac ? '6' : '5'}. Doble click en los nodos para cambiar su Color<br/>
                 {isMac ? '7' : '6'}. Click en las lineas para editarlas y agregarles animaciones
               </p>
             </div>
             
             {/* Botón de Donación */}
-            <div className="mt-4 space-y-3">
-              <h4 className="text-xs uppercase font-medium text-gray-500 text-center">¿Te gusta Archit Studio?</h4>
-              
+            <div className="mt-8 flex justify-center">
               <a 
-                href={generatePayPalLink()}
-                target="_blank"
-                rel="noopener noreferrer" 
-                className="flex items-center justify-center w-full py-1.5 px-3 bg-[#3eaf7c] hover:bg-[#318f64] text-white rounded-md transition-colors duration-200 shadow-sm text-xs"
+                href={generatePayPalLink()} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm bg-gradient-to-r from-primary to-purple-600 text-white font-medium hover:shadow-lg transition-shadow"
               >
-                <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 10h18v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8zm0-4a2 2 0 012-2h14a2 2 0 012 2v2H3V6zm4 10a1 1 0 110-2 1 1 0 010 2zm4 0a1 1 0 110-2 1 1 0 010 2z"></path>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                Donar con tarjeta
+                <span>Apoyar este proyecto</span>
               </a>
-              
-              <div className="text-center text-xs text-gray-500 mt-1">
-                Tu apoyo permite seguir mejorando 🙌
-              </div>
             </div>
           </div>
       </div>

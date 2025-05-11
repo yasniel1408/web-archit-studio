@@ -97,7 +97,8 @@ export function useDiagramPersistence(
           startArrowHead: conn.startArrowHead || 'none',
           endArrowHead: conn.endArrowHead || 'arrow',
           color: conn.color || '#000000',
-          strokeWidth: conn.strokeWidth || 2
+          strokeWidth: conn.strokeWidth || 2,
+          isSyncEnabled: conn.isSyncEnabled || false // Añadir propiedad de sincronización
         }));
         
         setConnections(connectionsWithDefaultProps);
@@ -149,7 +150,8 @@ export function useDiagramPersistence(
       startArrowHead: conn.startArrowHead || 'none',
       endArrowHead: conn.endArrowHead || 'arrow',
       color: conn.color || '#000000',
-      strokeWidth: conn.strokeWidth || 2
+      strokeWidth: conn.strokeWidth || 2,
+      isSyncEnabled: conn.isSyncEnabled || false // Añadir propiedad de sincronización
     }));
     
     // Guardar en localStorage
@@ -170,7 +172,7 @@ export function useDiagramPersistence(
     
     if (completedConnections.length > 0) {
       const sampleConn = completedConnections[0];
-      logDebug(`Ejemplo conexión: id=${sampleConn.id}, estilo=${sampleConn.style}, animación=${sampleConn.animation}, punta inicio=${sampleConn.startArrowHead}, punta fin=${sampleConn.endArrowHead}`);
+      logDebug(`Ejemplo conexión: id=${sampleConn.id}, estilo=${sampleConn.style}, animación=${sampleConn.animation}, punta inicio=${sampleConn.startArrowHead}, punta fin=${sampleConn.endArrowHead}, sincronización=${sampleConn.isSyncEnabled ? 'activada' : 'desactivada'}`);
     }
   }, [logDebug]);
 
@@ -210,7 +212,8 @@ export function useDiagramPersistence(
         startArrowHead: conn.startArrowHead || 'none',
         endArrowHead: conn.endArrowHead || 'arrow',
         color: conn.color || '#000000',
-        strokeWidth: conn.strokeWidth || 2
+        strokeWidth: conn.strokeWidth || 2,
+        isSyncEnabled: conn.isSyncEnabled || false // Añadir propiedad de sincronización
       }));
       
       const diagramData = {
@@ -603,7 +606,8 @@ export function useDiagramPersistence(
               startArrowHead: conn.startArrowHead || 'none',
               endArrowHead: conn.endArrowHead || 'arrow',
               color: conn.color || '#000000',
-              strokeWidth: conn.strokeWidth || 2
+              strokeWidth: conn.strokeWidth || 2,
+              isSyncEnabled: conn.isSyncEnabled || false // Añadir propiedad de sincronización
             }));
             
             setConnections(importedConnections);
@@ -678,7 +682,8 @@ export function useDiagramPersistence(
         startArrowHead: conn.startArrowHead || 'none',
         endArrowHead: conn.endArrowHead || 'arrow',
         color: conn.color || '#000000',
-        strokeWidth: conn.strokeWidth || 2
+        strokeWidth: conn.strokeWidth || 2,
+        isSyncEnabled: conn.isSyncEnabled || false // Añadir propiedad de sincronización
       }));
       
       const diagramData = {
@@ -755,7 +760,8 @@ export function useDiagramPersistence(
       startArrowHead: conn.startArrowHead || 'none',
       endArrowHead: conn.endArrowHead || 'arrow',
       color: conn.color || '#000000',
-      strokeWidth: conn.strokeWidth || 2
+      strokeWidth: conn.strokeWidth || 2,
+      isSyncEnabled: conn.isSyncEnabled || false // Añadir propiedad de sincronización
     }));
   }, []);
 

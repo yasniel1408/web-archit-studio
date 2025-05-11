@@ -80,8 +80,8 @@ export function Arrow({
 }: ArrowProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimationsMenuOpen, setIsAnimationsMenuOpen] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState<ArrowStyle>(style || 'solid');
-  const [currentAnimation, setCurrentAnimation] = useState<ArrowAnimation>(animation || 'none');
+  const [currentStyle, setCurrentStyle] = useState<ArrowStyle>(style);
+  const [currentAnimation, setCurrentAnimation] = useState<ArrowAnimation>(animation);
   const [currentArrowHead, setCurrentArrowHead] = useState<ArrowHeadType>(endArrowHead || 'arrow');
   const [currentStartArrowHead, setCurrentStartArrowHead] = useState<ArrowHeadType>(startArrowHead || 'none');
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
@@ -376,7 +376,10 @@ export function Arrow({
   };
   
   // Obtener color base y calcular color de hover
-  const baseColor = useMemo(() => isSelected ? "#3B82F6" : '#000000', [isSelected]); // Siempre negro si no está seleccionado
+  const baseColor = useMemo(() => {
+    return isSelected ? "#3B82F6" : color || '#000000';
+  }, [isSelected, color]);
+  
   const hoverColor = useMemo(() => {
     if (baseColor.startsWith('#')) {
       // Convertir color hexadecimal a rgba
@@ -393,7 +396,16 @@ export function Arrow({
     }
     return "#3B82F6"; // Color de hover predeterminado
   }, [baseColor]);
-
+  
+  const [currentColor, setCurrentColor] = useState<string>(color);
+  const [currentStrokeWidth, setCurrentStrokeWidth] = useState<number>(strokeWidth);
+  
+  // Update state when props change
+  useEffect(() => {
+    setCurrentColor(color);
+    setCurrentStrokeWidth(strokeWidth);
+  }, [color, strokeWidth]);
+  
   // Calcular camino de la Bezier
   const { controlPoint1X, controlPoint1Y, controlPoint2X, controlPoint2Y } = getBezierControlPoints();
   const pathCommand = `M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`;
@@ -780,6 +792,129 @@ export function Arrow({
     setIsOptionsModalOpen(false);
   };
 
+  // Calcular clase y estilo para la flecha principal
+  const getArrowClass = () => {
+    let classes = pathClass;
+    return classes;
+  };
+
+  // Calcular estilo para la flecha principal
+  const getArrowStyle = () => {
+    const styles: React.CSSProperties = { 
+      transition: 'stroke 0.2s ease, stroke-width 0.2s ease',
+      filter: isSelected 
+        ? 'drop-shadow(0 0 3px rgba(0,0,0,0.3))' 
+        : 'drop-shadow(0 0 2px rgba(0,0,0,0.2))',
+      pointerEvents: 'none',
+      zIndex: 40
+    };
+    
+    return styles;
+  };
+  
+  // Generar el path para la curva de Bezier
+  const getBezierPath = (sX: number, sY: number, eX: number, eY: number, 
+                         sPos: ConnectionPosition, ePos: ConnectionPosition): string => {
+    const { controlPoint1X, controlPoint1Y, controlPoint2X, controlPoint2Y } = getBezierControlPoints();
+    return `M ${sX} ${sY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${eX} ${eY}`;
+  };
+  
+  // Calcular punto en la curva de Bezier usando un parámetro t
+  const getPointOnPath = (pathStr: string, t: number) => {
+    return getPointOnCurve(t);
+  };
+
+  // Generar path para la curva de Bezier
+  const path = useMemo(() => {
+    return getBezierPath(startX, startY, endX, endY, startPosition, endPosition);
+  }, [startX, startY, endX, endY, startPosition, endPosition]);
+  
+  // Obtener puntos medios para posicionar el menú contextual
+  const { midX, midY } = useMemo(() => {
+    const pathMiddle = path.split('C')[1].split(' ');
+    const x = parseFloat(pathMiddle[pathMiddle.length-2]);
+    const y = parseFloat(pathMiddle[pathMiddle.length-1]);
+    return { midX: x, midY: y };
+  }, [path]);
+
+  // Función para manejar el cambio en las propiedades
+  const handlePropertyChange = (property: string, value: string | number | boolean) => {
+    switch (property) {
+      case 'style':
+        setCurrentStyle(value as ArrowStyle);
+        break;
+      case 'animation':
+        setCurrentAnimation(value as ArrowAnimation);
+        break;
+      case 'startArrowHead':
+        setCurrentStartArrowHead(value as ArrowHeadType);
+        break;
+      case 'endArrowHead':
+        setCurrentArrowHead(value as ArrowHeadType);
+        break;
+      case 'color':
+        setCurrentColor(value as string);
+        break;
+      case 'strokeWidth':
+        setCurrentStrokeWidth(value as number);
+        break;
+    }
+    
+    // Notificar cambios al componente padre
+    if (onPropertiesChange) {
+      const properties: Record<string, any> = {};
+      properties[property] = value;
+      onPropertiesChange(properties);
+    }
+  };
+
+  // Clases para la apariencia de la línea
+  const getPathClasses = () => {
+    let classes = "arrow-path transition-all duration-200 ";
+    
+    // Animaciones basadas en el estilo
+    switch (currentAnimation) {
+      case 'pulse':
+        classes += "animate-pulse ";
+        break;
+      case 'flow':
+        classes += "animate-flow ";
+        break;
+      case 'dash':
+        classes += "animate-dash ";
+        break;
+      default:
+        break;
+    }
+    
+    return classes;
+  };
+  
+  // Estilos para la apariencia de la línea
+  const getPathStyles = () => {
+    let dashArray = "none";
+    
+    switch (currentStyle) {
+      case 'dashed':
+        dashArray = "6,4";
+        break;
+      case 'dotted':
+        dashArray = "1,5";
+        break;
+      default:
+        dashArray = "none";
+    }
+    
+    return {
+      stroke: currentColor,
+      strokeWidth: currentStrokeWidth,
+      strokeDasharray: dashArray,
+      strokeLinecap: 'round',
+      fill: 'none',
+      cursor: 'pointer',
+    };
+  };
+
   return (
     <div 
       className="absolute top-0 left-0 w-full h-full pointer-events-none"
@@ -798,7 +933,7 @@ export function Arrow({
         {/* Área invisible más ancha para facilitar clic/interacción */}
         <path
           id={`arrow-path-${id}`}
-          d={pathCommand}
+          d={path}
           stroke="transparent"
           strokeWidth={Math.max(strokeWidth + 14, 18)}
           fill="none"
@@ -812,7 +947,7 @@ export function Arrow({
         
         {/* Efecto de resplandor/sombra para la flecha */}
         <path
-          d={pathCommand}
+          d={path}
           fill="none"
           stroke="#ffffff"
           strokeWidth={isSelected ? strokeWidth + 3 : strokeWidth + 2} 
@@ -826,21 +961,16 @@ export function Arrow({
         
         {/* Trazo visible de la flecha - Línea más fina */}
         <path
-          d={pathCommand}
+          d={path}
           fill="none"
           stroke={isSelected ? hoverColor : baseColor}
           strokeWidth={isSelected ? strokeWidth + 0.5 : strokeWidth} // Línea más fina
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeDasharray={getDashArray()}
-          className={pathClass}
+          className={getArrowClass()}
           data-animation={getAnimationAttribute()}
-          style={{ 
-            transition: 'stroke 0.2s ease, stroke-width 0.2s ease',
-            filter: isSelected ? 'drop-shadow(0 0 3px rgba(0,0,0,0.3))' : 'drop-shadow(0 0 2px rgba(0,0,0,0.2))',
-            pointerEvents: 'none',
-            zIndex: 40
-          }}
+          style={getArrowStyle()}
         />
         
         {/* Grupo de primer plano para los elementos animados y flechas */}
@@ -1091,13 +1221,24 @@ export function Arrow({
                           }}
                         >
                           <div className="flex items-center justify-center h-6">
-                            {/* Icono representativo de la punta */}
-                            {headOption === 'none' && <span className="h-1 w-16 bg-gray-700"></span>}
-                            {headOption === 'arrow' && <span className="text-lg">→</span>}
-                            {headOption === 'circle' && <span className="text-lg">◯</span>}
-                            {headOption === 'diamond' && <span className="text-lg">♦</span>}
+                            {headOption === 'none' ? (
+                              <div className="w-6 h-0.5 bg-gray-300"></div>
+                            ) : headOption === 'arrow' ? (
+                              <svg width="24" height="10" viewBox="0 0 24 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 5H22M22 5L18 1M22 5L18 9" stroke="currentColor" strokeWidth="2"/>
+                              </svg>
+                            ) : headOption === 'circle' ? (
+                              <svg width="24" height="10" viewBox="0 0 24 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="5" cy="5" r="4" fill="currentColor"/>
+                                <line x1="5" y1="5" x2="22" y2="5" stroke="currentColor" strokeWidth="2"/>
+                              </svg>
+                            ) : (
+                              <svg width="24" height="10" viewBox="0 0 24 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 5H22M4 1L0 5L4 9" stroke="currentColor" strokeWidth="2"/>
+                              </svg>
+                            )}
                           </div>
-                          <div className="text-sm mt-2 text-center">{getArrowHeadName(headOption)}</div>
+                          <div className="mt-2 text-center text-xs">{getArrowHeadName(headOption)}</div>
                         </button>
                       ))}
                     </div>

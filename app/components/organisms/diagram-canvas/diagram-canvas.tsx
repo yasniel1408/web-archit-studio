@@ -103,6 +103,7 @@ export function DiagramCanvas() {
     scale,
     position,
     addNode,
+    onNodePropertiesChange: updateNodeProperties,
     logDebug
   });
 

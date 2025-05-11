@@ -1,11 +1,13 @@
 import { useCallback } from 'react';
 import { IconType } from '@/app/components/atoms/icon-selector/types';
+import { NodeType } from '../types';
 
 type DragAndDropConfig = {
   canvasRef: React.RefObject<HTMLDivElement>;
   scale: number;
   position: { x: number; y: number };
-  addNode: (id: string, type: string, text: string, position: { x: number; y: number }, size: { width: number; height: number }, icon?: IconType) => void;
+  addNode: (id: string, type: string, text: string, position: { x: number; y: number }, size: { width: number; height: number }, icon?: IconType) => NodeType;
+  onNodePropertiesChange?: (nodeId: string, properties: { icon?: IconType; backgroundColor?: string }) => void;
   logDebug: (message: string) => void;
 };
 
@@ -17,6 +19,7 @@ export function useDragAndDrop({
   scale,
   position,
   addNode,
+  onNodePropertiesChange,
   logDebug
 }: DragAndDropConfig) {
   
@@ -107,8 +110,15 @@ export function useDragAndDrop({
     logDebug(`Escala: ${scale}, Posición canvas: ${position.x}, ${position.y}`);
     logDebug(`Posición final calculada: ${dropX}, ${dropY}`);
     
+    // Tamaños predeterminados según el tipo
+    let size;
+    if (type.includes('container')) {
+      size = { width: 400, height: 300 }; // Tamaño predeterminado para contenedores
+    } else {
+      size = { width: 220, height: 120 }; // Tamaño predeterminado para squares
+    }
+    
     // Extraer tamaño del tipo si se especifica (ej: "square size:200x150")
-    let size = { width: 220, height: 120 }; // Tamaño predeterminado
     const sizeMatch = type.match(/size:(\d+)x(\d+)/);
     
     if (sizeMatch) {
@@ -133,11 +143,26 @@ export function useDragAndDrop({
     // Asegurar que el tipo incluya el tamaño para que se conserve al guardar/cargar
     const finalType = `${type} size:${size.width}x${size.height}`;
     
+    // Propiedades adicionales según el tipo
+    let backgroundColor: string | undefined = undefined;
+    
+    if (type.includes('container')) {
+      backgroundColor = "rgba(240, 249, 255, 0.3)"; // Color predeterminado para contenedores
+    }
+    
     // Crear el nuevo nodo
-    addNode(id, finalType, text, { x: dropX, y: dropY }, size, icon);
+    const newNode = addNode(id, finalType, text, { x: dropX, y: dropY }, size, icon);
+    
+    // Si se creó correctamente y tiene propiedades adicionales, actualizarlas
+    if (onNodePropertiesChange && backgroundColor) {
+      setTimeout(() => {
+        // Actualizar propiedades adicionales después de crear el nodo
+        onNodePropertiesChange(newNode.id, { backgroundColor });
+      }, 0);
+    }
     
     logDebug(`Nodo añadido: ${id} (${finalType}) en posición ${Math.round(dropX)},${Math.round(dropY)}`);
-  }, [canvasRef, scale, position, addNode, logDebug]);
+  }, [canvasRef, scale, position, addNode, onNodePropertiesChange, logDebug]);
 
   return {
     handleDragOver,

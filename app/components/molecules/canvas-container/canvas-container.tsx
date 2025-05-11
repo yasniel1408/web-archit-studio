@@ -1,37 +1,39 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Square } from '@/app/components/atoms/square/square';
+import { Container } from '@/app/components/atoms/container/container';
 import { IconType } from '@/app/components/atoms/icon-selector/types';
 import { ConnectionPoint, ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
 
-interface CanvasNodeProps {
+type ResizeHandle = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
+interface CanvasContainerProps {
   id: string;
   type: string;
   position: { x: number; y: number };
   size?: { width: number; height: number };
   text?: string;
-  iconType?: IconType; // Usar el tipo importado
-  backgroundColor?: string; // Añadir la propiedad backgroundColor
+  iconType?: IconType;
+  backgroundColor?: string;
+  borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'none';
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
   onConnectionEnd: (targetNodeId: string, targetPosition: ConnectionPosition, x: number, y: number) => void;
   onNodeMove: (nodeId: string, position: { x: number, y: number }) => void;
   onNodeResize: (nodeId: string, size: { width: number, height: number }) => void;
   onDeleteNode?: (nodeId: string) => void;
-  onPropertiesChange?: (properties: { [key: string]: any }) => void; // Para cambios de propiedades adicionales
+  onPropertiesChange?: (properties: { [key: string]: any }) => void;
   disabled?: boolean;
 }
 
-type ResizeHandle = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-
-export function CanvasNode({ 
+export function CanvasContainer({ 
   id, 
   type, 
   position, 
-  size: initialSize = { width: 120, height: 120 },
+  size: initialSize = { width: 400, height: 300 },
   text = "",
   iconType,
-  backgroundColor = "#FFFFFF", // Añadir valor por defecto
+  backgroundColor = "rgba(240, 249, 255, 0.3)",
+  borderStyle = "dashed",
   onConnectionStart,
   onConnectionEnd,
   onNodeMove,
@@ -39,7 +41,7 @@ export function CanvasNode({
   onDeleteNode,
   onPropertiesChange,
   disabled = false
-}: CanvasNodeProps) {
+}: CanvasContainerProps) {
   const [pos, setPos] = useState(position);
   const [size, setSize] = useState(initialSize);
   const [isHovered, setIsHovered] = useState(false);
@@ -49,16 +51,16 @@ export function CanvasNode({
   const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
   const [showControls, setShowControls] = useState(false);
   
-  const nodeRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef<{ x: number; y: number; startX: number; startY: number } | null>(null);
   const resizeStartRef = useRef<{ handle: ResizeHandle; x: number; y: number; width: number; height: number; startX: number; startY: number } | null>(null);
   const initializedRef = useRef<boolean>(false);
 
   // Buscar tamaño del nodo en el DOM si no está definido
   useEffect(() => {
-    if (!initializedRef.current && nodeRef.current) {
+    if (!initializedRef.current && containerRef.current) {
       // Obtener el tamaño actual del nodo desde el DOM
-      const nodeElement = nodeRef.current;
+      const nodeElement = containerRef.current;
       const { width, height } = nodeElement.getBoundingClientRect();
       
       // Solo actualizar si es diferente del valor predeterminado o si no hay tamaño definido
@@ -87,10 +89,10 @@ export function CanvasNode({
       }
     }
   }, [type]);
-
+  
   // Debugging para el color de fondo
   useEffect(() => {
-    console.log(`CanvasNode ${id} - backgroundColor recibido:`, backgroundColor);
+    console.log(`CanvasContainer ${id} - backgroundColor recibido:`, backgroundColor);
   }, [id, backgroundColor]);
   
   // Limpiar listeners globales al desmontar
@@ -106,10 +108,10 @@ export function CanvasNode({
         const newY = dragStartRef.current.startY + dy;
         
         // Actualizar DOM directamente sin ningún tipo de transformación o animación
-        if (nodeRef.current) {
+        if (containerRef.current) {
           // Asignación directa de posiciones usando left/top
-          nodeRef.current.style.left = `${newX}px`;
-          nodeRef.current.style.top = `${newY}px`;
+          containerRef.current.style.left = `${newX}px`;
+          containerRef.current.style.top = `${newY}px`;
           
           // Notificar al padre
           onNodeMove(id, { x: newX, y: newY });
@@ -122,84 +124,63 @@ export function CanvasNode({
         handleResizeMove(e);
       }
     };
-
+    
     const handleGlobalMouseUp = (e: MouseEvent) => {
-      if (isDragging && dragStartRef.current && nodeRef.current) {
-        // Simplemente limpiar el estado
-        nodeRef.current.classList.remove('dragging');
+      if (isDragging || isResizing) {
+        e.preventDefault();
         setIsDragging(false);
-        dragStartRef.current = null;
-      }
-      
-      if (isResizing && resizeStartRef.current && nodeRef.current) {
-        // Al finalizar el redimensionado, solo necesitamos limpiar el estado
-        // ya que las dimensiones y posiciones ya se actualizaron en tiempo real
         setIsResizing(null);
+        dragStartRef.current = null;
         resizeStartRef.current = null;
       }
     };
-
-    if (isDragging || isResizing) {
-      document.addEventListener('mousemove', handleGlobalMouseMove);
-      document.addEventListener('mouseup', handleGlobalMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleGlobalMouseMove);
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleGlobalMouseMove);
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
-    };
-  }, [isDragging, isResizing, id, onNodeMove, onNodeResize, pos.x, pos.y]);
-
-  // Manejadores para arrastrar el nodo
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (disabled) return;
     
+    // Agregar escuchas para eventos globales del ratón
+    window.addEventListener('mousemove', handleGlobalMouseMove);
+    window.addEventListener('mouseup', handleGlobalMouseUp);
+    
+    // Limpieza al desmontar
+    return () => {
+      window.removeEventListener('mousemove', handleGlobalMouseMove);
+      window.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [id, isDragging, isResizing]);
+  
+  // Manejar inicio de arrastre del nodo
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Verificar que el clic no sea en un control o se esté utilizando
+    if (disabled || isResizing || isColorPickerOpen || isIconSelectorOpen) return;
+    
+    // Solo iniciar arrastre con clic primario y no en elementos interactivos
+    if (e.button !== 0 || (e.target as HTMLElement).tagName === 'INPUT') return;
+    
+    // Evitar iniciar arrastre si hacemos clic en un punto de conexión o botón de eliminar
     const target = e.target as HTMLElement;
     if (
-      target.tagName === 'BUTTON' ||
-      target.classList.contains('connection-point') ||
-      target.classList.contains('resize-handle') ||
-      target.closest('input') // Usar closest para detectar clics dentro del input
+      target.closest('.connection-point') || 
+      target.closest('button') || 
+      target.tagName === 'INPUT'
     ) {
       return;
     }
     
-    if (e.button !== 0) return; // Solo botón izquierdo
-    
+    // Iniciar operación de arrastre
     e.stopPropagation();
     e.preventDefault();
-    
-    // Agregar una clase al nodo cuando comienza el arrastre para mejorar el aspecto visual
-    if (nodeRef.current) {
-      nodeRef.current.classList.add('dragging');
-    }
-    
-    dragStartRef.current = { x: e.clientX, y: e.clientY, startX: pos.x, startY: pos.y };
     setIsDragging(true);
-  };
-  
-  // Manejadores para redimensionar el nodo
-  const handleResizeStart = (e: React.MouseEvent, handle: ResizeHandle) => {
-    e.stopPropagation();
-    e.preventDefault();
     
-    resizeStartRef.current = {
-      handle,
+    // Guardar posición inicial para cálculos de desplazamiento
+    dragStartRef.current = {
       x: e.clientX,
       y: e.clientY,
-      width: size.width,
-      height: size.height,
       startX: pos.x,
       startY: pos.y
     };
-    setIsResizing(handle);
   };
-
-  const handleResizeMove = (moveEvent: MouseEvent | PointerEvent) => {
-    if (!resizeStartRef.current || !nodeRef.current) return;
+  
+  // Manejar el redimensionamiento al mover el ratón
+  const handleResizeMove = (moveEvent: MouseEvent) => {
+    if (!resizeStartRef.current || !containerRef.current) return;
     
     const { handle, x, y, width, height, startX, startY } = resizeStartRef.current;
     
@@ -213,24 +194,24 @@ export function CanvasNode({
     
     // Aplicar cambios según el controlador
     if (handle.includes('left')) {
-      newWidth = Math.max(60, width - deltaX);
+      newWidth = Math.max(100, width - deltaX);
       newPosX = startX + (width - newWidth);
     } else if (handle.includes('right')) {
-      newWidth = Math.max(60, width + deltaX);
+      newWidth = Math.max(100, width + deltaX);
     }
 
     if (handle.includes('top')) {
-      newHeight = Math.max(60, height - deltaY);
+      newHeight = Math.max(100, height - deltaY);
       newPosY = startY + (height - newHeight);
     } else if (handle.includes('bottom')) {
-      newHeight = Math.max(60, height + deltaY);
+      newHeight = Math.max(100, height + deltaY);
     }
     
     // Actualizar directamente en el DOM para un redimensionado fluido
-    nodeRef.current.style.left = `${newPosX}px`;
-    nodeRef.current.style.top = `${newPosY}px`;
-    nodeRef.current.style.width = `${newWidth}px`;
-    nodeRef.current.style.height = `${newHeight}px`;
+    containerRef.current.style.left = `${newPosX}px`;
+    containerRef.current.style.top = `${newPosY}px`;
+    containerRef.current.style.width = `${newWidth}px`;
+    containerRef.current.style.height = `${newHeight}px`;
     
     // Actualizar el estado en tiempo real para mantener la coherencia
     setPos({ x: newPosX, y: newPosY });
@@ -239,6 +220,23 @@ export function CanvasNode({
     // Notificar al padre en tiempo real
     onNodeMove(id, { x: newPosX, y: newPosY });
     onNodeResize(id, { width: newWidth, height: newHeight });
+  };
+  
+  // Iniciar redimensionamiento desde un control específico
+  const handleResizeStart = (e: React.MouseEvent, handle: ResizeHandle) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
+    setIsResizing(handle);
+    resizeStartRef.current = {
+      handle,
+      x: e.clientX,
+      y: e.clientY,
+      width: size.width,
+      height: size.height,
+      startX: pos.x,
+      startY: pos.y
+    };
   };
   
   const handleMouseEnter = () => {
@@ -283,7 +281,7 @@ export function CanvasNode({
     
     if (!isDragging && !isResizing) { // Solo finalizar conexión si no estábamos arrastrando/redimensionando
       // Determinar la posición de conexión más cercana al punto donde se soltó el ratón
-      const rect = nodeRef.current?.getBoundingClientRect();
+      const rect = containerRef.current?.getBoundingClientRect();
       if (!rect) return;
       
       // Obtener la posición relativa del ratón respecto al nodo
@@ -310,7 +308,7 @@ export function CanvasNode({
         connectionPosition = 'left';
       }
       
-      console.log(`Node ${id}: Conexión terminada en posición ${connectionPosition}`);
+      console.log(`Container ${id}: Conexión terminada en posición ${connectionPosition}`);
       
       // Calcular las coordenadas exactas del punto de conexión
       let connectionX = pos.x;
@@ -336,9 +334,9 @@ export function CanvasNode({
   // Función para manejar cambios en el ícono
   const handleIconChange = (newIcon: IconType) => {
     // Notificar al padre del cambio
-    console.log("Icono cambiado en nodo:", id, newIcon);
+    console.log("Icono cambiado en contenedor:", id, newIcon);
     
-    // Propagar cambio al componente padre - CORREGIR: usar 'icon' en lugar de 'iconType'
+    // Propagar cambio al componente padre
     if (onPropertiesChange) {
       onPropertiesChange({ icon: newIcon });
     }
@@ -350,7 +348,7 @@ export function CanvasNode({
   // Función para manejar cambios en el color de fondo
   const handleColorChange = (newColor: string) => {
     // Notificar al padre del cambio
-    console.log("Color cambiado en nodo:", id, newColor);
+    console.log("Color cambiado en contenedor:", id, newColor);
     
     // Propagar cambio al componente padre
     if (onPropertiesChange) {
@@ -364,7 +362,7 @@ export function CanvasNode({
   // Manejar clics fuera del nodo para ocultar los controles
   useEffect(() => {
     function handleOutsideClick(e: MouseEvent) {
-      if (nodeRef.current && !nodeRef.current.contains(e.target as Node)) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setShowControls(false);
       }
     }
@@ -387,15 +385,17 @@ export function CanvasNode({
   }, [isHovered, isDragging, isResizing]);
 
   // Determinar las clases CSS para el nodo según su estado
-  const nodeClasses = `
+  const containerClasses = `
     absolute 
     node 
+    container-node
     rounded-lg
     shadow-sm
-    bg-white/95
+    bg-transparent
     backdrop-filter 
-    backdrop-blur-md
-    border 
+    backdrop-blur-sm
+    border-2
+    border-dashed
     border-border/40
     select-none
     ${isDragging ? 'cursor-grabbing' : 'cursor-move'}
@@ -403,7 +403,7 @@ export function CanvasNode({
   `;
   
   // Estilos adicionales aplicados directamente en el style
-  const nodeStyle = {
+  const containerStyle = {
     left: `${pos.x}px`, 
     top: `${pos.y}px`,
     width: `${size.width}px`,
@@ -413,25 +413,27 @@ export function CanvasNode({
     overflow: 'visible',
     transition: 'none',
     animation: 'none',
-    zIndex: isDragging || isResizing ? 40 : (isHovered ? 30 : 10), // Valores más altos para quedar encima de los contenedores
+    borderStyle: borderStyle || 'dashed',
+    zIndex: isDragging || isResizing ? 20 : (isHovered ? 5 : 0), // Valores más bajos para quedar debajo de los squares
   };
 
   return (
     <div
-      ref={nodeRef}
-      className={nodeClasses}
-      style={nodeStyle}
+      ref={containerRef}
+      className={containerClasses}
+      style={containerStyle}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseUp={handleMouseUp}
     >
-      <div className="w-full h-full p-2 overflow-hidden rounded-md" style={{ transition: 'none' }}>
-        <Square 
+      <div className="w-full h-full rounded-md" style={{ transition: 'none' }}>
+        <Container 
           editable={true} 
           initialText={text} 
           icon={iconType}
           backgroundColor={backgroundColor}
+          borderStyle={borderStyle as any}
           onIconChange={handleIconChange}
           onColorChange={handleColorChange}
           onColorPickerOpen={() => setIsColorPickerOpen(true)}
@@ -454,7 +456,7 @@ export function CanvasNode({
           <button
             className="absolute -top-6 -right-6 bg-red-400 hover:bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center transition-colors shadow-sm border border-white"
             onClick={handleDelete}
-            title="Eliminar nodo"
+            title="Eliminar contenedor"
           >
             ×
           </button>
@@ -495,4 +497,4 @@ export function CanvasNode({
       )}
     </div>
   );
-}
+} 

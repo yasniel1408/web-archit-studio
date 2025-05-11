@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Arrow } from '@/app/components/atoms/arrow/arrow';
 import { ConnectionType, ActiveConnectionType, ConnectionPropertiesType } from '../types';
 
@@ -11,6 +11,7 @@ type CanvasConnectionsProps = {
   selectedConnectionId: string | null;
   onConnectionPropertiesChange?: (connectionId: string, properties: ConnectionPropertiesType) => void;
   onDeleteConnection?: (connectionId: string) => void;
+  nodes?: any[]; 
 };
 
 export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
@@ -21,8 +22,10 @@ export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
   onConnectionSelect,
   selectedConnectionId,
   onConnectionPropertiesChange,
-  onDeleteConnection
+  onDeleteConnection,
+  nodes = []
 }) => {
+  
   return (
     <>
       {/* Conexiones existentes */}

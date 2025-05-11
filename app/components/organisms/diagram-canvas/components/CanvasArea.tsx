@@ -1,11 +1,12 @@
-import React from 'react';
-import { diagramCanvasStyles } from '../styles';
+import React, { useState, useCallback } from 'react';
 import { NodeType, ActiveConnectionType, ConnectionType, ConnectionPropertiesType } from '../types';
 import { CanvasNode } from '@/app/components/molecules/canvas-node/canvas-node';
+import { CanvasContainer } from '@/app/components/molecules/canvas-container/canvas-container';
 import { CanvasConnections } from './CanvasConnections';
 import { MiniMap } from '@/app/components/molecules/mini-map/mini-map';
 import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
 import { IconType } from '@/app/components/atoms/icon-selector/types';
+import { diagramCanvasStyles } from '../styles';
 
 type CanvasAreaProps = {
   canvasRef: React.RefObject<HTMLDivElement>;
@@ -65,6 +66,7 @@ export function CanvasArea({
   onDeleteConnection,
   onNodePropertiesChange
 }: CanvasAreaProps) {
+  
   const getCursorStyle = () => {
     if (isDraggingCanvas) return diagramCanvasStyles.canvasGrabbing;
     if (isSpacePressed) return diagramCanvasStyles.canvasGrab;
@@ -105,27 +107,56 @@ export function CanvasArea({
           selectedConnectionId={selectedConnectionId}
           onConnectionPropertiesChange={onConnectionPropertiesChange}
           onDeleteConnection={onDeleteConnection}
+          nodes={nodes}
         />
 
-        {/* Nodos */}
-        {nodes.map(node => (
-          <CanvasNode
-            key={node.id}
-            id={node.id}
-            position={node.position}
-            size={node.size}
-            text={node.text}
-            type={node.type}
-            iconType={node.icon}
-            backgroundColor={node.backgroundColor}
-            onNodeMove={onNodeMove}
-            onNodeResize={onNodeResize}
-            onDeleteNode={onDeleteNode}
-            onConnectionStart={onConnectionStart}
-            onConnectionEnd={onConnectionEnd}
-            onPropertiesChange={(props) => onNodePropertiesChange(node.id, props)}
-          />
-        ))}
+        {/* Primero renderizamos los contenedores (para que estén por debajo) */}
+        {nodes
+          .filter(node => node.type.includes('container'))
+          .map(node => (
+            <CanvasContainer
+              key={node.id}
+              id={node.id}
+              position={node.position}
+              size={node.size}
+              text={node.text}
+              type={node.type}
+              iconType={node.icon}
+              backgroundColor={node.backgroundColor}
+              borderStyle={(node.type.includes('solid') ? 'solid' : 
+                          node.type.includes('dotted') ? 'dotted' :
+                          node.type.includes('double') ? 'double' :
+                          node.type.includes('none') ? 'none' : 'dashed')}
+              onNodeMove={onNodeMove}
+              onNodeResize={onNodeResize}
+              onDeleteNode={onDeleteNode}
+              onConnectionStart={onConnectionStart}
+              onConnectionEnd={onConnectionEnd}
+              onPropertiesChange={(props) => onNodePropertiesChange(node.id, props)}
+            />
+          ))}
+          
+        {/* Después renderizamos los squares (para que estén por encima) */}
+        {nodes
+          .filter(node => !node.type.includes('container'))
+          .map(node => (
+            <CanvasNode
+              key={node.id}
+              id={node.id}
+              position={node.position}
+              size={node.size}
+              text={node.text}
+              type={node.type}
+              iconType={node.icon}
+              backgroundColor={node.backgroundColor}
+              onNodeMove={onNodeMove}
+              onNodeResize={onNodeResize}
+              onDeleteNode={onDeleteNode}
+              onConnectionStart={onConnectionStart}
+              onConnectionEnd={onConnectionEnd}
+              onPropertiesChange={(props) => onNodePropertiesChange(node.id, props)}
+            />
+          ))}
       </div>
 
       {/* Mini-mapa */}
