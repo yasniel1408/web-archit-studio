@@ -8,6 +8,7 @@ export type NodeType = {
   size: { width: number; height: number };
   icon?: IconType;
   backgroundColor?: string;
+  zIndex?: number;
 };
 
 export type ConnectionPosition = 'top' | 'right' | 'bottom' | 'left';

@@ -7,19 +7,23 @@ export interface SquareProps {
   initialText?: string;
   icon?: IconType;
   backgroundColor?: string;
+  zIndex?: number;
   onIconChange?: (icon: IconType) => void;
-  onColorChange?: (color: string) => void;
+  onColorChange?: (color: string, zIndex?: number) => void;
   onColorPickerOpen?: () => void;
   onColorPickerClose?: () => void;
   onIconSelectorOpen?: () => void;
   onIconSelectorClose?: () => void;
+  onTextChange?: (text: string) => void;
 }
 
 export interface ColorPickerProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (color: string) => void;
+  onSelect: (color: string, zIndex?: number) => void;
   initialColor: string;
+  showZIndexControls?: boolean;
+  initialZIndex?: number;
 }
 
 export const predefinedColors = [

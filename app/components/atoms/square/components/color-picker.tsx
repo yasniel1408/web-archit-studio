@@ -4,14 +4,29 @@ import { colorPickerStyles } from '../styles';
 import { useColorPicker } from '../hooks/useColorPicker';
 import { Modal } from '../../modal/Modal';
 
-export function ColorPicker({ isOpen, onClose, onSelect, initialColor }: ColorPickerProps) {
+export function ColorPicker({ 
+  isOpen, 
+  onClose, 
+  onSelect, 
+  initialColor,
+  showZIndexControls = false,
+  initialZIndex = 0
+}: ColorPickerProps) {
   const {
     selectedColor,
+    zIndex,
     handleColorChange,
     handleTextChange,
+    handleZIndexChange,
     selectColor,
     applyColor
-  } = useColorPicker({ initialColor, onSelect, onClose });
+  } = useColorPicker({ 
+    initialColor, 
+    onSelect, 
+    onClose,
+    showZIndexControls,
+    initialZIndex
+  });
   
   const handleApplyColor = () => {
     applyColor();
@@ -21,7 +36,7 @@ export function ColorPicker({ isOpen, onClose, onSelect, initialColor }: ColorPi
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Personalizar Color"
+      title="Personalizar Contenedor"
       size="small"
       className="overflow-hidden"
     >
@@ -56,6 +71,36 @@ export function ColorPicker({ isOpen, onClose, onSelect, initialColor }: ColorPi
             />
           </div>
         </div>
+        
+        {/* Control de prioridad de superposición (Z-Index) */}
+        {showZIndexControls && (
+          <div className={colorPickerStyles.section}>
+            <label className={colorPickerStyles.label}>
+              Prioridad de superposición
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={zIndex}
+                onChange={handleZIndexChange}
+                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              />
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={zIndex}
+                onChange={handleZIndexChange}
+                className="w-16 border border-gray-300 px-2 py-1 rounded-md text-sm focus:outline-none"
+              />
+            </div>
+            <div className="mt-1 text-xs text-gray-500">
+              Mayor valor = Por encima de otros contenedores
+            </div>
+          </div>
+        )}
         
         {/* Colores predefinidos */}
         <div>

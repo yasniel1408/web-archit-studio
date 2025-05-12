@@ -28,6 +28,9 @@ export type IconType =
   | 'aws-neptune'
   | 'aws-database-migration'
   | 'aws-timestream'
+  | 'aws-documentdb'
+  | 'aws-quantum-ledger-database'
+  | 'aws-keyspaces'
   // Iconos AWS App Integration
   | 'aws-api-gateway'
   | 'aws-app-sync'
@@ -45,6 +48,10 @@ export type IconType =
   | 'aws-s3'
   | 'aws-efs'
   | 'aws-glacier'
+  | 'aws-ebs'
+  | 'aws-backup'
+  | 'aws-fsx'
+  | 'aws-storage-gateway'
   // Iconos AWS Security
   | 'aws-waf'
   | 'aws-shield'
@@ -54,6 +61,27 @@ export type IconType =
   | 'aws-cloudformation'
   | 'aws-cloudtrail'
   | 'aws-auto-scaling'
+  // Iconos AWS IoT
+  | 'aws-iot-core'
+  | 'aws-iot-analytics'
+  | 'aws-iot-greengrass'
+  | 'aws-iot-sitewise'
+  // Iconos AWS Machine Learning
+  | 'aws-sagemaker'
+  | 'aws-rekognition'
+  | 'aws-comprehend'
+  | 'aws-personalize'
+  | 'aws-polly'
+  | 'aws-translate'
+  // Iconos AWS Migration & Transfer
+  | 'aws-datasync'
+  | 'aws-transfer-family'
+  | 'aws-migration-hub'
+  // Iconos AWS Developer Tools
+  | 'aws-codepipeline'
+  | 'aws-codecommit'
+  | 'aws-codebuild'
+  | 'aws-cloud9'
   // Iconos GCP Compute
   | 'gcp-compute-engine'
   | 'gcp-kubernetes-engine'
@@ -149,6 +177,9 @@ export const iconsMetadata: IconMetadata[] = [
   { id: 'aws-neptune', name: 'AWS Neptune', category: 'AWS Database', tags: ['aws', 'amazon', 'neptune', 'graph', 'database', 'grafo'] },
   { id: 'aws-database-migration', name: 'AWS Database Migration', category: 'AWS Database', tags: ['aws', 'amazon', 'migration', 'dms', 'database', 'migración'] },
   { id: 'aws-timestream', name: 'AWS Timestream', category: 'AWS Database', tags: ['aws', 'amazon', 'timestream', 'serie temporal', 'database', 'time series'] },
+  { id: 'aws-documentdb', name: 'AWS DocumentDB', category: 'AWS Database', tags: ['aws', 'amazon', 'documentdb', 'mongodb', 'nosql', 'document'] },
+  { id: 'aws-quantum-ledger-database', name: 'AWS QLDB', category: 'AWS Database', tags: ['aws', 'amazon', 'qldb', 'ledger', 'blockchain', 'inmutable'] },
+  { id: 'aws-keyspaces', name: 'AWS Keyspaces', category: 'AWS Database', tags: ['aws', 'amazon', 'keyspaces', 'cassandra', 'nosql', 'wide column'] },
   
   // AWS App Integration
   { id: 'aws-api-gateway', name: 'AWS API Gateway', category: 'AWS App Integration', tags: ['aws', 'amazon', 'api', 'gateway', 'rest', 'http'] },
@@ -169,6 +200,10 @@ export const iconsMetadata: IconMetadata[] = [
   { id: 'aws-s3', name: 'AWS S3', category: 'AWS Storage', tags: ['aws', 'amazon', 's3', 'storage', 'bucket', 'object'] },
   { id: 'aws-efs', name: 'AWS EFS', category: 'AWS Storage', tags: ['aws', 'amazon', 'efs', 'elastic', 'file', 'system'] },
   { id: 'aws-glacier', name: 'AWS Glacier', category: 'AWS Storage', tags: ['aws', 'amazon', 'glacier', 'archive', 'backup', 'storage'] },
+  { id: 'aws-ebs', name: 'AWS EBS', category: 'AWS Storage', tags: ['aws', 'amazon', 'ebs', 'elastic', 'block', 'store', 'volume'] },
+  { id: 'aws-backup', name: 'AWS Backup', category: 'AWS Storage', tags: ['aws', 'amazon', 'backup', 'respaldo', 'copia', 'seguridad'] },
+  { id: 'aws-fsx', name: 'AWS FSx', category: 'AWS Storage', tags: ['aws', 'amazon', 'fsx', 'file', 'system', 'windows', 'lustre'] },
+  { id: 'aws-storage-gateway', name: 'AWS Storage Gateway', category: 'AWS Storage', tags: ['aws', 'amazon', 'storage', 'gateway', 'hybrid', 'on-premise'] },
 
   // AWS Security
   { id: 'aws-waf', name: 'AWS WAF', category: 'AWS Security', tags: ['aws', 'amazon', 'waf', 'firewall', 'seguridad', 'web', 'aplicación'] },
@@ -180,6 +215,31 @@ export const iconsMetadata: IconMetadata[] = [
   { id: 'aws-cloudformation', name: 'AWS CloudFormation', category: 'AWS Management', tags: ['aws', 'amazon', 'cloudformation', 'iac', 'infraestructura', 'código', 'plantilla'] },
   { id: 'aws-cloudtrail', name: 'AWS CloudTrail', category: 'AWS Management', tags: ['aws', 'amazon', 'cloudtrail', 'auditoría', 'logs', 'seguridad'] },
   { id: 'aws-auto-scaling', name: 'AWS Auto Scaling', category: 'AWS Management', tags: ['aws', 'amazon', 'auto', 'scaling', 'escalado', 'automático', 'grupo'] },
+  
+  // AWS IoT
+  { id: 'aws-iot-core', name: 'AWS IoT Core', category: 'AWS IoT', tags: ['aws', 'amazon', 'iot', 'internet', 'things', 'dispositivos', 'conectados'] },
+  { id: 'aws-iot-analytics', name: 'AWS IoT Analytics', category: 'AWS IoT', tags: ['aws', 'amazon', 'iot', 'analytics', 'análisis', 'datos', 'sensores'] },
+  { id: 'aws-iot-greengrass', name: 'AWS IoT Greengrass', category: 'AWS IoT', tags: ['aws', 'amazon', 'iot', 'greengrass', 'edge', 'computing', 'local'] },
+  { id: 'aws-iot-sitewise', name: 'AWS IoT SiteWise', category: 'AWS IoT', tags: ['aws', 'amazon', 'iot', 'sitewise', 'industrial', 'equipos', 'sensores'] },
+
+  // AWS Machine Learning
+  { id: 'aws-sagemaker', name: 'AWS SageMaker', category: 'AWS Machine Learning', tags: ['aws', 'amazon', 'sagemaker', 'ml', 'machine learning', 'modelos', 'ai'] },
+  { id: 'aws-rekognition', name: 'AWS Rekognition', category: 'AWS Machine Learning', tags: ['aws', 'amazon', 'rekognition', 'visión', 'imágenes', 'video', 'facial'] },
+  { id: 'aws-comprehend', name: 'AWS Comprehend', category: 'AWS Machine Learning', tags: ['aws', 'amazon', 'comprehend', 'nlp', 'text', 'lenguaje natural'] },
+  { id: 'aws-personalize', name: 'AWS Personalize', category: 'AWS Machine Learning', tags: ['aws', 'amazon', 'personalize', 'recomendación', 'personalización'] },
+  { id: 'aws-polly', name: 'AWS Polly', category: 'AWS Machine Learning', tags: ['aws', 'amazon', 'polly', 'text-to-speech', 'voz', 'audio'] },
+  { id: 'aws-translate', name: 'AWS Translate', category: 'AWS Machine Learning', tags: ['aws', 'amazon', 'translate', 'traducción', 'idiomas', 'lenguajes'] },
+
+  // AWS Migration & Transfer
+  { id: 'aws-datasync', name: 'AWS DataSync', category: 'AWS Migration', tags: ['aws', 'amazon', 'datasync', 'sincronización', 'transferencia', 'datos'] },
+  { id: 'aws-transfer-family', name: 'AWS Transfer Family', category: 'AWS Migration', tags: ['aws', 'amazon', 'transfer', 'sftp', 'ftps', 'ftp'] },
+  { id: 'aws-migration-hub', name: 'AWS Migration Hub', category: 'AWS Migration', tags: ['aws', 'amazon', 'migration', 'migracion', 'hub', 'tracking'] },
+
+  // AWS Developer Tools
+  { id: 'aws-codepipeline', name: 'AWS CodePipeline', category: 'AWS Developer Tools', tags: ['aws', 'amazon', 'codepipeline', 'ci/cd', 'pipeline', 'despliegue'] },
+  { id: 'aws-codecommit', name: 'AWS CodeCommit', category: 'AWS Developer Tools', tags: ['aws', 'amazon', 'codecommit', 'git', 'repositorio', 'código'] },
+  { id: 'aws-codebuild', name: 'AWS CodeBuild', category: 'AWS Developer Tools', tags: ['aws', 'amazon', 'codebuild', 'build', 'compilación', 'ci'] },
+  { id: 'aws-cloud9', name: 'AWS Cloud9', category: 'AWS Developer Tools', tags: ['aws', 'amazon', 'cloud9', 'ide', 'desarrollo', 'editor'] },
   
   // GCP Compute
   { id: 'gcp-compute-engine', name: 'GCP Compute Engine', category: 'GCP Compute', tags: ['gcp', 'google', 'compute', 'engine', 'vm', 'virtual machine'] },

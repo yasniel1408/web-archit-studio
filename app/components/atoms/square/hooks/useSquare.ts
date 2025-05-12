@@ -8,11 +8,12 @@ interface UseSquareProps {
   backgroundColor?: string;
   editable?: boolean;
   onIconChange?: (icon: IconType) => void;
-  onColorChange?: (color: string) => void;
+  onColorChange?: (color: string, zIndex?: number) => void;
   onIconSelectorOpen?: () => void;
   onIconSelectorClose?: () => void;
   onColorPickerOpen?: () => void;
   onColorPickerClose?: () => void;
+  onTextChange?: (text: string) => void;
 }
 
 export function useSquare({
@@ -26,7 +27,8 @@ export function useSquare({
   onIconSelectorOpen,
   onIconSelectorClose,
   onColorPickerOpen,
-  onColorPickerClose
+  onColorPickerClose,
+  onTextChange
 }: UseSquareProps) {
   const [innerText, setInnerText] = useState(initialText || text);
   const [showIconSelector, setShowIconSelector] = useState(false);
@@ -43,8 +45,21 @@ export function useSquare({
     setSelectedColor(backgroundColor);
   }, [backgroundColor]);
   
+  useEffect(() => {
+    // Actualizar el texto interno si cambia la prop text
+    if (text && text !== innerText) {
+      setInnerText(text);
+    }
+  }, [text]);
+  
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInnerText(e.target.value);
+    const newText = e.target.value;
+    setInnerText(newText);
+    
+    // Notificar al componente padre sobre el cambio de texto
+    if (onTextChange) {
+      onTextChange(newText);
+    }
   };
   
   const handleInputClick = (e: React.MouseEvent) => {
@@ -99,11 +114,11 @@ export function useSquare({
     }
   };
 
-  const handleColorChange = (newColor: string) => {
+  const handleColorChange = (newColor: string, newZIndex?: number) => {
     setSelectedColor(newColor);
     setShowColorPicker(false);
     if (onColorChange) {
-      onColorChange(newColor);
+      onColorChange(newColor, newZIndex);
     }
     if (onColorPickerClose) {
       onColorPickerClose();

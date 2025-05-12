@@ -16,6 +16,7 @@ interface CanvasContainerProps {
   iconType?: IconType;
   backgroundColor?: string;
   borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'none';
+  zIndex?: number;
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
   onConnectionEnd: (targetNodeId: string, targetPosition: ConnectionPosition, x: number, y: number) => void;
   onNodeMove: (nodeId: string, position: { x: number, y: number }) => void;
@@ -34,6 +35,7 @@ export function CanvasContainer({
   iconType,
   backgroundColor = "rgba(240, 249, 255, 0.3)",
   borderStyle = "dashed",
+  zIndex = 0,
   onConnectionStart,
   onConnectionEnd,
   onNodeMove,
@@ -346,17 +348,31 @@ export function CanvasContainer({
   };
 
   // Función para manejar cambios en el color de fondo
-  const handleColorChange = (newColor: string) => {
+  const handleColorChange = (newColor: string, newZIndex?: number) => {
     // Notificar al padre del cambio
-    console.log("Color cambiado en contenedor:", id, newColor);
+    console.log("Color cambiado en contenedor:", id, newColor, "zIndex:", newZIndex);
     
     // Propagar cambio al componente padre
     if (onPropertiesChange) {
-      onPropertiesChange({ backgroundColor: newColor });
+      onPropertiesChange({ 
+        backgroundColor: newColor,
+        ...(newZIndex !== undefined && { zIndex: newZIndex })
+      });
     }
     
     // Actualizar estado para rastrear cuando el selector está abierto
     setIsColorPickerOpen(false);
+  };
+
+  // Función para manejar cambios en el texto del contenedor
+  const handleTextChange = (newText: string) => {
+    // Notificar al padre del cambio
+    console.log("Texto cambiado en contenedor:", id, newText);
+    
+    // Propagar cambio al componente padre
+    if (onPropertiesChange) {
+      onPropertiesChange({ text: newText });
+    }
   };
 
   // Manejar clics fuera del nodo para ocultar los controles
@@ -414,7 +430,9 @@ export function CanvasContainer({
     transition: 'none',
     animation: 'none',
     borderStyle: borderStyle || 'dashed',
-    zIndex: isDragging || isResizing ? 20 : (isHovered ? 5 : 0), // Valores más bajos para quedar debajo de los squares
+    // Ajustar z-index para respetar la prioridad absoluta
+    // Los incrementos por estado deben ser más pequeños que la diferencia entre niveles de prioridad
+    zIndex: zIndex * 100 + (isDragging ? 30 : (isResizing ? 20 : (isHovered ? 10 : 0))),
   };
 
   return (
@@ -427,15 +445,17 @@ export function CanvasContainer({
       onMouseLeave={handleMouseLeave}
       onMouseUp={handleMouseUp}
     >
-      <div className="w-full h-full rounded-md" style={{ transition: 'none' }}>
+      <div className="w-full h-full p-2 overflow-hidden rounded-md" style={{ transition: 'none' }}>
         <Container 
           editable={true} 
           initialText={text} 
           icon={iconType}
           backgroundColor={backgroundColor}
           borderStyle={borderStyle as any}
+          zIndex={zIndex}
           onIconChange={handleIconChange}
           onColorChange={handleColorChange}
+          onTextChange={handleTextChange}
           onColorPickerOpen={() => setIsColorPickerOpen(true)}
           onColorPickerClose={() => setIsColorPickerOpen(false)}
           onIconSelectorOpen={() => setIsIconSelectorOpen(true)}

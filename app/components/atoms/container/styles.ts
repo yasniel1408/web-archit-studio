@@ -8,6 +8,6 @@ export const containerStyles = {
   addIconSvg: 'w-4 h-4 text-gray-500',
   colorIndicator: 'absolute top-1.5 right-1.5 flex items-center',
   colorDot: 'w-3 h-3 rounded-full border border-gray-300',
-  input: 'w-auto text-sm font-semibold focus:outline-none bg-transparent pointer-events-auto',
-  text: 'text-sm font-semibold w-auto overflow-hidden text-gray-800 pointer-events-none',
+  input: 'w-auto text-sm font-semibold focus:outline-none bg-transparent pointer-events-auto leading-normal',
+  text: 'text-sm font-semibold w-auto overflow-hidden text-gray-800 pointer-events-none leading-normal',
 }; 

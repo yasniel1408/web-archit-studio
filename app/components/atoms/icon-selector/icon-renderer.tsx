@@ -114,6 +114,12 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/aws/database-migration.svg" className={className} alt="AWS Database Migration" style={{borderRadius: '7px'}} />;
     case 'aws-timestream':
       return <img src="/assets/icons/aws/timestream.svg" className={className} alt="AWS Timestream" style={{borderRadius: '7px'}} />;
+    case 'aws-documentdb':
+      return <img src="/assets/icons/aws/documentdb.svg" className={className} alt="AWS DocumentDB" style={{borderRadius: '7px'}} />;
+    case 'aws-quantum-ledger-database':
+      return <img src="/assets/icons/aws/quantum-ledger-database.svg" className={className} alt="AWS QLDB" style={{borderRadius: '7px'}} />;
+    case 'aws-keyspaces':
+      return <img src="/assets/icons/aws/keyspaces.svg" className={className} alt="AWS Keyspaces" style={{borderRadius: '7px'}} />;
       
     // Iconos AWS App Integration
     case 'aws-api-gateway':
@@ -148,6 +154,14 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/aws/efs.svg" className={className} alt="AWS EFS" style={{borderRadius: '7px'}} />;
     case 'aws-glacier':
       return <img src="/assets/icons/aws/glacier.svg" className={className} alt="AWS Glacier" style={{borderRadius: '7px'}} />;
+    case 'aws-ebs':
+      return <img src="/assets/icons/aws/ebs.svg" className={className} alt="AWS EBS" style={{borderRadius: '7px'}} />;
+    case 'aws-backup':
+      return <img src="/assets/icons/aws/backup.svg" className={className} alt="AWS Backup" style={{borderRadius: '7px'}} />;
+    case 'aws-fsx':
+      return <img src="/assets/icons/aws/fsx.svg" className={className} alt="AWS FSx" style={{borderRadius: '7px'}} />;
+    case 'aws-storage-gateway':
+      return <img src="/assets/icons/aws/storage-gateway.svg" className={className} alt="AWS Storage Gateway" style={{borderRadius: '7px'}} />;
     
     // Iconos AWS Security
     case 'aws-waf':
@@ -166,6 +180,48 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/aws/cloudtrail.svg" className={className} alt="AWS CloudTrail" style={{borderRadius: '7px'}} />;
     case 'aws-auto-scaling':
       return <img src="/assets/icons/aws/auto-scaling.svg" className={className} alt="AWS Auto Scaling" style={{borderRadius: '7px'}} />;
+    
+    // Iconos AWS IoT
+    case 'aws-iot-core':
+      return <img src="/assets/icons/aws/iot-core.svg" className={className} alt="AWS IoT Core" style={{borderRadius: '7px'}} />;
+    case 'aws-iot-analytics':
+      return <img src="/assets/icons/aws/iot-analytics.svg" className={className} alt="AWS IoT Analytics" style={{borderRadius: '7px'}} />;
+    case 'aws-iot-greengrass':
+      return <img src="/assets/icons/aws/iot-greengrass.svg" className={className} alt="AWS IoT Greengrass" style={{borderRadius: '7px'}} />;
+    case 'aws-iot-sitewise':
+      return <img src="/assets/icons/aws/iot-sitewise.svg" className={className} alt="AWS IoT SiteWise" style={{borderRadius: '7px'}} />;
+    
+    // Iconos AWS Machine Learning
+    case 'aws-sagemaker':
+      return <img src="/assets/icons/aws/sagemaker.svg" className={className} alt="AWS SageMaker" style={{borderRadius: '7px'}} />;
+    case 'aws-rekognition':
+      return <img src="/assets/icons/aws/rekognition.svg" className={className} alt="AWS Rekognition" style={{borderRadius: '7px'}} />;
+    case 'aws-comprehend':
+      return <img src="/assets/icons/aws/comprehend.svg" className={className} alt="AWS Comprehend" style={{borderRadius: '7px'}} />;
+    case 'aws-personalize':
+      return <img src="/assets/icons/aws/personalize.svg" className={className} alt="AWS Personalize" style={{borderRadius: '7px'}} />;
+    case 'aws-polly':
+      return <img src="/assets/icons/aws/polly.svg" className={className} alt="AWS Polly" style={{borderRadius: '7px'}} />;
+    case 'aws-translate':
+      return <img src="/assets/icons/aws/translate.svg" className={className} alt="AWS Translate" style={{borderRadius: '7px'}} />;
+    
+    // Iconos AWS Migration & Transfer
+    case 'aws-datasync':
+      return <img src="/assets/icons/aws/datasync.svg" className={className} alt="AWS DataSync" style={{borderRadius: '7px'}} />;
+    case 'aws-transfer-family':
+      return <img src="/assets/icons/aws/transfer-family.svg" className={className} alt="AWS Transfer Family" style={{borderRadius: '7px'}} />;
+    case 'aws-migration-hub':
+      return <img src="/assets/icons/aws/migration-hub.svg" className={className} alt="AWS Migration Hub" style={{borderRadius: '7px'}} />;
+    
+    // Iconos AWS Developer Tools
+    case 'aws-codepipeline':
+      return <img src="/assets/icons/aws/codepipeline.svg" className={className} alt="AWS CodePipeline" style={{borderRadius: '7px'}} />;
+    case 'aws-codecommit':
+      return <img src="/assets/icons/aws/codecommit.svg" className={className} alt="AWS CodeCommit" style={{borderRadius: '7px'}} />;
+    case 'aws-codebuild':
+      return <img src="/assets/icons/aws/codebuild.svg" className={className} alt="AWS CodeBuild" style={{borderRadius: '7px'}} />;
+    case 'aws-cloud9':
+      return <img src="/assets/icons/aws/cloud9.svg" className={className} alt="AWS Cloud9" style={{borderRadius: '7px'}} />;
     
     // Iconos GCP Compute
     case 'gcp-compute-engine':

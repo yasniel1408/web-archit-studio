@@ -62,7 +62,8 @@ export function useDiagramPersistence(
             size: node.size || { width: 140, height: 80 },
             // Corregir el mapeo: usar node.icon o node.iconType (para compatibilidad)
             icon: node.icon || node.iconType || undefined,
-            backgroundColor: node.backgroundColor || undefined
+            backgroundColor: node.backgroundColor || undefined,
+            zIndex: node.zIndex || 0
           };
         });
         
@@ -138,7 +139,8 @@ export function useDiagramPersistence(
         text: node.text || "",
         size: node.size || { width: 140, height: 80 },
         icon: node.icon || undefined,
-        backgroundColor: node.backgroundColor || undefined
+        backgroundColor: node.backgroundColor || undefined,
+        zIndex: node.zIndex || 0
       };
     });
     
@@ -378,36 +380,6 @@ export function useDiagramPersistence(
             progressText.innerText = `${progress}% (Frame ${frameIndex}/${totalFrames})`;
           }
           
-          // Simular animaciones aplicando pequeños cambios en la posición
-          // de elementos con clase animation para que se vean en movimiento
-          const animatedElements = document.querySelectorAll('.animation, [data-animation]');
-          animatedElements.forEach((el) => {
-            if (el instanceof HTMLElement) {
-              // Calcular la fase de animación (0-1) basada en el frame actual
-              const phase = (frameIndex / totalFrames) * Math.PI * 2;
-              
-              // Aplicar un efecto de pulso o movimiento suave
-              if (el.classList.contains('pulse') || el.getAttribute('data-animation') === 'pulse') {
-                const scale = 1 + 0.05 * Math.sin(phase);
-                el.style.transform = `scale(${scale})`;
-              } else if (el.classList.contains('flow') || el.getAttribute('data-animation') === 'flow') {
-                // Para conexiones animadas, modificamos el dash-offset
-                if (el.tagName === 'path' || el.tagName === 'LINE') {
-                  const currentOffset = -20 * (frameIndex % 30) / 30;
-                  el.setAttribute('stroke-dashoffset', String(currentOffset));
-                }
-              } else if (el.classList.contains('bounce') || el.getAttribute('data-animation') === 'bounce') {
-                const translateY = 2 * Math.sin(phase);
-                el.style.transform = `translateY(${translateY}px)`;
-              } else {
-                // Animación genérica con pequeño movimiento
-                const translateX = 1 * Math.sin(phase);
-                const translateY = 1 * Math.cos(phase);
-                el.style.transform = `translate(${translateX}px, ${translateY}px)`;
-              }
-            }
-          });
-          
           // Opciones para captura optimizada
           const options = {
             backgroundColor: '#FFFFFF',
@@ -417,6 +389,89 @@ export function useDiagramPersistence(
             logging: false,
             width: containerWidth,
             height: containerHeight,
+            onclone: (clonedDoc) => {
+              // Corregir la posición de los textos en los contenedores
+              const allExportTexts = clonedDoc.querySelectorAll('[data-export-text="true"]');
+              allExportTexts.forEach((el) => {
+                if (el instanceof HTMLElement) {
+                  // Aplicar ajustes más agresivos para corregir el desplazamiento en la captura
+                  el.style.transform = 'translateY(-2px)'; 
+                  el.style.display = 'inline-block';
+                  el.style.position = 'relative';
+                  el.style.lineHeight = '1.1';
+                  el.style.paddingTop = '0';
+                  el.style.paddingBottom = '0';
+                  el.style.margin = '0';
+                  el.style.verticalAlign = 'top';
+                  el.style.letterSpacing = 'normal';
+                  el.style.textRendering = 'optimizeLegibility';
+                  el.style.setProperty('-webkit-font-smoothing', 'antialiased');
+                  el.style.setProperty('-moz-osx-font-smoothing', 'grayscale');
+                  
+                  // Asegurarse de que el texto sea priorizado en la captura
+                  el.setAttribute('data-html2canvas-capture', 'true');
+                  el.setAttribute('data-html2canvas-priority', '1');
+                }
+              });
+              
+              // Ajustes específicos para los textos de contenedores
+              const containerTexts = clonedDoc.querySelectorAll('.container-text-element');
+              containerTexts.forEach((el) => {
+                if (el instanceof HTMLElement) {
+                  el.style.transform = 'translateY(-2px)';
+                }
+              });
+              
+              // Ajustes específicos para los textos de nodos
+              const squareTexts = clonedDoc.querySelectorAll('.square-text-element');
+              squareTexts.forEach((el) => {
+                if (el instanceof HTMLElement) {
+                  el.style.transform = 'translateY(-1px)';
+                }
+              });
+              
+              // También ajustar contenedores de título
+              const titleWrappers = clonedDoc.querySelectorAll('[data-export-important="true"]');
+              titleWrappers.forEach((wrapper) => {
+                if (wrapper instanceof HTMLElement) {
+                  wrapper.style.paddingTop = '2px';
+                  wrapper.style.paddingBottom = '2px';
+                  wrapper.style.marginBottom = '2px';
+                  wrapper.style.display = 'flex';
+                  wrapper.style.alignItems = 'center';
+                  wrapper.style.height = 'auto';
+                }
+              });
+              
+              // Manejar las animaciones
+              const animatedElements = clonedDoc.querySelectorAll('.animation, [data-animation]');
+              animatedElements.forEach((el) => {
+                if (el instanceof HTMLElement) {
+                  // Calcular la fase de animación (0-1) basada en el frame actual
+                  const phase = (frameIndex / totalFrames) * Math.PI * 2;
+                  
+                  // Aplicar un efecto de pulso o movimiento suave
+                  if (el.classList.contains('pulse') || el.getAttribute('data-animation') === 'pulse') {
+                    const scale = 1 + 0.05 * Math.sin(phase);
+                    el.style.transform = `scale(${scale})`;
+                  } else if (el.classList.contains('flow') || el.getAttribute('data-animation') === 'flow') {
+                    // Para conexiones animadas, modificamos el dash-offset
+                    if (el.tagName === 'path' || el.tagName === 'LINE') {
+                      const currentOffset = -20 * (frameIndex % 30) / 30;
+                      el.setAttribute('stroke-dashoffset', String(currentOffset));
+                    }
+                  } else if (el.classList.contains('bounce') || el.getAttribute('data-animation') === 'bounce') {
+                    const translateY = 2 * Math.sin(phase);
+                    el.style.transform = `translateY(${translateY}px)`;
+                  } else {
+                    // Animación genérica con pequeño movimiento
+                    const translateX = 1 * Math.sin(phase);
+                    const translateY = 1 * Math.cos(phase);
+                    el.style.transform = `translate(${translateX}px, ${translateY}px)`;
+                  }
+                }
+              });
+            },
             ignoreElements: (element: Element) => {
               // Ignorar elementos marcados explícitamente y el minimapa
               return element.classList.contains('ignore-export') || 

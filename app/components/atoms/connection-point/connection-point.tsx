@@ -21,7 +21,7 @@ export function ConnectionPoint({
   isMovable = false,
   onDragStart
 }: ConnectionPointProps) {
-  const offset = '-8px'; // Aumentamos el offset para que esté más afuera
+  const offset = '-8px'; // Restaurado al valor original
   
   // Posicionar el punto según su posición relativa
   const getPositionStyle = () => {

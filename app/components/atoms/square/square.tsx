@@ -14,12 +14,14 @@ export function Square({
   initialText = "",
   icon = "none",
   backgroundColor = "#FFFFFF",
+  zIndex = 0,
   onIconChange,
   onColorChange,
   onColorPickerOpen,
   onColorPickerClose,
   onIconSelectorOpen,
-  onIconSelectorClose
+  onIconSelectorClose,
+  onTextChange
 }: SquareProps) {
   const {
     innerText,
@@ -47,7 +49,8 @@ export function Square({
     onIconSelectorOpen,
     onIconSelectorClose,
     onColorPickerOpen,
-    onColorPickerClose
+    onColorPickerClose,
+    onTextChange
   });
   
   // Estilo sin transiciones para asegurar movimiento instantáneo
@@ -108,10 +111,30 @@ export function Square({
             onMouseDown={e => e.stopPropagation()}
             className={`${squareStyles.input} square-text-element`}
             placeholder="Texto aquí"
-            style={{ backgroundColor: 'transparent', transition: 'none' }}
+            style={{ 
+              backgroundColor: 'transparent', 
+              transition: 'none',
+              lineHeight: '1.2',
+              verticalAlign: 'middle',
+              marginTop: '0',
+              marginBottom: '0'
+            }}
+            data-html2canvas-capture="true"
+            data-export-text="true"
           />
         ) : (
-          <div className={`${squareStyles.text} square-text-element`} style={{ transition: 'none' }}>
+          <div 
+            className={`${squareStyles.text} square-text-element`} 
+            style={{ 
+              transition: 'none',
+              lineHeight: '1.2',
+              verticalAlign: 'middle',
+              marginTop: '0',
+              marginBottom: '0'
+            }}
+            data-html2canvas-capture="true"
+            data-export-text="true"
+          >
             {innerText || text}
           </div>
         )}
@@ -131,6 +154,8 @@ export function Square({
         onClose={handleCloseColorPicker}
         onSelect={handleColorChange}
         initialColor={selectedColor}
+        showZIndexControls={true}
+        initialZIndex={zIndex}
       />
     </div>
   );

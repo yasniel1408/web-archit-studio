@@ -15,12 +15,14 @@ export function Container({
   icon = "none",
   backgroundColor = "transparent",
   borderStyle = "dashed",
+  zIndex = 0,
   onIconChange,
   onColorChange,
   onColorPickerOpen,
   onColorPickerClose,
   onIconSelectorOpen,
-  onIconSelectorClose
+  onIconSelectorClose,
+  onTextChange
 }: ContainerProps) {
   const {
     innerText,
@@ -44,13 +46,15 @@ export function Container({
     icon,
     backgroundColor,
     borderStyle,
+    zIndex,
     editable,
     onIconChange,
     onColorChange,
     onIconSelectorOpen,
     onIconSelectorClose,
     onColorPickerOpen,
-    onColorPickerClose
+    onColorPickerClose,
+    onTextChange
   });
   
   // Estilo sin transiciones para asegurar movimiento instantáneo
@@ -69,7 +73,9 @@ export function Container({
       onDoubleClick={handleContainerDoubleClick}
     >
       {/* Título (en la parte superior) */}
-      <div className={containerStyles.titleContainer} style={{ transition: 'none' }}>
+      <div className={containerStyles.titleContainer} 
+           style={{ transition: 'none', transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
+           data-export-important="true">
         {/* Icono (al lado del título) */}
         {selectedIcon !== 'none' && (
           <div 
@@ -91,10 +97,30 @@ export function Container({
             onMouseDown={e => e.stopPropagation()}
             className={`${containerStyles.input} container-text-element`}
             placeholder="Título aquí"
-            style={{ backgroundColor: 'transparent', transition: 'none' }}
+            style={{ 
+              backgroundColor: 'transparent', 
+              transition: 'none', 
+              lineHeight: '1.2', 
+              verticalAlign: 'middle',
+              marginTop: '0',
+              marginBottom: '0'
+            }}
+            data-html2canvas-capture="true"
+            data-export-text="true"
           />
         ) : (
-          <div className={`${containerStyles.text} container-text-element`} style={{ transition: 'none' }}>
+          <div 
+            className={`${containerStyles.text} container-text-element`} 
+            style={{ 
+              transition: 'none', 
+              lineHeight: '1.2', 
+              verticalAlign: 'middle',
+              marginTop: '0',
+              marginBottom: '0'
+            }}
+            data-html2canvas-capture="true"
+            data-export-text="true"
+          >
             {innerText || text}
           </div>
         )}
@@ -142,6 +168,8 @@ export function Container({
         onClose={handleCloseColorPicker}
         onSelect={handleColorChange}
         initialColor={selectedColor}
+        showZIndexControls={true}
+        initialZIndex={zIndex}
       />
     </div>
   );

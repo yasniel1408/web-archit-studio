@@ -7,13 +7,15 @@ interface UseContainerProps {
   icon?: IconType;
   backgroundColor?: string;
   borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'none';
+  zIndex?: number;
   editable?: boolean;
   onIconChange?: (icon: IconType) => void;
-  onColorChange?: (color: string) => void;
+  onColorChange?: (color: string, zIndex?: number) => void;
   onIconSelectorOpen?: () => void;
   onIconSelectorClose?: () => void;
   onColorPickerOpen?: () => void;
   onColorPickerClose?: () => void;
+  onTextChange?: (text: string) => void;
 }
 
 export function useContainer({
@@ -22,13 +24,15 @@ export function useContainer({
   icon = 'none',
   backgroundColor = 'transparent',
   borderStyle = 'dashed',
+  zIndex = 0,
   editable = false,
   onIconChange,
   onColorChange,
   onIconSelectorOpen,
   onIconSelectorClose,
   onColorPickerOpen,
-  onColorPickerClose
+  onColorPickerClose,
+  onTextChange
 }: UseContainerProps) {
   const [innerText, setInnerText] = useState(initialText || text);
   const [showIconSelector, setShowIconSelector] = useState(false);
@@ -36,6 +40,7 @@ export function useContainer({
   const [selectedIcon, setSelectedIcon] = useState<IconType>(icon);
   const [selectedColor, setSelectedColor] = useState<string>(backgroundColor);
   const [selectedBorderStyle, setSelectedBorderStyle] = useState<string>(borderStyle);
+  const [selectedZIndex, setSelectedZIndex] = useState<number>(zIndex);
   
   // Actualizar el estado local cuando cambien las props
   useEffect(() => {
@@ -50,8 +55,20 @@ export function useContainer({
     setSelectedBorderStyle(borderStyle);
   }, [borderStyle]);
   
+  useEffect(() => {
+    if (text && text !== innerText) {
+      setInnerText(text);
+    }
+  }, [text]);
+  
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInnerText(e.target.value);
+    const newText = e.target.value;
+    setInnerText(newText);
+    
+    // Notificar al componente padre sobre el cambio de texto
+    if (onTextChange) {
+      onTextChange(newText);
+    }
   };
   
   const handleInputClick = (e: React.MouseEvent) => {
@@ -106,11 +123,14 @@ export function useContainer({
     }
   };
 
-  const handleColorChange = (newColor: string) => {
+  const handleColorChange = (newColor: string, newZIndex?: number) => {
     setSelectedColor(newColor);
+    if (newZIndex !== undefined) {
+      setSelectedZIndex(newZIndex);
+    }
     setShowColorPicker(false);
     if (onColorChange) {
-      onColorChange(newColor);
+      onColorChange(newColor, newZIndex);
     }
     if (onColorPickerClose) {
       onColorPickerClose();
@@ -138,6 +158,7 @@ export function useContainer({
     selectedIcon,
     selectedColor,
     selectedBorderStyle,
+    selectedZIndex,
     handleTextChange,
     handleInputClick,
     handleIconClick,

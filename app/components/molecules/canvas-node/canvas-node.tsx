@@ -13,6 +13,7 @@ interface CanvasNodeProps {
   text?: string;
   iconType?: IconType; // Usar el tipo importado
   backgroundColor?: string; // Añadir la propiedad backgroundColor
+  zIndex?: number; // Agregar zIndex
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
   onConnectionEnd: (targetNodeId: string, targetPosition: ConnectionPosition, x: number, y: number) => void;
   onNodeMove: (nodeId: string, position: { x: number, y: number }) => void;
@@ -32,6 +33,7 @@ export function CanvasNode({
   text = "",
   iconType,
   backgroundColor = "#FFFFFF", // Añadir valor por defecto
+  zIndex = 10, // Valor por defecto para zIndex
   onConnectionStart,
   onConnectionEnd,
   onNodeMove,
@@ -348,17 +350,35 @@ export function CanvasNode({
   };
 
   // Función para manejar cambios en el color de fondo
-  const handleColorChange = (newColor: string) => {
+  const handleColorChange = (newColor: string, newZIndex?: number) => {
     // Notificar al padre del cambio
-    console.log("Color cambiado en nodo:", id, newColor);
+    console.log("Color cambiado en nodo:", id, newColor, "zIndex:", newZIndex);
     
     // Propagar cambio al componente padre
     if (onPropertiesChange) {
-      onPropertiesChange({ backgroundColor: newColor });
+      if (newZIndex !== undefined) {
+        onPropertiesChange({ 
+          backgroundColor: newColor,
+          zIndex: newZIndex
+        });
+      } else {
+        onPropertiesChange({ backgroundColor: newColor });
+      }
     }
     
     // Actualizar estado para rastrear cuando el selector está abierto
     setIsColorPickerOpen(false);
+  };
+
+  // Función para manejar cambios en el texto
+  const handleTextChange = (newText: string) => {
+    // Notificar al padre del cambio
+    console.log("Texto cambiado en nodo:", id, newText);
+    
+    // Propagar cambio al componente padre
+    if (onPropertiesChange) {
+      onPropertiesChange({ text: newText });
+    }
   };
 
   // Manejar clics fuera del nodo para ocultar los controles
@@ -413,7 +433,9 @@ export function CanvasNode({
     overflow: 'visible',
     transition: 'none',
     animation: 'none',
-    zIndex: isDragging || isResizing ? 40 : (isHovered ? 30 : 10), // Valores más altos para quedar encima de los contenedores
+    // Ajustar z-index para respetar la prioridad absoluta
+    // Los incrementos por estado deben ser más pequeños que la diferencia entre niveles de prioridad
+    zIndex: zIndex * 100 + (isDragging ? 30 : (isResizing ? 20 : (isHovered ? 10 : 0))),
   };
 
   return (
@@ -432,8 +454,10 @@ export function CanvasNode({
           initialText={text} 
           icon={iconType}
           backgroundColor={backgroundColor}
+          zIndex={zIndex}
           onIconChange={handleIconChange}
-          onColorChange={handleColorChange}
+          onColorChange={(newColor, newZIndex) => handleColorChange(newColor, newZIndex)}
+          onTextChange={handleTextChange}
           onColorPickerOpen={() => setIsColorPickerOpen(true)}
           onColorPickerClose={() => setIsColorPickerOpen(false)}
           onIconSelectorOpen={() => setIsIconSelectorOpen(true)}
