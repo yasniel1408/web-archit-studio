@@ -39,10 +39,21 @@ export type IconType =
   | 'aws-route53'
   | 'aws-vpc'
   | 'aws-direct-connect'
+  | 'aws-elastic-load-balancing'
+  | 'aws-transit-gateway'
   // Iconos AWS Storage
   | 'aws-s3'
   | 'aws-efs'
   | 'aws-glacier'
+  // Iconos AWS Security
+  | 'aws-waf'
+  | 'aws-shield'
+  | 'aws-network-firewall'
+  // Iconos AWS Management & Governance
+  | 'aws-cloudwatch'
+  | 'aws-cloudformation'
+  | 'aws-cloudtrail'
+  | 'aws-auto-scaling'
   // Iconos GCP Compute
   | 'gcp-compute-engine'
   | 'gcp-kubernetes-engine'
@@ -151,11 +162,24 @@ export const iconsMetadata: IconMetadata[] = [
   { id: 'aws-route53', name: 'AWS Route 53', category: 'AWS Networking', tags: ['aws', 'amazon', 'route53', 'dns', 'dominio', 'nombre'] },
   { id: 'aws-vpc', name: 'AWS VPC', category: 'AWS Networking', tags: ['aws', 'amazon', 'vpc', 'red', 'private', 'cloud'] },
   { id: 'aws-direct-connect', name: 'AWS Direct Connect', category: 'AWS Networking', tags: ['aws', 'amazon', 'direct', 'connect', 'conexión', 'dedicada'] },
+  { id: 'aws-elastic-load-balancing', name: 'AWS Elastic Load Balancing', category: 'AWS Networking', tags: ['aws', 'amazon', 'elb', 'alb', 'nlb', 'load', 'balancer', 'balanceador', 'carga'] },
+  { id: 'aws-transit-gateway', name: 'AWS Transit Gateway', category: 'AWS Networking', tags: ['aws', 'amazon', 'transit', 'gateway', 'red', 'conectividad', 'vpc'] },
   
   // AWS Storage
   { id: 'aws-s3', name: 'AWS S3', category: 'AWS Storage', tags: ['aws', 'amazon', 's3', 'storage', 'bucket', 'object'] },
   { id: 'aws-efs', name: 'AWS EFS', category: 'AWS Storage', tags: ['aws', 'amazon', 'efs', 'elastic', 'file', 'system'] },
   { id: 'aws-glacier', name: 'AWS Glacier', category: 'AWS Storage', tags: ['aws', 'amazon', 'glacier', 'archive', 'backup', 'storage'] },
+
+  // AWS Security
+  { id: 'aws-waf', name: 'AWS WAF', category: 'AWS Security', tags: ['aws', 'amazon', 'waf', 'firewall', 'seguridad', 'web', 'aplicación'] },
+  { id: 'aws-shield', name: 'AWS Shield', category: 'AWS Security', tags: ['aws', 'amazon', 'shield', 'ddos', 'protección', 'seguridad'] },
+  { id: 'aws-network-firewall', name: 'AWS Network Firewall', category: 'AWS Security', tags: ['aws', 'amazon', 'network', 'firewall', 'seguridad', 'red'] },
+
+  // AWS Management & Governance
+  { id: 'aws-cloudwatch', name: 'AWS CloudWatch', category: 'AWS Management', tags: ['aws', 'amazon', 'cloudwatch', 'monitoreo', 'logs', 'métricas', 'alarmas'] },
+  { id: 'aws-cloudformation', name: 'AWS CloudFormation', category: 'AWS Management', tags: ['aws', 'amazon', 'cloudformation', 'iac', 'infraestructura', 'código', 'plantilla'] },
+  { id: 'aws-cloudtrail', name: 'AWS CloudTrail', category: 'AWS Management', tags: ['aws', 'amazon', 'cloudtrail', 'auditoría', 'logs', 'seguridad'] },
+  { id: 'aws-auto-scaling', name: 'AWS Auto Scaling', category: 'AWS Management', tags: ['aws', 'amazon', 'auto', 'scaling', 'escalado', 'automático', 'grupo'] },
   
   // GCP Compute
   { id: 'gcp-compute-engine', name: 'GCP Compute Engine', category: 'GCP Compute', tags: ['gcp', 'google', 'compute', 'engine', 'vm', 'virtual machine'] },

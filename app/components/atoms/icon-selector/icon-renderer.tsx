@@ -136,6 +136,10 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/aws/vpc.svg" className={className} alt="AWS VPC" style={{borderRadius: '7px'}} />;
     case 'aws-direct-connect':
       return <img src="/assets/icons/aws/direct-connect.svg" className={className} alt="AWS Direct Connect" />;
+    case 'aws-elastic-load-balancing':
+      return <img src="/assets/icons/aws/elastic-load-balancing.svg" className={className} alt="AWS Elastic Load Balancing" style={{borderRadius: '7px'}} />;
+    case 'aws-transit-gateway':
+      return <img src="/assets/icons/aws/transit-gateway.svg" className={className} alt="AWS Transit Gateway" style={{borderRadius: '7px'}} />;
       
     // Iconos AWS Storage
     case 'aws-s3':
@@ -144,6 +148,24 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/aws/efs.svg" className={className} alt="AWS EFS" style={{borderRadius: '7px'}} />;
     case 'aws-glacier':
       return <img src="/assets/icons/aws/glacier.svg" className={className} alt="AWS Glacier" style={{borderRadius: '7px'}} />;
+    
+    // Iconos AWS Security
+    case 'aws-waf':
+      return <img src="/assets/icons/aws/waf.svg" className={className} alt="AWS WAF" style={{borderRadius: '7px'}} />;
+    case 'aws-shield':
+      return <img src="/assets/icons/aws/shield.svg" className={className} alt="AWS Shield" style={{borderRadius: '7px'}} />;
+    case 'aws-network-firewall':
+      return <img src="/assets/icons/aws/network-firewall.svg" className={className} alt="AWS Network Firewall" style={{borderRadius: '7px'}} />;
+    
+    // Iconos AWS Management & Governance
+    case 'aws-cloudwatch':
+      return <img src="/assets/icons/aws/cloudwatch.svg" className={className} alt="AWS CloudWatch" style={{borderRadius: '7px'}} />;
+    case 'aws-cloudformation':
+      return <img src="/assets/icons/aws/cloudformation.svg" className={className} alt="AWS CloudFormation" style={{borderRadius: '7px'}} />;
+    case 'aws-cloudtrail':
+      return <img src="/assets/icons/aws/cloudtrail.svg" className={className} alt="AWS CloudTrail" style={{borderRadius: '7px'}} />;
+    case 'aws-auto-scaling':
+      return <img src="/assets/icons/aws/auto-scaling.svg" className={className} alt="AWS Auto Scaling" style={{borderRadius: '7px'}} />;
     
     // Iconos GCP Compute
     case 'gcp-compute-engine':

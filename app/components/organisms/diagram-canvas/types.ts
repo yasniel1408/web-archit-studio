@@ -28,6 +28,7 @@ export type ConnectionType = {
   endArrowHead?: 'none' | 'arrow' | 'circle' | 'diamond';
   color?: string;
   strokeWidth?: number;
+  isSyncEnabled?: boolean;
 };
 
 export type ActiveConnectionType = {
