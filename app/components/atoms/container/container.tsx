@@ -62,7 +62,8 @@ export function Container({
     backgroundColor: selectedColor,
     transition: 'none',
     animation: 'none',
-    borderStyle: selectedBorderStyle
+    borderStyle: selectedBorderStyle,
+    zIndex: zIndex
   };
   
   return (

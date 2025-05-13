@@ -132,6 +132,8 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/aws/sns.svg" className={className} alt="AWS SNS" style={{borderRadius: '7px'}} />;
     case 'aws-sqs':
       return <img src="/assets/icons/aws/sqs.svg" className={className} alt="AWS SQS" style={{borderRadius: '7px'}} />;
+    case 'aws-eventbridge':
+      return <img src="/assets/icons/aws/eventbridge.svg" className={className} alt="AWS EventBridge" style={{borderRadius: '7px'}} />;
       
     // Iconos AWS Networking
     case 'aws-cloudfront':
@@ -170,6 +172,10 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/aws/shield.svg" className={className} alt="AWS Shield" style={{borderRadius: '7px'}} />;
     case 'aws-network-firewall':
       return <img src="/assets/icons/aws/network-firewall.svg" className={className} alt="AWS Network Firewall" style={{borderRadius: '7px'}} />;
+    case 'aws-secrets-manager':
+      return <img src="/assets/icons/aws/secrets-manager.svg" className={className} alt="AWS Secrets Manager" style={{borderRadius: '7px'}} />;
+    case 'aws-cognito':
+      return <img src="/assets/icons/aws/cognito.svg" className={className} alt="AWS Cognito" style={{borderRadius: '7px'}} />;
     
     // Iconos AWS Management & Governance
     case 'aws-cloudwatch':
@@ -180,6 +186,34 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/aws/cloudtrail.svg" className={className} alt="AWS CloudTrail" style={{borderRadius: '7px'}} />;
     case 'aws-auto-scaling':
       return <img src="/assets/icons/aws/auto-scaling.svg" className={className} alt="AWS Auto Scaling" style={{borderRadius: '7px'}} />;
+    case 'aws-config':
+      return <img src="/assets/icons/aws/config.svg" className={className} alt="AWS Config" style={{borderRadius: '7px'}} />;
+    case 'aws-organizations':
+      return <img src="/assets/icons/aws/organizations.svg" className={className} alt="AWS Organizations" style={{borderRadius: '7px'}} />;
+    case 'aws-systems-manager':
+      return <img src="/assets/icons/aws/systems-manager.svg" className={className} alt="AWS Systems Manager" style={{borderRadius: '7px'}} />;
+    case 'aws-service-catalog':
+      return <img src="/assets/icons/aws/service-catalog.svg" className={className} alt="AWS Service Catalog" style={{borderRadius: '7px'}} />;
+    case 'aws-trusted-advisor':
+      return <img src="/assets/icons/aws/trusted-advisor.svg" className={className} alt="AWS Trusted Advisor" style={{borderRadius: '7px'}} />;
+    case 'aws-well-architected-tool':
+      return <img src="/assets/icons/aws/well-architected-tool.svg" className={className} alt="AWS Well-Architected Tool" style={{borderRadius: '7px'}} />;
+    case 'aws-launch-wizard':
+      return <img src="/assets/icons/aws/launch-wizard.svg" className={className} alt="AWS Launch Wizard" style={{borderRadius: '7px'}} />;
+    case 'aws-opsworks':
+      return <img src="/assets/icons/aws/opsworks.svg" className={className} alt="AWS OpsWorks" style={{borderRadius: '7px'}} />;
+    case 'aws-systems-manager-incident-manager':
+      return <img src="/assets/icons/aws/systems-manager-incident-manager.svg" className={className} alt="AWS Systems Manager Incident Manager" style={{borderRadius: '7px'}} />;
+    case 'aws-personal-health-dashboard':
+      return <img src="/assets/icons/aws/personal-health-dashboard.svg" className={className} alt="AWS Personal Health Dashboard" style={{borderRadius: '7px'}} />;
+    case 'aws-management-console':
+      return <img src="/assets/icons/aws/management-console.svg" className={className} alt="AWS Management Console" style={{borderRadius: '7px'}} />;
+    case 'aws-license-manager':
+      return <img src="/assets/icons/aws/license-manager.svg" className={className} alt="AWS License Manager" style={{borderRadius: '7px'}} />;
+    case 'aws-fault-injection-simulator':
+      return <img src="/assets/icons/aws/fault-injection-simulator.svg" className={className} alt="AWS Fault Injection Simulator" style={{borderRadius: '7px'}} />;
+    case 'aws-appconfig':
+      return <img src="/assets/icons/aws/appconfig.svg" className={className} alt="AWS AppConfig" style={{borderRadius: '7px'}} />;
     
     // Iconos AWS IoT
     case 'aws-iot-core':
@@ -204,6 +238,12 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/aws/polly.svg" className={className} alt="AWS Polly" style={{borderRadius: '7px'}} />;
     case 'aws-translate':
       return <img src="/assets/icons/aws/translate.svg" className={className} alt="AWS Translate" style={{borderRadius: '7px'}} />;
+    
+    // Iconos AWS Analytics
+    case 'aws-athena':
+      return <img src="/assets/icons/aws/athena.svg" className={className} alt="AWS Athena" style={{borderRadius: '7px'}} />;
+    case 'aws-glue':
+      return <img src="/assets/icons/aws/glue.svg" className={className} alt="AWS Glue" style={{borderRadius: '7px'}} />;
     
     // Iconos AWS Migration & Transfer
     case 'aws-datasync':
@@ -326,10 +366,35 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/gcp/cloud_build/cloud_build.svg" className={className} alt="GCP Cloud Build" style={{borderRadius: '7px'}} />;
     case 'gcp-cloud-source-repositories':
       return <img src="/assets/icons/gcp/cloud_source_repository.svg" className={className} alt="GCP Cloud Source Repositories" style={{borderRadius: '7px'}} />;
-      // Nota: Ruta corregida para el icono de Cloud Source Repositories
     case 'gcp-artifact-registry':
       return <img src="/assets/icons/gcp/artifact_registry/artifact_registry.svg" className={className} alt="GCP Artifact Registry" style={{borderRadius: '7px'}} />;
-      
+    case 'aws-organizations':
+      return <img src="/assets/icons/aws/organizations.svg" className={className} alt="AWS Organizations" style={{borderRadius: '7px'}} />;
+    case 'aws-systems-manager':
+      return <img src="/assets/icons/aws/systems-manager.svg" className={className} alt="AWS Systems Manager" style={{borderRadius: '7px'}} />;
+    case 'aws-service-catalog':
+      return <img src="/assets/icons/aws/service-catalog.svg" className={className} alt="AWS Service Catalog" style={{borderRadius: '7px'}} />;
+    case 'aws-trusted-advisor':
+      return <img src="/assets/icons/aws/trusted-advisor.svg" className={className} alt="AWS Trusted Advisor" style={{borderRadius: '7px'}} />;
+    case 'aws-well-architected-tool':
+      return <img src="/assets/icons/aws/well-architected-tool.svg" className={className} alt="AWS Well-Architected Tool" style={{borderRadius: '7px'}} />;
+    case 'aws-launch-wizard':
+      return <img src="/assets/icons/aws/launch-wizard.svg" className={className} alt="AWS Launch Wizard" style={{borderRadius: '7px'}} />;
+    case 'aws-opsworks':
+      return <img src="/assets/icons/aws/opsworks.svg" className={className} alt="AWS OpsWorks" style={{borderRadius: '7px'}} />;
+    case 'aws-systems-manager-incident-manager':
+      return <img src="/assets/icons/aws/systems-manager-incident-manager.svg" className={className} alt="AWS Systems Manager Incident Manager" style={{borderRadius: '7px'}} />;
+    case 'aws-personal-health-dashboard':
+      return <img src="/assets/icons/aws/personal-health-dashboard.svg" className={className} alt="AWS Personal Health Dashboard" style={{borderRadius: '7px'}} />;
+    case 'aws-management-console':
+      return <img src="/assets/icons/aws/management-console.svg" className={className} alt="AWS Management Console" style={{borderRadius: '7px'}} />;
+    case 'aws-license-manager':
+      return <img src="/assets/icons/aws/license-manager.svg" className={className} alt="AWS License Manager" style={{borderRadius: '7px'}} />;
+    case 'aws-fault-injection-simulator':
+      return <img src="/assets/icons/aws/fault-injection-simulator.svg" className={className} alt="AWS Fault Injection Simulator" style={{borderRadius: '7px'}} />;
+    case 'aws-appconfig':
+      return <img src="/assets/icons/aws/appconfig.svg" className={className} alt="AWS AppConfig" style={{borderRadius: '7px'}} />;
+    
     default:
       return null;
   }

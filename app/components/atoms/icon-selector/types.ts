@@ -37,6 +37,7 @@ export type IconType =
   | 'aws-step-functions'
   | 'aws-sns'
   | 'aws-sqs'
+  | 'aws-eventbridge'
   // Iconos AWS Networking
   | 'aws-cloudfront'
   | 'aws-route53'
@@ -56,11 +57,27 @@ export type IconType =
   | 'aws-waf'
   | 'aws-shield'
   | 'aws-network-firewall'
+  | 'aws-secrets-manager'
+  | 'aws-cognito'
   // Iconos AWS Management & Governance
   | 'aws-cloudwatch'
   | 'aws-cloudformation'
   | 'aws-cloudtrail'
   | 'aws-auto-scaling'
+  | 'aws-config'
+  | 'aws-organizations'
+  | 'aws-systems-manager'
+  | 'aws-service-catalog'
+  | 'aws-trusted-advisor'
+  | 'aws-well-architected-tool'
+  | 'aws-launch-wizard'
+  | 'aws-opsworks'
+  | 'aws-systems-manager-incident-manager'
+  | 'aws-personal-health-dashboard'
+  | 'aws-management-console'
+  | 'aws-license-manager'
+  | 'aws-fault-injection-simulator'
+  | 'aws-appconfig'
   // Iconos AWS IoT
   | 'aws-iot-core'
   | 'aws-iot-analytics'
@@ -73,6 +90,9 @@ export type IconType =
   | 'aws-personalize'
   | 'aws-polly'
   | 'aws-translate'
+  // Iconos AWS Analytics
+  | 'aws-athena'
+  | 'aws-glue'
   // Iconos AWS Migration & Transfer
   | 'aws-datasync'
   | 'aws-transfer-family'
@@ -187,6 +207,7 @@ export const iconsMetadata: IconMetadata[] = [
   { id: 'aws-step-functions', name: 'AWS Step Functions', category: 'AWS App Integration', tags: ['aws', 'amazon', 'step', 'functions', 'workflow', 'serverless'] },
   { id: 'aws-sns', name: 'AWS SNS', category: 'AWS App Integration', tags: ['aws', 'amazon', 'sns', 'notification', 'service', 'messaging'] },
   { id: 'aws-sqs', name: 'AWS SQS', category: 'AWS App Integration', tags: ['aws', 'amazon', 'sqs', 'queue', 'messaging', 'service'] },
+  { id: 'aws-eventbridge', name: 'AWS EventBridge', category: 'AWS App Integration', tags: ['aws', 'amazon', 'eventbridge', 'event', 'serverless', 'integration', 'bus'] },
   
   // AWS Networking
   { id: 'aws-cloudfront', name: 'AWS CloudFront', category: 'AWS Networking', tags: ['aws', 'amazon', 'cloudfront', 'cdn', 'distribución', 'edge'] },
@@ -209,12 +230,28 @@ export const iconsMetadata: IconMetadata[] = [
   { id: 'aws-waf', name: 'AWS WAF', category: 'AWS Security', tags: ['aws', 'amazon', 'waf', 'firewall', 'seguridad', 'web', 'aplicación'] },
   { id: 'aws-shield', name: 'AWS Shield', category: 'AWS Security', tags: ['aws', 'amazon', 'shield', 'ddos', 'protección', 'seguridad'] },
   { id: 'aws-network-firewall', name: 'AWS Network Firewall', category: 'AWS Security', tags: ['aws', 'amazon', 'network', 'firewall', 'seguridad', 'red'] },
+  { id: 'aws-secrets-manager', name: 'AWS Secrets Manager', category: 'AWS Security', tags: ['aws', 'amazon', 'secrets', 'manager', 'security', 'credentials', 'password'] },
+  { id: 'aws-cognito', name: 'AWS Cognito', category: 'AWS Security', tags: ['aws', 'amazon', 'cognito', 'identity', 'authentication', 'user', 'pool'] },
 
   // AWS Management & Governance
   { id: 'aws-cloudwatch', name: 'AWS CloudWatch', category: 'AWS Management', tags: ['aws', 'amazon', 'cloudwatch', 'monitoreo', 'logs', 'métricas', 'alarmas'] },
   { id: 'aws-cloudformation', name: 'AWS CloudFormation', category: 'AWS Management', tags: ['aws', 'amazon', 'cloudformation', 'iac', 'infraestructura', 'código', 'plantilla'] },
   { id: 'aws-cloudtrail', name: 'AWS CloudTrail', category: 'AWS Management', tags: ['aws', 'amazon', 'cloudtrail', 'auditoría', 'logs', 'seguridad'] },
   { id: 'aws-auto-scaling', name: 'AWS Auto Scaling', category: 'AWS Management', tags: ['aws', 'amazon', 'auto', 'scaling', 'escalado', 'automático', 'grupo'] },
+  { id: 'aws-config', name: 'AWS Config', category: 'AWS Management', tags: ['aws', 'amazon', 'config', 'compliance', 'auditoría', 'gestión'] },
+  { id: 'aws-organizations', name: 'AWS Organizations', category: 'AWS Management', tags: ['aws', 'amazon', 'organizations', 'multi-account', 'gestión'] },
+  { id: 'aws-systems-manager', name: 'AWS Systems Manager', category: 'AWS Management', tags: ['aws', 'amazon', 'systems manager', 'gestión', 'automatización'] },
+  { id: 'aws-service-catalog', name: 'AWS Service Catalog', category: 'AWS Management', tags: ['aws', 'amazon', 'service catalog', 'catálogo', 'servicios'] },
+  { id: 'aws-trusted-advisor', name: 'AWS Trusted Advisor', category: 'AWS Management', tags: ['aws', 'amazon', 'trusted advisor', 'recomendaciones', 'optimización'] },
+  { id: 'aws-well-architected-tool', name: 'AWS Well-Architected Tool', category: 'AWS Management', tags: ['aws', 'amazon', 'well-architected', 'tool', 'mejores prácticas'] },
+  { id: 'aws-launch-wizard', name: 'AWS Launch Wizard', category: 'AWS Management', tags: ['aws', 'amazon', 'launch wizard', 'despliegue', 'automatización'] },
+  { id: 'aws-opsworks', name: 'AWS OpsWorks', category: 'AWS Management', tags: ['aws', 'amazon', 'opsworks', 'gestión', 'configuración'] },
+  { id: 'aws-systems-manager-incident-manager', name: 'AWS Systems Manager Incident Manager', category: 'AWS Management', tags: ['aws', 'amazon', 'incident manager', 'gestión', 'incidentes'] },
+  { id: 'aws-personal-health-dashboard', name: 'AWS Personal Health Dashboard', category: 'AWS Management', tags: ['aws', 'amazon', 'personal health dashboard', 'salud', 'monitorización'] },
+  { id: 'aws-management-console', name: 'AWS Management Console', category: 'AWS Management', tags: ['aws', 'amazon', 'management console', 'consola', 'gestión'] },
+  { id: 'aws-license-manager', name: 'AWS License Manager', category: 'AWS Management', tags: ['aws', 'amazon', 'license manager', 'licencias', 'gestión'] },
+  { id: 'aws-fault-injection-simulator', name: 'AWS Fault Injection Simulator', category: 'AWS Management', tags: ['aws', 'amazon', 'fault injection', 'simulator', 'resiliencia'] },
+  { id: 'aws-appconfig', name: 'AWS AppConfig', category: 'AWS Management', tags: ['aws', 'amazon', 'appconfig', 'configuración', 'aplicaciones'] },
   
   // AWS IoT
   { id: 'aws-iot-core', name: 'AWS IoT Core', category: 'AWS IoT', tags: ['aws', 'amazon', 'iot', 'internet', 'things', 'dispositivos', 'conectados'] },
@@ -229,6 +266,10 @@ export const iconsMetadata: IconMetadata[] = [
   { id: 'aws-personalize', name: 'AWS Personalize', category: 'AWS Machine Learning', tags: ['aws', 'amazon', 'personalize', 'recomendación', 'personalización'] },
   { id: 'aws-polly', name: 'AWS Polly', category: 'AWS Machine Learning', tags: ['aws', 'amazon', 'polly', 'text-to-speech', 'voz', 'audio'] },
   { id: 'aws-translate', name: 'AWS Translate', category: 'AWS Machine Learning', tags: ['aws', 'amazon', 'translate', 'traducción', 'idiomas', 'lenguajes'] },
+
+  // AWS Analytics
+  { id: 'aws-athena', name: 'AWS Athena', category: 'AWS Analytics', tags: ['aws', 'amazon', 'athena', 'query', 'sql', 's3', 'data', 'analytics'] },
+  { id: 'aws-glue', name: 'AWS Glue', category: 'AWS Analytics', tags: ['aws', 'amazon', 'glue', 'etl', 'data', 'catalog', 'integration'] },
 
   // AWS Migration & Transfer
   { id: 'aws-datasync', name: 'AWS DataSync', category: 'AWS Migration', tags: ['aws', 'amazon', 'datasync', 'sincronización', 'transferencia', 'datos'] },
