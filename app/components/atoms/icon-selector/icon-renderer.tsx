@@ -379,7 +379,7 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
     case 'gcp-automl':
       return <img src="/assets/icons/gcp/automl/automl.svg" className={className} alt="GCP AutoML" style={{borderRadius: '7px'}} />;
     case 'gcp-vision-ai':
-      return <img src="/assets/icons/gcp/vision_ai/vision_ai.svg" className={className} alt="GCP Vision AI" style={{borderRadius: '7px'}} />;
+      return <img src="/assets/icons/gcp/cloud_vision_api/cloud_vision_api.svg" className={className} alt="GCP Vision AI" style={{borderRadius: '7px'}} />;
     case 'gcp-speech-to-text':
       return <img src="/assets/icons/gcp/speech-to-text/speech-to-text.svg" className={className} alt="GCP Speech-to-Text" style={{borderRadius: '7px'}} />;
     case 'gcp-text-to-speech':
