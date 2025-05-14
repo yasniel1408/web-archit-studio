@@ -99,8 +99,6 @@ export function useDragAndDrop({
     const relativeY = e.clientY - canvasRect.top;
     
     // Convertir coordenadas de pantalla a coordenadas del canvas
-    // En esta aplicación, position representa el desplazamiento del canvas que se aplica
-    // después del zoom, por lo que la fórmula correcta es:
     const dropX = relativeX / scale - position.x;
     const dropY = relativeY / scale - position.y;
     
@@ -148,6 +146,11 @@ export function useDragAndDrop({
     
     if (type.includes('container')) {
       backgroundColor = "rgba(240, 249, 255, 0.3)"; // Color predeterminado para contenedores
+    }
+    
+    // Generar un ID único si no se proporciona uno válido
+    if (!id || id === 'undefined' || id === 'null') {
+      id = `node-${Date.now()}`;
     }
     
     // Crear el nuevo nodo

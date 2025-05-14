@@ -42,6 +42,9 @@ export function CanvasNode({
   onPropertiesChange,
   disabled = false
 }: CanvasNodeProps) {
+  // Asegurar que el ID sea válido
+  const nodeId = id || `node-${Date.now()}`;
+  
   const [pos, setPos] = useState(position);
   const [size, setSize] = useState(initialSize);
   const [isHovered, setIsHovered] = useState(false);
@@ -92,8 +95,8 @@ export function CanvasNode({
 
   // Debugging para el color de fondo
   useEffect(() => {
-    console.log(`CanvasNode ${id} - backgroundColor recibido:`, backgroundColor);
-  }, [id, backgroundColor]);
+    console.log(`CanvasNode ${nodeId} - backgroundColor recibido:`, backgroundColor);
+  }, [nodeId, backgroundColor]);
   
   // Limpiar listeners globales al desmontar
   useEffect(() => {
@@ -114,7 +117,7 @@ export function CanvasNode({
           nodeRef.current.style.top = `${newY}px`;
           
           // Notificar al padre
-          onNodeMove(id, { x: newX, y: newY });
+          onNodeMove(nodeId, { x: newX, y: newY });
         }
         
         // Actualizar estado
@@ -153,7 +156,7 @@ export function CanvasNode({
       document.removeEventListener('mousemove', handleGlobalMouseMove);
       document.removeEventListener('mouseup', handleGlobalMouseUp);
     };
-  }, [isDragging, isResizing, id, onNodeMove, onNodeResize, pos.x, pos.y]);
+  }, [isDragging, isResizing, nodeId, onNodeMove, onNodeResize, pos.x, pos.y]);
 
   // Manejadores para arrastrar el nodo
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -164,17 +167,16 @@ export function CanvasNode({
       target.tagName === 'BUTTON' ||
       target.classList.contains('connection-point') ||
       target.classList.contains('resize-handle') ||
-      target.closest('input') // Usar closest para detectar clics dentro del input
+      target.closest('input')
     ) {
       return;
     }
     
-    if (e.button !== 0) return; // Solo botón izquierdo
+    if (e.button !== 0) return;
     
     e.stopPropagation();
     e.preventDefault();
     
-    // Agregar una clase al nodo cuando comienza el arrastre para mejorar el aspecto visual
     if (nodeRef.current) {
       nodeRef.current.classList.add('dragging');
     }
@@ -239,8 +241,8 @@ export function CanvasNode({
     setSize({ width: newWidth, height: newHeight });
     
     // Notificar al padre en tiempo real
-    onNodeMove(id, { x: newPosX, y: newPosY });
-    onNodeResize(id, { width: newWidth, height: newHeight });
+    onNodeMove(nodeId, { x: newPosX, y: newPosY });
+    onNodeResize(nodeId, { width: newWidth, height: newHeight });
   };
   
   const handleMouseEnter = () => {
@@ -259,86 +261,39 @@ export function CanvasNode({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onDeleteNode) onDeleteNode(id);
+    if (onDeleteNode) {
+      onDeleteNode(nodeId);
+    }
   };
   
   // Iniciar una conexión desde un punto de conexión
   const handleConnectionStart = (connectionPosition: ConnectionPosition) => {
-    if (disabled || !onConnectionStart) return;
-    
-    let x = pos.x;
-    let y = pos.y;
-    
-    switch (connectionPosition) {
-      case 'top': x += size.width / 2; break;
-      case 'right': x += size.width; y += size.height / 2; break;
-      case 'bottom': x += size.width / 2; y += size.height; break;
-      case 'left': y += size.height / 2; break;
+    if (nodeRef.current) {
+      const rect = nodeRef.current.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      onConnectionStart(nodeId, connectionPosition, x, y);
     }
-    
-    onConnectionStart(id, connectionPosition, x, y);
   };
   
   // Cuando soltamos el ratón sobre este nodo, puede ser el destino de una conexión
   const handleMouseUp = (e: React.MouseEvent) => {
-    if (disabled || !onConnectionEnd) return;
+    if (isDragging && dragStartRef.current && nodeRef.current) {
+      nodeRef.current.classList.remove('dragging');
+      setIsDragging(false);
+      dragStartRef.current = null;
+    }
     
-    if (!isDragging && !isResizing) { // Solo finalizar conexión si no estábamos arrastrando/redimensionando
-      // Determinar la posición de conexión más cercana al punto donde se soltó el ratón
-      const rect = nodeRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      
-      // Obtener la posición relativa del ratón respecto al nodo
-      const relX = e.clientX - rect.left;
-      const relY = e.clientY - rect.top;
-      
-      // Calcular distancias a cada lado
-      const distToTop = relY;
-      const distToRight = rect.width - relX;
-      const distToBottom = rect.height - relY;
-      const distToLeft = relX;
-      
-      // Determinar cuál es el más cercano
-      const minDist = Math.min(distToTop, distToRight, distToBottom, distToLeft);
-      let connectionPosition: ConnectionPosition;
-      
-      if (minDist === distToTop) {
-        connectionPosition = 'top';
-      } else if (minDist === distToRight) {
-        connectionPosition = 'right';
-      } else if (minDist === distToBottom) {
-        connectionPosition = 'bottom';
-      } else {
-        connectionPosition = 'left';
-      }
-      
-      console.log(`Node ${id}: Conexión terminada en posición ${connectionPosition}`);
-      
-      // Calcular las coordenadas exactas del punto de conexión
-      let connectionX = pos.x;
-      let connectionY = pos.y;
-      
-      // Ajustar las coordenadas según la posición de conexión
-      if (connectionPosition === 'top') {
-        connectionX += size.width / 2;
-      } else if (connectionPosition === 'right') {
-        connectionX += size.width;
-        connectionY += size.height / 2;
-      } else if (connectionPosition === 'bottom') {
-        connectionX += size.width / 2;
-        connectionY += size.height;
-      } else if (connectionPosition === 'left') {
-        connectionY += size.height / 2;
-      }
-      
-      onConnectionEnd(id, connectionPosition, connectionX, connectionY);
+    if (isResizing && resizeStartRef.current && nodeRef.current) {
+      setIsResizing(null);
+      resizeStartRef.current = null;
     }
   };
 
   // Función para manejar cambios en el ícono
   const handleIconChange = (newIcon: IconType) => {
     // Notificar al padre del cambio
-    console.log("Icono cambiado en nodo:", id, newIcon);
+    console.log("Icono cambiado en nodo:", nodeId, newIcon);
     
     // Propagar cambio al componente padre - CORREGIR: usar 'icon' en lugar de 'iconType'
     if (onPropertiesChange) {
@@ -352,7 +307,7 @@ export function CanvasNode({
   // Función para manejar cambios en el color de fondo
   const handleColorChange = (newColor: string, newZIndex?: number) => {
     // Notificar al padre del cambio
-    console.log("Color cambiado en nodo:", id, newColor, "zIndex:", newZIndex);
+    console.log("Color cambiado en nodo:", nodeId, newColor, "zIndex:", newZIndex);
     
     // Propagar cambio al componente padre
     if (onPropertiesChange) {
@@ -373,7 +328,7 @@ export function CanvasNode({
   // Función para manejar cambios en el texto
   const handleTextChange = (newText: string) => {
     // Notificar al padre del cambio
-    console.log("Texto cambiado en nodo:", id, newText);
+    console.log("Texto cambiado en nodo:", nodeId, newText);
     
     // Propagar cambio al componente padre
     if (onPropertiesChange) {

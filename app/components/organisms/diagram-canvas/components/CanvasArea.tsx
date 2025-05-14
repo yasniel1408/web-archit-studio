@@ -112,7 +112,7 @@ export function CanvasArea({
 
         {/* Primero renderizamos los contenedores (para que estén por debajo) */}
         {nodes
-          .filter(node => node.type.includes('container'))
+          .filter(node => node.type.includes('container') && node.icon)
           .map(node => (
             <CanvasContainer
               key={node.id}
@@ -138,7 +138,7 @@ export function CanvasArea({
           
         {/* Después renderizamos los squares (para que estén por encima) */}
         {nodes
-          .filter(node => !node.type.includes('container'))
+          .filter(node => !node.type.includes('container') && node.icon)
           .map(node => (
             <CanvasNode
               key={node.id}

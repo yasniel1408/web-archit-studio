@@ -14,6 +14,13 @@ export function useNodeManagement() {
     size: { width: number, height: number } = { width: 140, height: 80 },
     icon?: IconType
   ) => {
+    // Verificar si ya existe un nodo con el mismo ID
+    const existingNode = nodes.find(node => node.id === id);
+    if (existingNode) {
+      // Si existe, generar un nuevo ID único
+      id = `${id}-${Date.now()}`;
+    }
+
     const newNode: NodeType = {
       id,
       position,
@@ -25,7 +32,7 @@ export function useNodeManagement() {
 
     setNodes(prevNodes => [...prevNodes, newNode]);
     return newNode;
-  }, []);
+  }, [nodes]);
 
   // Borrar un nodo y todas sus conexiones asociadas
   const deleteNode = useCallback((

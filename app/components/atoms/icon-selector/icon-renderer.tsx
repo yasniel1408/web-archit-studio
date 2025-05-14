@@ -390,8 +390,6 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/gcp/cloud_translation_api/cloud_translation_api.svg" className={className} alt="GCP Translation" style={{borderRadius: '7px'}} />;
     case 'gcp-dialogflow':
       return <img src="/assets/icons/gcp/dialogflow/dialogflow.svg" className={className} alt="GCP Dialogflow" style={{borderRadius: '7px'}} />;
-    case 'gcp-document-ai':
-      return <img src="/assets/icons/gcp/document_ai/document_ai.svg" className={className} alt="GCP Document AI" style={{borderRadius: '7px'}} />;
     case 'gcp-contact-center-ai':
       return <img src="/assets/icons/gcp/contact_center_ai/contact_center_ai.svg" className={className} alt="GCP Contact Center AI" style={{borderRadius: '7px'}} />;
     case 'gcp-healthcare-nlp-api':
@@ -400,20 +398,14 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
       return <img src="/assets/icons/gcp/recommendations_ai/recommendations_ai.svg" className={className} alt="GCP Recommendations AI" style={{borderRadius: '7px'}} />;
     case 'gcp-retail-api':
       return <img src="/assets/icons/gcp/retail_api/retail_api.svg" className={className} alt="GCP Retail API" style={{borderRadius: '7px'}} />;
-    case 'gcp-media-translation-api':
-      return <img src="/assets/icons/gcp/media_translation_api/media_translation_api.svg" className={className} alt="GCP Media Translation API" style={{borderRadius: '7px'}} />;
     case 'gcp-cloud-inference-api':
       return <img src="/assets/icons/gcp/cloud_inference_api/cloud_inference_api.svg" className={className} alt="GCP Cloud Inference API" style={{borderRadius: '7px'}} />;
-    case 'gcp-cloud-vision-api':
-      return <img src="/assets/icons/gcp/cloud_vision_api/cloud_vision_api.svg" className={className} alt="GCP Cloud Vision API" style={{borderRadius: '7px'}} />;
     
     // Iconos GCP Big Data
     case 'gcp-bigquery':
       return <img src="/assets/icons/gcp/bigquery/bigquery.svg" className={className} alt="GCP BigQuery" style={{borderRadius: '7px'}} />;
     case 'gcp-dataflow':
       return <img src="/assets/icons/gcp/dataflow/dataflow.svg" className={className} alt="GCP Dataflow" style={{borderRadius: '7px'}} />;
-    case 'gcp-dataproc':
-      return <img src="/assets/icons/gcp/dataproc/dataproc.svg" className={className} alt="GCP Dataproc" style={{borderRadius: '7px'}} />;
     case 'gcp-pubsub':
       return <img src="/assets/icons/gcp/pubsub/pubsub.svg" className={className} alt="GCP Pub/Sub" style={{borderRadius: '7px'}} />;
     case 'gcp-data-catalog':
@@ -439,34 +431,46 @@ export function IconRenderer({ iconType, className = "w-6 h-6 text-gray-600" }: 
     case 'gcp-cloud-source-repositories':
       return <img src="/assets/icons/gcp/cloud_source_repository.svg" className={className} alt="GCP Cloud Source Repositories" style={{borderRadius: '7px'}} />;
     case 'gcp-artifact-registry':
-      return <img src="/assets/icons/gcp/artifact_registry/artifact_registry.svg" className={className} alt="GCP Artifact Registry" style={{borderRadius: '7px'}} />;
-    case 'aws-organizations':
-      return <img src="/assets/icons/aws/organizations.svg" className={className} alt="AWS Organizations" style={{borderRadius: '7px'}} />;
-    case 'aws-systems-manager':
-      return <img src="/assets/icons/aws/systems-manager.svg" className={className} alt="AWS Systems Manager" style={{borderRadius: '7px'}} />;
-    case 'aws-service-catalog':
-      return <img src="/assets/icons/aws/service-catalog.svg" className={className} alt="AWS Service Catalog" style={{borderRadius: '7px'}} />;
-    case 'aws-trusted-advisor':
-      return <img src="/assets/icons/aws/trusted-advisor.svg" className={className} alt="AWS Trusted Advisor" style={{borderRadius: '7px'}} />;
-    case 'aws-well-architected-tool':
-      return <img src="/assets/icons/aws/well-architected-tool.svg" className={className} alt="AWS Well-Architected Tool" style={{borderRadius: '7px'}} />;
-    case 'aws-launch-wizard':
-      return <img src="/assets/icons/aws/launch-wizard.svg" className={className} alt="AWS Launch Wizard" style={{borderRadius: '7px'}} />;
-    case 'aws-opsworks':
-      return <img src="/assets/icons/aws/opsworks.svg" className={className} alt="AWS OpsWorks" style={{borderRadius: '7px'}} />;
-    case 'aws-systems-manager-incident-manager':
-      return <img src="/assets/icons/aws/systems-manager-incident-manager.svg" className={className} alt="AWS Systems Manager Incident Manager" style={{borderRadius: '7px'}} />;
-    case 'aws-personal-health-dashboard':
-      return <img src="/assets/icons/aws/personal-health-dashboard.svg" className={className} alt="AWS Personal Health Dashboard" style={{borderRadius: '7px'}} />;
-    case 'aws-management-console':
-      return <img src="/assets/icons/aws/management-console.svg" className={className} alt="AWS Management Console" style={{borderRadius: '7px'}} />;
-    case 'aws-license-manager':
-      return <img src="/assets/icons/aws/license-manager.svg" className={className} alt="AWS License Manager" style={{borderRadius: '7px'}} />;
-    case 'aws-fault-injection-simulator':
-      return <img src="/assets/icons/aws/fault-injection-simulator.svg" className={className} alt="AWS Fault Injection Simulator" style={{borderRadius: '7px'}} />;
-    case 'aws-appconfig':
-      return <img src="/assets/icons/aws/appconfig.svg" className={className} alt="AWS AppConfig" style={{borderRadius: '7px'}} />;
-    
+      return <img src="/assets/icons/gcp/artifact_registry/artifact_registry.svg" className="w-6 h-6" alt="GCP Artifact Registry" style={{ borderRadius: '7px' }} />;
+    case 'gcp-cloud-shell':
+      return <img src="/assets/icons/gcp/cloud_shell/cloud_shell.svg" className={className} alt="GCP Cloud Shell" style={{borderRadius: '7px'}} />;
+    case 'gcp-secret-manager':
+      return <img src="/assets/icons/gcp/secret_manager/secret_manager.svg" className={className} alt="GCP Secret Manager" style={{borderRadius: '7px'}} />;
+    case 'gcp-batch':
+      return <img src="/assets/icons/gcp/batch/batch.svg" className={className} alt="GCP Batch" style={{borderRadius: '7px'}} />;
+    case 'gcp-binary-authorization':
+      return <img src="/assets/icons/gcp/binary_authorization/binary_authorization.svg" className={className} alt="GCP Binary Authorization" style={{borderRadius: '7px'}} />;
+    case 'gcp-cloud-deploy':
+      return <img src="/assets/icons/gcp/cloud_deploy/cloud_deploy.svg" className={className} alt="GCP Cloud Deploy" style={{borderRadius: '7px'}} />;
+    case 'gcp-web-risk':
+      return <img src="/assets/icons/gcp/web_risk/web_risk.svg" className={className} alt="GCP Web Risk" style={{borderRadius: '7px'}} />;
+    case 'gcp-web-security-scanner':
+      return <img src="/assets/icons/gcp/web_security_scanner/web_security_scanner.svg" className={className} alt="GCP Web Security Scanner" style={{borderRadius: '7px'}} />;
+    case 'gcp-workflows':
+      return <img src="/assets/icons/gcp/workflows/workflows.svg" className={className} alt="GCP Workflows" style={{borderRadius: '7px'}} />;
+    case 'gcp-workload-identity-pool':
+      return <img src="/assets/icons/gcp/workload_identity_pool/workload_identity_pool.svg" className={className} alt="GCP Workload Identity Pool" style={{borderRadius: '7px'}} />;
+    case 'gcp-virtual-private-cloud':
+      return <img src="/assets/icons/gcp/virtual_private_cloud/virtual_private_cloud.svg" className={className} alt="GCP Virtual Private Cloud" style={{borderRadius: '7px'}} />;
+    case 'gcp-visual-inspection':
+      return <img src="/assets/icons/gcp/visual_inspection/visual_inspection.svg" className={className} alt="GCP Visual Inspection" style={{borderRadius: '7px'}} />;
+    case 'gcp-vmware-engine':
+      return <img src="/assets/icons/gcp/vmware_engine/vmware_engine.svg" className={className} alt="GCP VMware Engine" style={{borderRadius: '7px'}} />;
+    case 'gcp-transfer-appliance':
+      return <img src="/assets/icons/gcp/transfer_appliance/transfer_appliance.svg" className={className} alt="GCP Transfer Appliance" style={{borderRadius: '7px'}} />;
+    case 'gcp-user-preferences':
+      return <img src="/assets/icons/gcp/user_preferences/user_preferences.svg" className={className} alt="GCP User Preferences" style={{borderRadius: '7px'}} />;
+    case 'gcp-vertexai':
+      return <img src="/assets/icons/gcp/vertexai/vertexai.svg" className={className} alt="GCP Vertex AI" style={{borderRadius: '7px'}} />;
+    case 'gcp-video-intelligence-api':
+      return <img src="/assets/icons/gcp/video_intelligence_api/video_intelligence_api.svg" className={className} alt="GCP Video Intelligence API" style={{borderRadius: '7px'}} />;
+    case 'gcp-trace':
+      return <img src="/assets/icons/gcp/trace/trace.svg" className={className} alt="GCP Trace" style={{borderRadius: '7px'}} />;
+    case 'gcp-traffic-director':
+      return <img src="/assets/icons/gcp/traffic_director/traffic_director.svg" className={className} alt="GCP Traffic Director" style={{borderRadius: '7px'}} />;
+    case 'gcp-transfer':
+      return <img src="/assets/icons/gcp/transfer/transfer.svg" className={className} alt="GCP Transfer" style={{borderRadius: '7px'}} />;
+
     // New AWS Networking & Content Delivery
     case 'aws-global-accelerator':
       return <img src="/assets/icons/aws/global-accelerator.svg" className={className} alt="AWS Global Accelerator" style={{borderRadius: '7px'}} />;
