@@ -110,53 +110,59 @@ export function CanvasArea({
           nodes={nodes}
         />
 
-        {/* Primero renderizamos los contenedores (para que estén por debajo) */}
+        {/* Renderizar todos los nodos ordenados por z-index (menor a mayor) */}
+        {/* Los nodos con mayor z-index se renderizan al final y quedan por encima */}
         {nodes
-          .filter(node => node.type.includes('container') && node.icon)
-          .map(node => (
-            <CanvasContainer
-              key={node.id}
-              id={node.id}
-              position={node.position}
-              size={node.size}
-              text={node.text}
-              type={node.type}
-              iconType={node.icon}
-              backgroundColor={node.backgroundColor}
-              borderStyle={(node.type.includes('solid') ? 'solid' : 
-                          node.type.includes('dotted') ? 'dotted' :
-                          node.type.includes('double') ? 'double' :
-                          node.type.includes('none') ? 'none' : 'dashed')}
-              onNodeMove={onNodeMove}
-              onNodeResize={onNodeResize}
-              onDeleteNode={onDeleteNode}
-              onConnectionStart={onConnectionStart}
-              onConnectionEnd={onConnectionEnd}
-              onPropertiesChange={(props) => onNodePropertiesChange(node.id, props)}
-            />
-          ))}
-          
-        {/* Después renderizamos los squares (para que estén por encima) */}
-        {nodes
-          .filter(node => !node.type.includes('container') && node.icon)
-          .map(node => (
-            <CanvasNode
-              key={node.id}
-              id={node.id}
-              position={node.position}
-              size={node.size}
-              text={node.text}
-              type={node.type}
-              iconType={node.icon}
-              backgroundColor={node.backgroundColor}
-              onNodeMove={onNodeMove}
-              onNodeResize={onNodeResize}
-              onDeleteNode={onDeleteNode}
-              onConnectionStart={onConnectionStart}
-              onConnectionEnd={onConnectionEnd}
-              onPropertiesChange={(props) => onNodePropertiesChange(node.id, props)}
-            />
-          ))}
+          .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
+          .map(node => {
+            // Renderizar contenedores
+            if (node.type.includes('container')) {
+              return (
+                <CanvasContainer
+                  key={node.id}
+                  id={node.id}
+                  position={node.position}
+                  size={node.size}
+                  text={node.text}
+                  type={node.type}
+                  iconType={node.icon || 'none'}
+                  backgroundColor={node.backgroundColor || 'rgba(240, 249, 255, 0.3)'}
+                  zIndex={node.zIndex || 0}
+                  borderStyle={(node.type.includes('solid') ? 'solid' : 
+                              node.type.includes('dotted') ? 'dotted' :
+                              node.type.includes('double') ? 'double' :
+                              node.type.includes('none') ? 'none' : 'dashed')}
+                  onNodeMove={onNodeMove}
+                  onNodeResize={onNodeResize}
+                  onDeleteNode={onDeleteNode}
+                  onConnectionStart={onConnectionStart}
+                  onConnectionEnd={onConnectionEnd}
+                  onPropertiesChange={(props) => onNodePropertiesChange(node.id, props)}
+                />
+              );
+            } else {
+              // Renderizar squares/nodos
+              return (
+                <CanvasNode
+                  key={node.id}
+                  id={node.id}
+                  position={node.position}
+                  size={node.size}
+                  text={node.text}
+                  type={node.type}
+                  iconType={node.icon || 'none'}
+                  backgroundColor={node.backgroundColor || '#FFFFFF'}
+                  zIndex={node.zIndex || 10}
+                  onNodeMove={onNodeMove}
+                  onNodeResize={onNodeResize}
+                  onDeleteNode={onDeleteNode}
+                  onConnectionStart={onConnectionStart}
+                  onConnectionEnd={onConnectionEnd}
+                  onPropertiesChange={(props) => onNodePropertiesChange(node.id, props)}
+                />
+              );
+            }
+          })}
       </div>
 
       {/* Mini-mapa */}

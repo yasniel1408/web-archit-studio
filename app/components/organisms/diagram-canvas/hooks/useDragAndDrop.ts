@@ -24,69 +24,6 @@ export function useDragAndDrop({
 }: DragAndDropConfig) {
   
   /**
-   * Previene el comportamiento predeterminado y establece el efecto de copia
-   */
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-    logDebug("Evento dragOver en el canvas");
-  }, [logDebug]);
-
-  /**
-   * Maneja cuando se suelta un componente en el canvas
-   */
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    logDebug("Evento drop en el canvas");
-    
-    try {
-      let data;
-      let parsedData;
-      
-      // Intentar obtener datos como texto plano
-      if (e.dataTransfer.types.includes('text/plain')) {
-        data = e.dataTransfer.getData('text/plain');
-        logDebug(`Datos obtenidos de text/plain: ${data}`);
-        
-        if (data) {
-          try {
-            parsedData = JSON.parse(data);
-            if (parsedData && parsedData.id && parsedData.type) {
-              logDebug(`Datos válidos en formato JSON: ${data}`);
-              addNodeToCanvas(parsedData.id, parsedData.type, parsedData.text || "", e);
-              return;
-            }
-          } catch (jsonError) {
-            console.warn("Error al parsear JSON:", jsonError);
-            // Si no es JSON válido, podría ser un simple ID
-            if (typeof data === 'string' && data.trim()) {
-              const id = `${data.trim()}-${Date.now()}`;
-              logDebug(`Añadiendo nodo con ID generado: ${id}`);
-              addNodeToCanvas(id, 'square', data.trim(), e);
-              return;
-            }
-          }
-        }
-      }
-      
-      // Si no se pudo procesar como texto plano, verificar otros formatos
-      const availableTypes = e.dataTransfer.types;
-      logDebug(`Tipos disponibles en el evento drop: ${availableTypes.join(', ')}`);
-      
-      // Último recurso: crear un nodo genérico
-      const genericId = `node-${Date.now()}`;
-      logDebug(`Creando nodo genérico: ${genericId}`);
-      addNodeToCanvas(genericId, 'square', 'Nuevo nodo', e);
-      
-    } catch (error) {
-      console.error('Error al procesar evento drop:', error);
-      logDebug(`Error en el evento drop: ${error}`);
-    }
-  }, [logDebug, addNode]);
-
-  /**
    * Agregar nodo al canvas cuando se arrastra un componente
    */
   const addNodeToCanvas = useCallback((id: string, type: string, text: string = "", e: React.DragEvent) => {
@@ -94,19 +31,41 @@ export function useDragAndDrop({
     const canvasRect = canvasRef.current?.getBoundingClientRect();
     if (!canvasRect) return;
     
-    // Calcular posición relativa
+    // Calcular posición relativa al canvas
     const relativeX = e.clientX - canvasRect.left;
     const relativeY = e.clientY - canvasRect.top;
     
     // Convertir coordenadas de pantalla a coordenadas del canvas
-    const dropX = relativeX / scale - position.x;
-    const dropY = relativeY / scale - position.y;
+    // La transformación CSS es: scale(scale) translate(position.x, position.y)
+    // Para invertir esta transformación:
+    // 1. Primero dividir por la escala para deshacer el scale
+    // 2. Luego restar la traslación para deshacer el translate
+    let dropX = (relativeX / scale) - position.x;
+    let dropY = (relativeY / scale) - position.y;
     
-    logDebug(`Posición de drop: clientX=${e.clientX}, clientY=${e.clientY}`);
-    logDebug(`Canvas rect: left=${canvasRect.left}, top=${canvasRect.top}`);
-    logDebug(`Posición relativa al canvas: ${relativeX}, ${relativeY}`);
-    logDebug(`Escala: ${scale}, Posición canvas: ${position.x}, ${position.y}`);
-    logDebug(`Posición final calculada: ${dropX}, ${dropY}`);
+    // Ajuste experimental: centrar el elemento en el cursor
+    // Restar la mitad del tamaño del elemento para que aparezca centrado
+    const elementWidth = type.includes('container') ? 400 : 220;
+    const elementHeight = type.includes('container') ? 300 : 120;
+    dropX -= elementWidth / 2;
+    dropY -= elementHeight / 2;
+    
+    logDebug(`🎯 DROP EVENT DETAILS:`);
+    logDebug(`  Mouse: (${e.clientX}, ${e.clientY})`);
+    logDebug(`  Canvas rect: (${canvasRect.left}, ${canvasRect.top}) ${canvasRect.width}x${canvasRect.height}`);
+    logDebug(`  Relative to canvas: (${relativeX}, ${relativeY})`);
+    logDebug(`  Scale: ${scale}, Canvas position: (${position.x}, ${position.y})`);
+    logDebug(`  Calculated drop position: (${dropX}, ${dropY})`);
+    
+    // Agregar información adicional para debugging
+    const transformElement = canvasRef.current?.querySelector('[data-diagram-transform]') as HTMLElement;
+    if (transformElement) {
+      const transformRect = transformElement.getBoundingClientRect();
+      const transformRelativeX = e.clientX - transformRect.left;
+      const transformRelativeY = e.clientY - transformRect.top;
+      logDebug(`  Transform element rect: (${transformRect.left}, ${transformRect.top}) ${transformRect.width}x${transformRect.height}`);
+      logDebug(`  Relative to transform: (${transformRelativeX}, ${transformRelativeY})`);
+    }
     
     // Tamaños predeterminados según el tipo
     let size;
@@ -166,6 +125,69 @@ export function useDragAndDrop({
     
     logDebug(`Nodo añadido: ${id} (${finalType}) en posición ${Math.round(dropX)},${Math.round(dropY)}`);
   }, [canvasRef, scale, position, addNode, onNodePropertiesChange, logDebug]);
+
+  /**
+   * Previene el comportamiento predeterminado y establece el efecto de copia
+   */
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    logDebug("Evento dragOver en el canvas");
+  }, [logDebug]);
+
+  /**
+   * Maneja cuando se suelta un componente en el canvas
+   */
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    logDebug("Evento drop en el canvas");
+    
+    try {
+      let data;
+      let parsedData;
+      
+      // Intentar obtener datos como texto plano
+      if (e.dataTransfer.types.includes('text/plain')) {
+        data = e.dataTransfer.getData('text/plain');
+        logDebug(`Datos obtenidos de text/plain: ${data}`);
+        
+        if (data) {
+          try {
+            parsedData = JSON.parse(data);
+            if (parsedData && parsedData.id && parsedData.type) {
+              logDebug(`Datos válidos en formato JSON: ${data}`);
+              addNodeToCanvas(String(parsedData.id), String(parsedData.type), parsedData.text || "", e);
+              return;
+            }
+          } catch (jsonError) {
+            console.warn("Error al parsear JSON:", jsonError);
+            // Si no es JSON válido, podría ser un simple ID
+            if (typeof data === 'string' && data.trim()) {
+              const id = `${data.trim()}-${Date.now()}`;
+              logDebug(`Añadiendo nodo con ID generado: ${id}`);
+              addNodeToCanvas(id, 'square', data.trim(), e);
+              return;
+            }
+          }
+        }
+      }
+      
+      // Si no se pudo procesar como texto plano, verificar otros formatos
+      const availableTypes = e.dataTransfer.types;
+      logDebug(`Tipos disponibles en el evento drop: ${availableTypes.join(', ')}`);
+      
+      // Último recurso: crear un nodo genérico
+      const genericId = `node-${Date.now()}`;
+      logDebug(`Creando nodo genérico: ${genericId}`);
+      addNodeToCanvas(genericId, 'square', 'Nuevo nodo', e);
+      
+    } catch (error) {
+      console.error('Error al procesar evento drop:', error);
+      logDebug(`Error en el evento drop: ${error}`);
+    }
+  }, [logDebug, addNodeToCanvas]);
 
   return {
     handleDragOver,
