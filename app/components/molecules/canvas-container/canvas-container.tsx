@@ -18,7 +18,7 @@ interface CanvasContainerProps {
   borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'none';
   zIndex?: number;
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
-  onConnectionEnd: (targetNodeId: string, targetPosition: ConnectionPosition, x: number, y: number) => void;
+  onConnectionEnd: (targetNodeId: string, targetPosition: ConnectionPosition, x: number, y: number, getFinalCoordinates?: (mouseX: number, mouseY: number) => { x: number; y: number; isSnapped: boolean; targetNodeId: string | null; targetPosition: ConnectionPosition | null; }) => void;
   onNodeMove: (nodeId: string, position: { x: number, y: number }) => void;
   onNodeResize: (nodeId: string, size: { width: number, height: number }) => void;
   onDeleteNode?: (nodeId: string) => void;
@@ -440,6 +440,7 @@ export function CanvasContainer({
       ref={containerRef}
       className={containerClasses}
       style={containerStyle}
+      data-node-id={id}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -449,8 +450,8 @@ export function CanvasContainer({
         <Container 
           editable={true} 
           initialText={text} 
-          icon={iconType}
-          backgroundColor={backgroundColor}
+          icon={iconType || 'none'}
+          backgroundColor={backgroundColor || 'transparent'}
           borderStyle={borderStyle as any}
           zIndex={zIndex}
           onIconChange={handleIconChange}

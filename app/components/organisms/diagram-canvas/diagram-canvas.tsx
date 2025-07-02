@@ -4,7 +4,8 @@ import React, { useEffect, useCallback } from 'react';
 import { diagramCanvasStyles } from './styles';
 import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
 import { IconType } from '@/app/components/atoms/icon-selector/types';
-import { ConnectionPropertiesType, ConnectionType } from './types';
+import { ConnectionPropertiesType, ConnectionType, NodeType } from './types';
+import { useLogger } from '@/app/contexts/debug-context';
 
 // Hooks
 import { useNodeManagement } from './hooks/useNodeManagement';
@@ -14,18 +15,28 @@ import { useDiagramPersistence } from './hooks/useDiagramPersistence';
 import { useTemplates } from './hooks/useTemplates';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import { useCanvasConnections } from './hooks/useCanvasConnections';
+import { useNodeSelection } from './hooks/useNodeSelection';
+import { useCopyPaste } from './hooks/useCopyPaste';
+import { useConnectionSnapping } from './hooks/useConnectionSnapping';
 
 // Componentes
 import { CanvasToolbar } from './components/CanvasToolbar';
 import { JsonModal } from './components/JsonModal';
 import { TemplatesModal } from './components/TemplatesModal';
 import { CanvasArea } from './components/CanvasArea';
-import { DebugPanel } from './components/DebugPanel';
 
 /**
  * Componente principal del canvas de diagramación
  */
 export function DiagramCanvas() {
+  // Logger para debug
+  const logger = useLogger('DiagramCanvas');
+
+  // Inicialización del componente
+  useEffect(() => {
+    logger.info('DiagramCanvas inicializado');
+  }, [logger]);
+
   // Hooks para el manejo de nodos
   const {
     nodes,
@@ -61,7 +72,6 @@ export function DiagramCanvas() {
     position,
     isDraggingCanvas,
     isSpacePressed,
-    debug,
     handleCanvasMouseDown,
     handleCanvasMouseUp,
     resetView,
@@ -69,7 +79,6 @@ export function DiagramCanvas() {
     zoomOut,
     setViewport,
     getViewport,
-    logDebug,
     handleCanvasMouseMove
   } = useCanvasControls();
 
@@ -89,7 +98,7 @@ export function DiagramCanvas() {
     showDiagramJson,
     copyJsonToClipboard,
     loadTemplate
-  } = useDiagramPersistence(setNodes, setConnections, setViewport, logDebug);
+  } = useDiagramPersistence(setNodes, setConnections, setViewport, logger.debug);
 
   // Hook para plantillas predefinidas
   const { templates } = useTemplates();
@@ -104,7 +113,7 @@ export function DiagramCanvas() {
     position,
     addNode,
     onNodePropertiesChange: updateNodeProperties,
-    logDebug
+    logDebug: logger.debug
   });
 
   // Hook para conexiones del canvas
@@ -123,21 +132,74 @@ export function DiagramCanvas() {
     startConnection,
     completeConnection,
     cancelConnection,
-    logDebug
+    logDebug: logger.debug
+  });
+
+  // Hook para selección de nodos
+  const {
+    selectedNodeIds,
+    clearSelection,
+    isNodeSelected,
+    handleCanvasClick: handleSelectionCanvasClick
+  } = useNodeSelection({ logDebug: logger.debug });
+
+  // Wrapper para addNode que convierte el formato esperado por useCopyPaste
+  const addNodeWrapper = useCallback((nodeData: Omit<NodeType, 'id'>) => {
+    const newId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return addNode(
+      newId,
+      nodeData.type,
+      nodeData.text || '',
+      nodeData.position,
+      nodeData.size || { width: 120, height: 120 },
+      nodeData.icon
+    );
+  }, [addNode]);
+
+  // Hook para copiar y pegar
+  const {
+    copyNodes,
+    pasteNodes,
+    duplicateNodes
+  } = useCopyPaste({
+    nodes,
+    selectedNodeIds,
+    addNode: addNodeWrapper,
+    canvasRef,
+    scale,
+    position,
+    logDebug: logger.debug
+  });
+
+  // Hook para efecto de imán en conexiones
+  const {
+    updateSnapState,
+    getFinalConnectionCoordinates,
+    getSnapIndicatorStyle,
+    isSnapping
+  } = useConnectionSnapping({
+    nodes,
+    activeConnection,
+    snapDistance: 30,
+    logDebug: logger.debug
   });
 
   // Guardar cambios cuando cambian nodos o conexiones
   useEffect(() => {
     if (nodes.length > 0 || connections.length > 0) {
       saveDiagram(nodes, connections, getViewport());
+      logger.debug('Diagrama guardado automáticamente', { 
+        nodes: nodes.length, 
+        connections: connections.length 
+      });
     }
-  }, [nodes, connections, saveDiagram, getViewport]);
+  }, [nodes, connections, saveDiagram, getViewport, logger.debug]);
 
   // Borrar un nodo y sus conexiones
   const handleDeleteNode = useCallback((nodeId: string) => {
     deleteNode(nodeId, connections, setConnections);
-    logDebug(`Nodo eliminado: ${nodeId}`);
-  }, [deleteNode, connections, setConnections, logDebug]);
+    logger.debug(`Nodo eliminado: ${nodeId}`);
+  }, [deleteNode, connections, setConnections, logger.debug]);
 
   // Actualizar posición de un nodo cuando se mueve
   const handleNodeMove = useCallback((nodeId: string, newPosition: { x: number, y: number }) => {
@@ -152,8 +214,8 @@ export function DiagramCanvas() {
   // Manejar cambios en las propiedades de una conexión
   const handleConnectionPropertiesChange = useCallback((connectionId: string, properties: ConnectionPropertiesType) => {
     updateConnectionProperties(connectionId, properties);
-    logDebug(`Propiedades de conexión actualizadas: ${connectionId} - ${JSON.stringify(properties)}`);
-  }, [updateConnectionProperties, logDebug]);
+    logger.debug(`Propiedades de conexión actualizadas: ${connectionId} - ${JSON.stringify(properties)}`);
+  }, [updateConnectionProperties, logger.debug]);
 
   // Limpiar el lienzo eliminando todos los nodos y conexiones
   const clearCanvas = useCallback(() => {
@@ -162,9 +224,9 @@ export function DiagramCanvas() {
       setNodes([]);
       setConnections([]);
       resetView();
-      logDebug('Lienzo limpiado: se eliminaron todos los elementos');
+      logger.info('Lienzo limpiado: se eliminaron todos los elementos');
     }
-  }, [setNodes, setConnections, resetView, logDebug]);
+  }, [setNodes, setConnections, resetView, logger.info]);
 
   // Envolver los eventos de mouse para combinar comportamientos
   const handleCanvasMouseMoveWrapper = useCallback((e: React.MouseEvent) => {
@@ -172,7 +234,22 @@ export function DiagramCanvas() {
     handleCanvasMouseMove(e);
     // Si hay una conexión activa, actualiza su posición mientras se arrastra
     handleUpdateActiveConnection(e);
-  }, [handleCanvasMouseMove, handleUpdateActiveConnection]);
+    
+    // Si hay una conexión activa, actualizar el estado de snap
+    if (activeConnection) {
+      const canvasRect = canvasRef.current?.getBoundingClientRect();
+      if (canvasRect) {
+        const relativeX = e.clientX - canvasRect.left;
+        const relativeY = e.clientY - canvasRect.top;
+        
+        // Convertir coordenadas de pantalla a coordenadas del canvas
+        const canvasX = (relativeX / scale) - position.x;
+        const canvasY = (relativeY / scale) - position.y;
+        
+        updateSnapState(canvasX, canvasY);
+      }
+    }
+  }, [handleCanvasMouseMove, handleUpdateActiveConnection, activeConnection, canvasRef, scale, position, updateSnapState]);
 
   // Combinar manejadores de mouseUp
   const handleCanvasMouseUpWrapper = useCallback((e: React.MouseEvent) => {
@@ -198,8 +275,7 @@ export function DiagramCanvas() {
         scale={scale}
       />
 
-      {/* Panel de depuración */}
-      <DebugPanel messages={debug} />
+
 
       {/* Área del canvas */}
       <CanvasArea
@@ -223,12 +299,21 @@ export function DiagramCanvas() {
         onNodeResize={handleNodeResize}
         onDeleteNode={handleDeleteNode}
         onConnectionStart={handleConnectionStart}
-        onConnectionEnd={handleConnectionEnd}
+        onConnectionEnd={(nodeId, position, x, y) => handleConnectionEnd(nodeId, position, x, y, getFinalConnectionCoordinates)}
         onConnectionSelect={selectConnection}
         onConnectionPropertiesChange={handleConnectionPropertiesChange}
         onDeleteConnection={deleteConnection}
         onNodePropertiesChange={updateNodeProperties}
       />
+
+      {/* Indicador visual del efecto de imán para conexiones */}
+      {isSnapping && getSnapIndicatorStyle() && (
+        <div 
+          style={getSnapIndicatorStyle()!} 
+          className="pointer-events-none ignore-export"
+          title="Punto de conexión magnético"
+        />
+      )}
 
       {/* Input oculto para importar archivo */}
       <input

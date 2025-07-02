@@ -132,6 +132,7 @@ export function useDragAndDrop({
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
+    console.log("🎯 DRAG OVER en canvas - tipos disponibles:", e.dataTransfer.types);
     logDebug("Evento dragOver en el canvas");
   }, [logDebug]);
 
@@ -142,6 +143,10 @@ export function useDragAndDrop({
     e.preventDefault();
     e.stopPropagation();
     
+    console.log("🎯 DROP EVENT en canvas!");
+    console.log("📋 Tipos disponibles:", e.dataTransfer.types);
+    console.log("📍 Posición del mouse:", e.clientX, e.clientY);
+    
     logDebug("Evento drop en el canvas");
     
     try {
@@ -151,21 +156,24 @@ export function useDragAndDrop({
       // Intentar obtener datos como texto plano
       if (e.dataTransfer.types.includes('text/plain')) {
         data = e.dataTransfer.getData('text/plain');
+        console.log(`📝 Datos de text/plain:`, data);
         logDebug(`Datos obtenidos de text/plain: ${data}`);
         
         if (data) {
           try {
             parsedData = JSON.parse(data);
             if (parsedData && parsedData.id && parsedData.type) {
+              console.log("✅ Datos JSON válidos:", parsedData);
               logDebug(`Datos válidos en formato JSON: ${data}`);
               addNodeToCanvas(String(parsedData.id), String(parsedData.type), parsedData.text || "", e);
               return;
             }
           } catch (jsonError) {
-            console.warn("Error al parsear JSON:", jsonError);
+            console.warn("⚠️ Error al parsear JSON:", jsonError);
             // Si no es JSON válido, podría ser un simple ID
             if (typeof data === 'string' && data.trim()) {
               const id = `${data.trim()}-${Date.now()}`;
+              console.log(`🔄 Generando ID: ${id}`);
               logDebug(`Añadiendo nodo con ID generado: ${id}`);
               addNodeToCanvas(id, 'square', data.trim(), e);
               return;
@@ -174,17 +182,37 @@ export function useDragAndDrop({
         }
       }
       
+      // Intentar application/json si está disponible
+      if (e.dataTransfer.types.includes('application/json')) {
+        data = e.dataTransfer.getData('application/json');
+        console.log(`📝 Datos de application/json:`, data);
+        if (data) {
+          try {
+            parsedData = JSON.parse(data);
+            if (parsedData && parsedData.id && parsedData.type) {
+              console.log("✅ Datos JSON válidos (application/json):", parsedData);
+              addNodeToCanvas(String(parsedData.id), String(parsedData.type), parsedData.text || "", e);
+              return;
+            }
+          } catch (jsonError) {
+            console.warn("⚠️ Error al parsear JSON de application/json:", jsonError);
+          }
+        }
+      }
+      
       // Si no se pudo procesar como texto plano, verificar otros formatos
       const availableTypes = e.dataTransfer.types;
+      console.log(`📋 Tipos disponibles en el evento drop: ${availableTypes.join(', ')}`);
       logDebug(`Tipos disponibles en el evento drop: ${availableTypes.join(', ')}`);
       
       // Último recurso: crear un nodo genérico
       const genericId = `node-${Date.now()}`;
+      console.log(`🔄 Creando nodo genérico: ${genericId}`);
       logDebug(`Creando nodo genérico: ${genericId}`);
       addNodeToCanvas(genericId, 'square', 'Nuevo nodo', e);
       
     } catch (error) {
-      console.error('Error al procesar evento drop:', error);
+      console.error('❌ Error al procesar evento drop:', error);
       logDebug(`Error en el evento drop: ${error}`);
     }
   }, [logDebug, addNodeToCanvas]);

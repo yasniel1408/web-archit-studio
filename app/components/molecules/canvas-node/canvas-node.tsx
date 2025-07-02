@@ -15,7 +15,7 @@ interface CanvasNodeProps {
   backgroundColor?: string; // Añadir la propiedad backgroundColor
   zIndex?: number; // Agregar zIndex
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
-  onConnectionEnd: (targetNodeId: string, targetPosition: ConnectionPosition, x: number, y: number) => void;
+  onConnectionEnd: (targetNodeId: string, targetPosition: ConnectionPosition, x: number, y: number, getFinalCoordinates?: (mouseX: number, mouseY: number) => { x: number; y: number; isSnapped: boolean; targetNodeId: string | null; targetPosition: ConnectionPosition | null; }) => void;
   onNodeMove: (nodeId: string, position: { x: number, y: number }) => void;
   onNodeResize: (nodeId: string, size: { width: number, height: number }) => void;
   onDeleteNode?: (nodeId: string) => void;
@@ -43,7 +43,7 @@ export function CanvasNode({
   disabled = false
 }: CanvasNodeProps) {
   // Asegurar que el ID sea válido
-  const nodeId = id || `node-${Date.now()}`;
+  const nodeId: string = id || `node-${Date.now()}`;
   
   const [pos, setPos] = useState(position);
   const [size, setSize] = useState(initialSize);
@@ -268,25 +268,74 @@ export function CanvasNode({
   
   // Iniciar una conexión desde un punto de conexión
   const handleConnectionStart = (connectionPosition: ConnectionPosition) => {
-    if (nodeRef.current) {
-      const rect = nodeRef.current.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-      onConnectionStart(nodeId, connectionPosition, x, y);
+    if (disabled || !onConnectionStart) return;
+    
+    let x = pos.x;
+    let y = pos.y;
+    
+    switch (connectionPosition) {
+      case 'top': x += size.width / 2; break;
+      case 'right': x += size.width; y += size.height / 2; break;
+      case 'bottom': x += size.width / 2; y += size.height; break;
+      case 'left': y += size.height / 2; break;
     }
+    
+    onConnectionStart(nodeId, connectionPosition, x, y);
   };
   
   // Cuando soltamos el ratón sobre este nodo, puede ser el destino de una conexión
   const handleMouseUp = (e: React.MouseEvent) => {
-    if (isDragging && dragStartRef.current && nodeRef.current) {
-      nodeRef.current.classList.remove('dragging');
-      setIsDragging(false);
-      dragStartRef.current = null;
-    }
+    if (disabled || !onConnectionEnd) return;
     
-    if (isResizing && resizeStartRef.current && nodeRef.current) {
-      setIsResizing(null);
-      resizeStartRef.current = null;
+    if (!isDragging && !isResizing) { // Solo finalizar conexión si no estábamos arrastrando/redimensionando
+      // Determinar la posición de conexión más cercana al punto donde se soltó el ratón
+      const rect = nodeRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      
+      // Obtener la posición relativa del ratón respecto al nodo
+      const relX = e.clientX - rect.left;
+      const relY = e.clientY - rect.top;
+      
+      // Calcular distancias a cada lado
+      const distToTop = relY;
+      const distToRight = rect.width - relX;
+      const distToBottom = rect.height - relY;
+      const distToLeft = relX;
+      
+      // Determinar cuál es el más cercano
+      const minDist = Math.min(distToTop, distToRight, distToBottom, distToLeft);
+      let connectionPosition: ConnectionPosition;
+      
+      if (minDist === distToTop) {
+        connectionPosition = 'top';
+      } else if (minDist === distToRight) {
+        connectionPosition = 'right';
+      } else if (minDist === distToBottom) {
+        connectionPosition = 'bottom';
+      } else {
+        connectionPosition = 'left';
+      }
+      
+      console.log(`CanvasNode ${nodeId}: Conexión terminada en posición ${connectionPosition}`);
+      
+      // Calcular las coordenadas exactas del punto de conexión
+      let connectionX = pos.x;
+      let connectionY = pos.y;
+      
+      // Ajustar las coordenadas según la posición de conexión
+      if (connectionPosition === 'top') {
+        connectionX += size.width / 2;
+      } else if (connectionPosition === 'right') {
+        connectionX += size.width;
+        connectionY += size.height / 2;
+      } else if (connectionPosition === 'bottom') {
+        connectionX += size.width / 2;
+        connectionY += size.height;
+      } else if (connectionPosition === 'left') {
+        connectionY += size.height / 2;
+      }
+      
+      onConnectionEnd(nodeId, connectionPosition, connectionX, connectionY);
     }
   };
 
@@ -398,6 +447,7 @@ export function CanvasNode({
       ref={nodeRef}
       className={nodeClasses}
       style={nodeStyle}
+      data-node-id={id}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -407,8 +457,8 @@ export function CanvasNode({
         <Square 
           editable={true} 
           initialText={text} 
-          icon={iconType}
-          backgroundColor={backgroundColor}
+          icon={iconType || 'none'}
+          backgroundColor={backgroundColor || '#FFFFFF'}
           zIndex={zIndex}
           onIconChange={handleIconChange}
           onColorChange={(newColor, newZIndex) => handleColorChange(newColor, newZIndex)}

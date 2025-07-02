@@ -44,7 +44,7 @@ export function useMinimapNavigation({
   }, []);
   
   const handleMousePosition = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDragging || !canvasRef.current) return;
+    if (!canvasRef.current) return; // Permitir navegación inmediata, no solo al arrastrar
     
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -53,13 +53,14 @@ export function useMinimapNavigation({
     const minimapScale = calculateMiniMapScale();
     const { offsetX, offsetY } = calculateOffset();
     
-    // Calcular la posición en el diagrama completo
+    // Calcular la posición en el diagrama completo donde se hizo clic
     const diagramX = bounds.minX + ((x - offsetX) / minimapScale);
     const diagramY = bounds.minY + ((y - offsetY) / minimapScale);
     
-    // Calcular la posición del viewport
-    const viewportX = -diagramX * scale + viewportSize.width / 2;
-    const viewportY = -diagramY * scale + viewportSize.height / 2;
+    // Calcular la posición del viewport para centrar en el punto clickeado
+    // Invertir las coordenadas para corregir la navegación
+    const viewportX = -diagramX + viewportSize.width / (2 * scale);
+    const viewportY = -diagramY + viewportSize.height / (2 * scale);
     
     // Disparar el evento con la posición
     const event = new CustomEvent('minimap-navigation', {
@@ -67,7 +68,7 @@ export function useMinimapNavigation({
     });
     
     window.dispatchEvent(event);
-  }, [isDragging, canvasRef, bounds, scale, viewportSize, calculateMiniMapScale, calculateOffset]);
+  }, [canvasRef, bounds, scale, viewportSize, calculateMiniMapScale, calculateOffset]);
   
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);

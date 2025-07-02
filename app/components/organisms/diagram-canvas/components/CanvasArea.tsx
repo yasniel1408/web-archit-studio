@@ -29,7 +29,7 @@ type CanvasAreaProps = {
   onNodeResize: (nodeId: string, newSize: { width: number; height: number }) => void;
   onDeleteNode: (nodeId: string) => void;
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
-  onConnectionEnd: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
+  onConnectionEnd: (nodeId: string, position: ConnectionPosition, x: number, y: number, getFinalCoordinates?: (mouseX: number, mouseY: number) => { x: number; y: number; isSnapped: boolean; targetNodeId: string | null; targetPosition: ConnectionPosition | null; }) => void;
   onConnectionSelect: (connectionId: string) => void;
   onConnectionPropertiesChange: (connectionId: string, properties: ConnectionPropertiesType) => void;
   onDeleteConnection: (connectionId: string) => void;
@@ -67,6 +67,25 @@ export function CanvasArea({
   onNodePropertiesChange
 }: CanvasAreaProps) {
   
+  const [dragOverActive, setDragOverActive] = useState(false);
+
+  const handleDragOverWithIndicator = useCallback((e: React.DragEvent) => {
+    setDragOverActive(true);
+    onDragOver(e);
+  }, [onDragOver]);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    // Solo ocultar si realmente salimos del canvas
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setDragOverActive(false);
+    }
+  }, []);
+
+  const handleDropWithIndicator = useCallback((e: React.DragEvent) => {
+    setDragOverActive(false);
+    onDrop(e);
+  }, [onDrop]);
+
   const getCursorStyle = () => {
     if (isDraggingCanvas) return diagramCanvasStyles.canvasGrabbing;
     if (isSpacePressed) return diagramCanvasStyles.canvasGrab;
@@ -76,13 +95,14 @@ export function CanvasArea({
   return (
     <div
       ref={canvasRef}
-      className={`${diagramCanvasStyles.canvas} ${getCursorStyle()}`}
+      className={`${diagramCanvasStyles.canvas} ${getCursorStyle()} ${dragOverActive ? 'border-4 border-blue-500 border-dashed' : ''}`}
       onMouseDown={onCanvasMouseDown}
       onMouseMove={onCanvasMouseMove}
       onMouseUp={onCanvasMouseUp}
       onClick={onCanvasClick}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
+      onDragOver={handleDragOverWithIndicator}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDropWithIndicator}
       data-diagram-export="true"
     >
       {/* Capa de transformación para zoom y pan */}
@@ -164,6 +184,15 @@ export function CanvasArea({
             }
           })}
       </div>
+
+      {/* Indicador visual de drag and drop */}
+      {dragOverActive && (
+        <div className="absolute inset-0 bg-blue-500/10 pointer-events-none z-50 flex items-center justify-center">
+          <div className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg animate-pulse">
+            🎯 Suelta aquí para agregar componente
+          </div>
+        </div>
+      )}
 
       {/* Mini-mapa */}
       <div className="absolute bottom-4 right-4 z-10 ignore-export" data-minimap="true">

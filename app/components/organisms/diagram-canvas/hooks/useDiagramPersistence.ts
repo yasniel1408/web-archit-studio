@@ -320,10 +320,10 @@ export function useDiagramPersistence(
         logDebug('Minimapa ocultado para la exportación');
       }
       
-      // Configuración para la animación - OPTIMIZADO para mejorar rendimiento
-      const fps = 15; // Reducido a la mitad (antes 30) para menos frames
-      const duration = 3; // Reducido de 5 a 3 segundos
-      const totalFrames = fps * duration; // Menos frames en total
+      // Configuración para la animación - MEJORADA para mejor calidad
+      const fps = 20; // Aumentado para mejor fluidez (antes 15)
+      const duration = 4; // Duración optimizada (antes 3)
+      const totalFrames = fps * duration; // Frames totales optimizados
       const frameDelay = Math.round(100 / fps); // Delay entre frames en centésimas de segundo
       
       // Creamos un div para mostrar progreso

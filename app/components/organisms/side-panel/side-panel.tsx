@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { DraggableItem } from '@/app/components/molecules/draggable-item/draggable-item';
+import { GoogleAds } from '@/app/components/atoms/google-ads/google-ads';
 
 export function SidePanel() {
   const generatePayPalLink = () => {
@@ -58,6 +59,28 @@ export function SidePanel() {
                 </svg>
                 <span>Apoyar este proyecto</span>
               </a>
+            </div>
+
+            {/* Anuncios de Google AdSense */}
+            <div className="mt-6">
+              <GoogleAds
+                adSlot="1234567890" // Reemplazar con tu Ad Slot ID real
+                adFormat="auto"
+                className="w-full max-w-sm mx-auto"
+                style={{ minHeight: '200px' }}
+                fallbackText="🚀 Considera desactivar tu bloqueador de anuncios para apoyar este proyecto gratuito"
+              />
+            </div>
+
+            {/* Segundo anuncio más pequeño */}
+            <div className="mt-4">
+              <GoogleAds
+                adSlot="0987654321" // Reemplazar con tu segundo Ad Slot ID real
+                adFormat="banner"
+                className="w-full max-w-sm mx-auto"
+                style={{ minHeight: '100px' }}
+                fallbackText="💡 Los anuncios nos ayudan a mantener esta herramienta gratuita"
+              />
             </div>
           </div>
       </div>

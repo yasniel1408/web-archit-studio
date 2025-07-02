@@ -15,7 +15,7 @@ export function DragWrapper({ id, type, text, children }: DragWrapperProps) {
   const handleDragStart = (e: React.DragEvent) => {
     // Generar un ID único para este drag-and-drop
     const uniqueId = `${id}-${Date.now()}`;
-    console.log('Iniciando arrastre', { id: uniqueId, type, text });
+    console.log('🚀 INICIANDO ARRASTRE:', { id: uniqueId, type, text });
     
     try {
       // Configurar datos para transferir con el ID único
@@ -25,9 +25,11 @@ export function DragWrapper({ id, type, text, children }: DragWrapperProps) {
       // Se intenta primero text/plain porque algunos navegadores tienen problemas con tipos personalizados
       e.dataTransfer.setData('text/plain', data);
       e.dataTransfer.setData('application/reactflow', data);
+      e.dataTransfer.setData('application/json', data);
       
       // Registrar qué tipos de datos se han establecido
-      console.log('Tipos de datos establecidos:', e.dataTransfer.types);
+      console.log('📋 Tipos de datos establecidos:', e.dataTransfer.types);
+      console.log('📋 Datos JSON:', data);
       
       // Establecer efecto de copia explícitamente
       e.dataTransfer.effectAllowed = 'copy';
@@ -53,15 +55,21 @@ export function DragWrapper({ id, type, text, children }: DragWrapperProps) {
       e.dataTransfer.setDragImage(dragEl.firstChild as HTMLElement, 60, 25);
       
       setTimeout(() => {
-        document.body.removeChild(dragEl);
+        try {
+          document.body.removeChild(dragEl);
+        } catch (e) {
+          // Si ya se removió, no hay problema
+        }
       }, 0);
       
       setIsDragging(true);
       
       // Añadir clase al body para indicar que se está arrastrando
       document.body.classList.add('is-dragging');
+      
+      console.log('✅ Arrastre configurado exitosamente');
     } catch (error) {
-      console.error('Error al iniciar arrastre:', error);
+      console.error('❌ Error al iniciar arrastre:', error);
     }
   };
   

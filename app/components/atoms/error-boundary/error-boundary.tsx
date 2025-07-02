@@ -1,15 +1,18 @@
 'use client';
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { ErrorHandler, AppError } from '@/lib/error-handler';
 
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  onError?: (error: AppError) => void;
 }
 
 interface State {
   hasError: boolean;
   error?: Error;
+  errorId?: string;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -24,11 +27,18 @@ export class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
     
-    // Aquí puedes enviar el error a un servicio de logging
-    // como Sentry, LogRocket, etc.
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
-      // Ejemplo: window.Sentry?.captureException(error);
-    }
+    // Usar nuestro sistema de manejo de errores
+    const appError = ErrorHandler.logError(
+      error,
+      {
+        componentStack: errorInfo.componentStack,
+        errorBoundary: true,
+      },
+      'critical'
+    );
+
+    this.setState({ errorId: appError.id });
+    this.props.onError?.(appError);
   }
 
   public render() {

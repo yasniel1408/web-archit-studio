@@ -1,4 +1,5 @@
 import React from 'react';
+import { DebugToggle } from '@/app/components/atoms/debug-toggle/debug-toggle';
 
 type CanvasToolbarProps = {
   onZoomIn: () => void;
@@ -132,6 +133,11 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
           </svg>
           <span>Limpiar Lienzo</span>
         </button>
+      </div>
+      
+      {/* Sección de herramientas de desarrollo */}
+      <div className="flex items-center gap-1.5 border-l pl-4 ml-2">
+        <DebugToggle showText={false} compact={true} />
       </div>
     </div>
   );

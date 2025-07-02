@@ -58,7 +58,7 @@ export function useCanvasControls() {
       if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
         
-        const delta = e.deltaY < 0 ? 0.1 : -0.1;
+        const delta = e.deltaY < 0 ? 0.05 : -0.05; // Reducir sensibilidad a la mitad
         const newScale = Math.min(Math.max(scale + delta, 0.25), 3);
         
         // Obtener posición del cursor relativa al canvas
@@ -143,14 +143,14 @@ export function useCanvasControls() {
   
   // Zoom in
   const zoomIn = useCallback(() => {
-    const newScale = Math.min(scale + 0.1, 3);
+    const newScale = Math.min(scale + 0.05, 3); // Reducir step de zoom de botones
     setScale(newScale);
     logDebug(`Zoom: ${Math.round(newScale * 100)}%`);
   }, [scale, logDebug]);
   
   // Zoom out
   const zoomOut = useCallback(() => {
-    const newScale = Math.max(scale - 0.1, 0.25);
+    const newScale = Math.max(scale - 0.05, 0.25); // Reducir step de zoom de botones
     setScale(newScale);
     logDebug(`Zoom: ${Math.round(newScale * 100)}%`);
   }, [scale, logDebug]);
@@ -159,11 +159,9 @@ export function useCanvasControls() {
   useEffect(() => {
     const handleMinimapNavigation = (e: CustomEvent) => {
       const { x, y } = e.detail;
-      // Centrar la vista en la posición seleccionada
-      setPosition({
-        x: -x + (canvasRef.current?.clientWidth || 0) / 2 / scale,
-        y: -y + (canvasRef.current?.clientHeight || 0) / 2 / scale
-      });
+      // Aplicar directamente la posición calculada desde el minimapa
+      setPosition({ x, y });
+      logDebug(`Navegación minimapa: (${Math.round(x)}, ${Math.round(y)})`);
     };
 
     window.addEventListener('minimap-navigation', handleMinimapNavigation as EventListener);
@@ -171,7 +169,7 @@ export function useCanvasControls() {
     return () => {
       window.removeEventListener('minimap-navigation', handleMinimapNavigation as EventListener);
     };
-  }, [scale]);
+  }, [logDebug]);
 
   // Establecer el viewport con valores específicos (útil para cargar diagramas guardados)
   const setViewport = useCallback((viewport: ViewportType) => {

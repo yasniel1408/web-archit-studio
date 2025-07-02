@@ -44,18 +44,45 @@ export function useCanvasConnections({
 
   /**
    * Finaliza una conexión en un punto específico de otro nodo
+   * Ahora incluye soporte para coordenadas de snap magnético
    */
   const handleConnectionEnd = useCallback((
     targetNodeId: string, 
     targetPosition: ConnectionPosition, 
     x: number, 
-    y: number
+    y: number,
+    getFinalCoordinates?: (mouseX: number, mouseY: number) => {
+      x: number;
+      y: number;
+      isSnapped: boolean;
+      targetNodeId: string | null;
+      targetPosition: ConnectionPosition | null;
+    }
   ) => {
     if (activeConnection) {
-      const newConnection = completeConnection(targetNodeId, targetPosition, x, y);
+      let finalX = x;
+      let finalY = y;
+      let finalTargetNodeId = targetNodeId;
+      let finalTargetPosition = targetPosition;
+
+      // Si tenemos una función para obtener coordenadas finales (con snap), usarla
+      if (getFinalCoordinates) {
+        const finalCoords = getFinalCoordinates(x, y);
+        finalX = finalCoords.x;
+        finalY = finalCoords.y;
+        
+        // Si hay snap activo, usar las coordenadas y nodo del snap
+        if (finalCoords.isSnapped && finalCoords.targetNodeId && finalCoords.targetPosition) {
+          finalTargetNodeId = finalCoords.targetNodeId;
+          finalTargetPosition = finalCoords.targetPosition;
+          logDebug(`🧲 Snap aplicado: conectando a ${finalTargetNodeId} (${finalTargetPosition})`);
+        }
+      }
+
+      const newConnection = completeConnection(finalTargetNodeId, finalTargetPosition, finalX, finalY);
       
       if (newConnection) {
-        logDebug(`Conexión completada: ${activeConnection.sourceId} → ${targetNodeId}`);
+        logDebug(`Conexión completada: ${activeConnection.sourceId} → ${finalTargetNodeId}`);
       } else {
         logDebug(`Conexión cancelada: ya existe o mismo nodo`);
       }
