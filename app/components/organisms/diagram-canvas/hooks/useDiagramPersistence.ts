@@ -347,29 +347,31 @@ export function useDiagramPersistence(
           logDebug("Minimapa ocultado para la exportación");
         }
 
-        // Configuración para la animación - MEJORADA para mejor calidad
-        const fps = 20; // Aumentado para mejor fluidez (antes 15)
-        const duration = 4; // Duración optimizada (antes 3)
+        // Configuración para la animación - ⭐ MÁXIMA CALIDAD PROFESIONAL ⭐
+        const fps = 25; // FPS optimizado para GIF (balance perfecto calidad/tamaño)
+        const duration = 6; // Duración más larga para mejor showcase
         const totalFrames = fps * duration; // Frames totales optimizados
         const frameDelay = Math.round(100 / fps); // Delay entre frames en centésimas de segundo
 
-        // Creamos un div para mostrar progreso
+        // Creamos un div para mostrar progreso con mejor UX
         const progressContainer = document.createElement("div");
         progressContainer.style.position = "fixed";
         progressContainer.style.top = "50%";
         progressContainer.style.left = "50%";
         progressContainer.style.transform = "translate(-50%, -50%)";
-        progressContainer.style.padding = "20px";
-        progressContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+        progressContainer.style.padding = "24px";
+        progressContainer.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
         progressContainer.style.color = "white";
-        progressContainer.style.borderRadius = "8px";
+        progressContainer.style.borderRadius = "12px";
         progressContainer.style.zIndex = "10000";
         progressContainer.style.textAlign = "center";
+        progressContainer.style.boxShadow = "0 10px 25px rgba(0,0,0,0.5)";
         progressContainer.innerHTML = `
-        <div>Grabando GIF animado...</div>
-        <div id="gif-progress-text">0%</div>
-        <div style="width: 200px; height: 10px; background: #333; margin-top: 10px; border-radius: 5px; overflow: hidden;">
-          <div id="gif-progress-bar" style="width: 0%; height: 100%; background: #3b82f6;"></div>
+        <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">⭐ Generando GIF de Alta Calidad</div>
+        <div style="font-size: 12px; color: #888; margin-bottom: 12px;">25 FPS • 6 segundos • Resolución HD</div>
+        <div id="gif-progress-text" style="font-size: 16px; margin-bottom: 12px;">0%</div>
+        <div style="width: 250px; height: 8px; background: #333; margin: 0 auto; border-radius: 4px; overflow: hidden;">
+          <div id="gif-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 0.3s ease;"></div>
         </div>
       `;
         document.body.appendChild(progressContainer);
@@ -381,21 +383,26 @@ export function useDiagramPersistence(
         const containerWidth = diagramContainer.clientWidth;
         const containerHeight = diagramContainer.clientHeight;
 
-        // Ajustamos la escala para obtener mayor calidad
-        const scale = 0.92; // Aumentamos la escala (antes 0.85) para mejorar calidad
+        // ⭐ ESCALA MEJORADA PARA MÁXIMA CALIDAD ⭐
+        const scale = 1.25; // Escala aumentada significativamente para HD
         const scaledWidth = Math.floor(containerWidth * scale);
         const scaledHeight = Math.floor(containerHeight * scale);
 
-        // Inicializamos el generador de GIF con opciones de alta calidad manteniendo buen rendimiento
+        console.log(`🎬 Generando GIF Premium: ${scaledWidth}x${scaledHeight} a ${fps}FPS`);
+
+        // ⭐ CONFIGURACIÓN DE GIF PREMIUM ⭐
         const gif = new GIF({
-          workers: 4, // Mantener 4 workers para procesamiento paralelo
-          quality: 2, // Mejoramos la calidad (1=mejor calidad, 20=menor calidad)
-          workerScript: "/gif.worker.js", // Worker script path
-          width: scaledWidth, // Ancho con mejor calidad
-          height: scaledHeight, // Alto con mejor calidad
-          dither: false, // Sin dithering para mantener colores limpios
-          background: "#FFFFFF", // Fondo blanco
-        } as any); // Utilizamos as any para evitar errores de tipado
+          workers: 6, // Más workers para procesamiento más rápido
+          quality: 1, // MÁXIMA CALIDAD (1 = mejor calidad posible)
+          workerScript: "/gif.worker.js",
+          width: scaledWidth,
+          height: scaledHeight,
+          dither: "FloydSteinberg", // Dithering profesional para mejores gradientes
+          background: "#FFFFFF",
+          repeat: 0, // Loop infinito
+          globalPalette: false, // Paleta optimizada por frame
+          optimizePalette: true, // Optimización automática de colores
+        } as any);
 
         try {
           // Capturar frames en un bucle
@@ -407,22 +414,26 @@ export function useDiagramPersistence(
               progressText.innerText = `${progress}% (Frame ${frameIndex}/${totalFrames})`;
             }
 
-            // Opciones para captura optimizada
+            // ⭐ OPCIONES DE CAPTURA PREMIUM ⭐
             const options = {
               backgroundColor: "#FFFFFF",
-              scale: 1, // Mantenemos escala 1 para el html2canvas
+              scale: 2, // ALTA RESOLUCIÓN - Mayor detalle en la captura
               useCORS: true,
               allowTaint: true,
               logging: false,
               width: containerWidth,
               height: containerHeight,
+              pixelRatio: 2, // Para pantallas retina
+              imageTimeout: 30000, // Timeout más largo para capturas complejas
+              removeContainer: true, // Limpieza automática
+              foreignObjectRendering: false, // Mejor compatibilidad
               onclone: (clonedDoc: Document) => {
-                // Corregir la posición de los textos en los contenedores
+                // ⭐ CORRECCIÓN AVANZADA DE TEXTOS ⭐
                 const allExportTexts = clonedDoc.querySelectorAll('[data-export-text="true"]');
                 allExportTexts.forEach((el) => {
                   if (el instanceof HTMLElement) {
-                    // Aplicar ajustes más agresivos para corregir el desplazamiento en la captura
-                    el.style.transform = "translateY(-2px)";
+                    // Aplicar ajustes premium para texto HD
+                    el.style.transform = "translateY(-1px)";
                     el.style.display = "inline-block";
                     el.style.position = "relative";
                     el.style.lineHeight = "1.1";
@@ -434,8 +445,13 @@ export function useDiagramPersistence(
                     el.style.textRendering = "optimizeLegibility";
                     el.style.setProperty("-webkit-font-smoothing", "antialiased");
                     el.style.setProperty("-moz-osx-font-smoothing", "grayscale");
+                    el.style.setProperty("font-feature-settings", '"liga" 1, "kern" 1');
 
-                    // Asegurarse de que el texto sea priorizado en la captura
+                    // Mejoras específicas para HD
+                    el.style.textShadow = "0 0 1px rgba(0,0,0,0.1)";
+                    el.style.backfaceVisibility = "hidden";
+                    el.style.perspective = "1000px";
+
                     el.setAttribute("data-html2canvas-capture", "true");
                     el.setAttribute("data-html2canvas-priority", "1");
                   }
@@ -445,7 +461,8 @@ export function useDiagramPersistence(
                 const containerTexts = clonedDoc.querySelectorAll(".container-text-element");
                 containerTexts.forEach((el) => {
                   if (el instanceof HTMLElement) {
-                    el.style.transform = "translateY(-2px)";
+                    el.style.transform = "translateY(-1px)";
+                    el.style.filter = "contrast(1.1) brightness(1.02)"; // Mejor contraste
                   }
                 });
 
@@ -453,7 +470,8 @@ export function useDiagramPersistence(
                 const squareTexts = clonedDoc.querySelectorAll(".square-text-element");
                 squareTexts.forEach((el) => {
                   if (el instanceof HTMLElement) {
-                    el.style.transform = "translateY(-1px)";
+                    el.style.transform = "translateY(-0.5px)";
+                    el.style.filter = "contrast(1.1) brightness(1.02)";
                   }
                 });
 
@@ -467,54 +485,74 @@ export function useDiagramPersistence(
                     wrapper.style.display = "flex";
                     wrapper.style.alignItems = "center";
                     wrapper.style.height = "auto";
+                    wrapper.style.filter = "contrast(1.05)"; // Mejor definición
                   }
                 });
 
-                // Manejar las animaciones
+                // ⭐ ANIMACIONES PREMIUM CON EFECTOS SUAVES ⭐
                 const animatedElements = clonedDoc.querySelectorAll(".animation, [data-animation]");
                 animatedElements.forEach((el) => {
                   if (el instanceof HTMLElement) {
-                    // Calcular la fase de animación (0-1) basada en el frame actual
+                    // Calcular múltiples fases de animación para mejor fluidez
                     const phase = (frameIndex / totalFrames) * Math.PI * 2;
+                    const slowPhase = (frameIndex / totalFrames) * Math.PI * 0.5; // Fase más lenta
+                    const fastPhase = (frameIndex / totalFrames) * Math.PI * 4; // Fase más rápida
 
-                    // Aplicar un efecto de pulso o movimiento suave
                     if (
                       el.classList.contains("pulse") ||
                       el.getAttribute("data-animation") === "pulse"
                     ) {
-                      const scale = 1 + 0.05 * Math.sin(phase);
+                      // Pulso suave y elegante
+                      const scale = 1 + 0.03 * Math.sin(phase);
+                      const glow = 0.5 + 0.5 * Math.sin(phase);
                       el.style.transform = `scale(${scale})`;
+                      el.style.filter = `brightness(${1 + glow * 0.1}) contrast(1.05)`;
                     } else if (
                       el.classList.contains("flow") ||
                       el.getAttribute("data-animation") === "flow"
                     ) {
-                      // Para conexiones animadas, modificamos el dash-offset
+                      // Para conexiones animadas con movimiento fluido
                       if (el.tagName === "path" || el.tagName === "LINE") {
-                        const currentOffset = (-20 * (frameIndex % 30)) / 30;
+                        const currentOffset = (-30 * (frameIndex % 40)) / 40; // Movimiento más suave
                         el.setAttribute("stroke-dashoffset", String(currentOffset));
+                        el.style.filter = "brightness(1.1)";
                       }
                     } else if (
                       el.classList.contains("bounce") ||
                       el.getAttribute("data-animation") === "bounce"
                     ) {
-                      const translateY = 2 * Math.sin(phase);
+                      // Rebote suave y profesional
+                      const translateY = 1.5 * Math.sin(slowPhase);
                       el.style.transform = `translateY(${translateY}px)`;
+                      el.style.filter = "brightness(1.05)";
                     } else {
-                      // Animación genérica con pequeño movimiento
-                      const translateX = 1 * Math.sin(phase);
-                      const translateY = 1 * Math.cos(phase);
-                      el.style.transform = `translate(${translateX}px, ${translateY}px)`;
+                      // Animación genérica con movimiento muy sutil
+                      const translateX = 0.5 * Math.sin(phase);
+                      const translateY = 0.5 * Math.cos(fastPhase);
+                      const rotation = 0.5 * Math.sin(slowPhase);
+                      el.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotation}deg)`;
+                      el.style.filter = "brightness(1.02) contrast(1.02)";
                     }
+                  }
+                });
+
+                // ⭐ MEJORAS GLOBALES DE RENDERIZADO ⭐
+                const allElements = clonedDoc.querySelectorAll("*");
+                allElements.forEach((el) => {
+                  if (el instanceof HTMLElement) {
+                    // Mejoras de renderizado para todos los elementos
+                    el.style.imageRendering = "crisp-edges";
+                    el.style.setProperty("-webkit-transform", "translateZ(0)");
+                    el.style.willChange = "transform";
                   }
                 });
               },
               ignoreElements: (element: Element) => {
-                // Ignorar elementos marcados explícitamente y el minimapa
+                // Ignorar elementos que no queremos en el GIF
                 return (
                   element.classList.contains("ignore-export") ||
                   element.hasAttribute("data-minimap") ||
                   element.parentElement?.hasAttribute("data-minimap") ||
-                  false ||
                   element.classList.contains("minimap-container") ||
                   element.parentElement?.classList.contains("minimap-container") ||
                   false
@@ -522,24 +560,37 @@ export function useDiagramPersistence(
               },
             };
 
-            // Capturar el frame actual
+            // ⭐ CAPTURA Y PROCESAMIENTO PREMIUM ⭐
             const canvas = await html2canvas(diagramContainer as HTMLElement, options);
 
-            // Crear un canvas más pequeño para reducir el tamaño del GIF
+            // ⭐ PROCESAMIENTO AVANZADO DE CANVAS PARA HD ⭐
             const scaledCanvas = document.createElement("canvas");
             scaledCanvas.width = scaledWidth;
             scaledCanvas.height = scaledHeight;
             const ctx = scaledCanvas.getContext("2d");
 
             if (ctx) {
-              // Dibujar el canvas original reducido
+              // Configurar contexto para máxima calidad
+              ctx.imageSmoothingEnabled = true;
+              ctx.imageSmoothingQuality = "high";
+              ctx.filter = "contrast(1.05) brightness(1.02) saturate(1.1)"; // Mejoras de color
+
+              // Dibujar con alta calidad
               ctx.drawImage(canvas, 0, 0, scaledWidth, scaledHeight);
 
-              // Añadir el canvas redimensionado al GIF
-              gif.addFrame(scaledCanvas, { copy: true, delay: frameDelay * 10 }); // delay en ms
+              // Añadir el frame premium al GIF
+              gif.addFrame(scaledCanvas, {
+                copy: true,
+                delay: frameDelay * 10,
+                quality: 1, // Máxima calidad por frame
+              });
             } else {
-              // Si falla la creación del contexto, usar el canvas original como fallback
-              gif.addFrame(canvas, { copy: true, delay: frameDelay * 10 });
+              // Fallback con el canvas original
+              gif.addFrame(canvas, {
+                copy: true,
+                delay: frameDelay * 10,
+                quality: 1,
+              });
             }
 
             // Si aún faltan frames, programar el siguiente

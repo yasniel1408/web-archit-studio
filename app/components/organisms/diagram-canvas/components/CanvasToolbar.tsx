@@ -8,6 +8,7 @@ type CanvasToolbarProps = {
   onResetView: () => void;
   onExport: () => void;
   onExportGif: () => void;
+  onExportModernGif: () => void;
   onImport: () => void;
   onShowJson: () => void;
   onShowTemplates: () => void;
@@ -21,6 +22,7 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
   onResetView,
   onExport,
   onExportGif,
+  onExportModernGif,
   onImport,
   onShowJson,
   onShowTemplates,
@@ -139,6 +141,24 @@ export const CanvasToolbar: React.FC<CanvasToolbarProps> = ({
             <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33.076 33.076 0 0 1 2.5.5zm.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935zm10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935z" />
           </svg>
           <span>Exportar GIF</span>
+        </button>
+
+        <button
+          className="flex items-center gap-1.5 rounded-md bg-gradient-to-r from-green-500/10 to-blue-500/10 px-3 py-1.5 text-xs text-green-700 shadow-sm transition-all hover:scale-105 hover:from-green-500/20 hover:to-blue-500/20"
+          onClick={onExportModernGif}
+          title="Exportar como MP4 usando WebCodecs API - Hasta 10x más rápido que GIF tradicional"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+          >
+            <path d="M7 2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2.5L17 3a1 1 0 0 1 1.5.9v8.2a1 1 0 0 1-1.5.9L15 11.5V14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V2z" />
+            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+          </svg>
+          <span className="font-semibold">🚀 MP4 Pro</span>
         </button>
 
         <button
