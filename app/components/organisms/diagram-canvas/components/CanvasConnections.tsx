@@ -41,6 +41,7 @@ export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
           animation={connection.animation || "none"}
           startArrowHead={connection.startArrowHead || "none"}
           endArrowHead={connection.endArrowHead || "arrow"}
+          roundTrip={connection.roundTrip || false}
           color={connection.color || "#000000"}
           strokeWidth={connection.strokeWidth || 2}
           isSelected={selectedConnectionId === connection.id}

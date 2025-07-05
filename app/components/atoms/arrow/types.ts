@@ -23,6 +23,7 @@ export interface ArrowProps {
   endArrowHead?: ArrowHeadType;
   style?: ArrowStyle;
   animation?: ArrowAnimation;
+  roundTrip?: boolean;
   color?: string;
   strokeWidth?: number;
   isSelected?: boolean;
@@ -32,6 +33,7 @@ export interface ArrowProps {
     animation?: ArrowAnimation;
     startArrowHead?: ArrowHeadType;
     endArrowHead?: ArrowHeadType;
+    roundTrip?: boolean;
     color?: string;
     strokeWidth?: number;
   }) => void;

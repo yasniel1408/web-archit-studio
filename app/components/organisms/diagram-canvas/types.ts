@@ -34,6 +34,7 @@ export type ConnectionType = {
     | "traveling-dot-fastest";
   startArrowHead?: "none" | "arrow" | "circle" | "diamond";
   endArrowHead?: "none" | "arrow" | "circle" | "diamond";
+  roundTrip?: boolean; // Para controlar si las animaciones de puntos van y regresan
   color?: string;
   strokeWidth?: number;
   isSyncEnabled?: boolean;
@@ -60,6 +61,7 @@ export type ConnectionPropertiesType = {
     | "traveling-dot-fastest";
   startArrowHead?: "none" | "arrow" | "circle" | "diamond";
   endArrowHead?: "none" | "arrow" | "circle" | "diamond";
+  roundTrip?: boolean; // Para controlar si las animaciones de puntos van y regresan
   color?: string;
   strokeWidth?: number;
 };

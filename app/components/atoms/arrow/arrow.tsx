@@ -52,6 +52,7 @@ interface ArrowProps {
   endArrowHead?: ArrowHeadType;
   style?: ArrowStyle;
   animation?: ArrowAnimation;
+  roundTrip?: boolean; // Para controlar si las animaciones de puntos van y regresan
   color?: string;
   strokeWidth?: number;
   isSelected?: boolean;
@@ -61,6 +62,7 @@ interface ArrowProps {
     animation?: ArrowAnimation;
     startArrowHead?: ArrowHeadType;
     endArrowHead?: ArrowHeadType;
+    roundTrip?: boolean;
     color?: string;
     strokeWidth?: number;
   }) => void;
@@ -79,6 +81,7 @@ export function Arrow({
   endArrowHead = "arrow",
   style = "solid",
   animation = "none",
+  roundTrip = false,
   color = "#000000",
   strokeWidth = 2,
   isSelected = false,
@@ -94,6 +97,7 @@ export function Arrow({
   const [currentStartArrowHead, setCurrentStartArrowHead] = useState<ArrowHeadType>(
     startArrowHead || "none"
   );
+  const [currentRoundTrip, setCurrentRoundTrip] = useState<boolean>(roundTrip);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const optionsMenuRef = useRef<HTMLDivElement>(null);
   const animationsMenuRef = useRef<HTMLDivElement>(null);
@@ -101,6 +105,7 @@ export function Arrow({
 
   // Para animación de punto recorriendo (traveling-dot)
   const [dotPosition, setDotPosition] = useState(0);
+  const [isReturning, setIsReturning] = useState(false); // Para rastrear si está regresando
 
   // Update dot position for traveling-dot animation
   useEffect(() => {
@@ -131,8 +136,30 @@ export function Arrow({
 
     const interval = setInterval(() => {
       setDotPosition((prev) => {
-        const newPos = prev + speedFactor;
-        return newPos >= 1 ? 0 : newPos;
+        if (currentRoundTrip) {
+          // Lógica para ida y vuelta
+          if (!isReturning) {
+            // Yendo hacia adelante
+            const newPos = prev + speedFactor;
+            if (newPos >= 1) {
+              setIsReturning(true);
+              return 1;
+            }
+            return newPos;
+          } else {
+            // Regresando
+            const newPos = prev - speedFactor;
+            if (newPos <= 0) {
+              setIsReturning(false);
+              return 0;
+            }
+            return newPos;
+          }
+        } else {
+          // Lógica original: solo ida (reinicia al llegar a 1)
+          const newPos = prev + speedFactor;
+          return newPos >= 1 ? 0 : newPos;
+        }
       });
     }, 16); // 60fps para animación más fluida
 
@@ -140,7 +167,7 @@ export function Arrow({
       console.log(`Arrow ${id}: Limpiando animación de punto`);
       clearInterval(interval);
     };
-  }, [currentAnimation, id]);
+  }, [currentAnimation, id, currentRoundTrip, isReturning]);
 
   console.log(
     `Arrow ${id}: Rendering with animation = ${currentAnimation}, style = ${currentStyle}`
@@ -532,10 +559,11 @@ export function Arrow({
       (currentStyle !== style ||
         currentAnimation !== animation ||
         currentArrowHead !== endArrowHead ||
-        currentStartArrowHead !== startArrowHead)
+        currentStartArrowHead !== startArrowHead ||
+        currentRoundTrip !== roundTrip)
     ) {
       console.log(
-        `Arrow ${id}: Enviando cambios al componente padre - style=${currentStyle}, animation=${currentAnimation}, startArrowHead=${currentStartArrowHead}, endArrowHead=${currentArrowHead}`
+        `Arrow ${id}: Enviando cambios al componente padre - style=${currentStyle}, animation=${currentAnimation}, startArrowHead=${currentStartArrowHead}, endArrowHead=${currentArrowHead}, roundTrip=${currentRoundTrip}`
       );
 
       onPropertiesChange({
@@ -543,6 +571,7 @@ export function Arrow({
         animation: currentAnimation,
         endArrowHead: currentArrowHead,
         startArrowHead: currentStartArrowHead,
+        roundTrip: currentRoundTrip,
       });
     }
   }, [
@@ -550,10 +579,12 @@ export function Arrow({
     currentAnimation,
     currentArrowHead,
     currentStartArrowHead,
+    currentRoundTrip,
     style,
     animation,
     endArrowHead,
     startArrowHead,
+    roundTrip,
     onPropertiesChange,
     id,
   ]);
@@ -906,6 +937,36 @@ export function Arrow({
                         ))}
                       </div>
                     </div>
+
+                    {/* Checkbox para ida y vuelta - solo mostrar para animaciones de puntos */}
+                    {(currentAnimation === "traveling-dot" ||
+                      currentAnimation === "traveling-dot-fast" ||
+                      currentAnimation === "traveling-dot-fastest") && (
+                      <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
+                        <div className="flex items-center space-x-3">
+                          <input
+                            id="roundTrip"
+                            type="checkbox"
+                            checked={currentRoundTrip}
+                            onChange={(e) => {
+                              setCurrentRoundTrip(e.target.checked);
+                              if (onPropertiesChange) {
+                                onPropertiesChange({ roundTrip: e.target.checked });
+                              }
+                            }}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <label htmlFor="roundTrip" className="text-sm font-medium text-gray-700">
+                            Ida y vuelta
+                          </label>
+                        </div>
+                        <p className="mt-2 text-xs text-gray-500">
+                          {currentRoundTrip
+                            ? "El punto viaja del inicio al final y regresa al inicio"
+                            : "El punto viaja del inicio al final y reinicia"}
+                        </p>
+                      </div>
+                    )}
 
                     <div>
                       <label className="mb-3 block text-sm font-medium text-gray-700">

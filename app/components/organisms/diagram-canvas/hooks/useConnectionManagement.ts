@@ -66,6 +66,7 @@ export function useConnectionManagement() {
           animation: "none",
           startArrowHead: "none",
           endArrowHead: "arrow",
+          roundTrip: false, // Por defecto, las animaciones van solo de ida
           color: "#000000",
           strokeWidth: 2,
         };

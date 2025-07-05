@@ -5,11 +5,13 @@ import { ArrowAnimation } from "../types";
 interface UseTravelingDotProps {
   animation: ArrowAnimation;
   id: string;
+  roundTrip?: boolean; // Para controlar si el punto va y regresa
 }
 
-export const useTravelingDot = ({ animation, id }: UseTravelingDotProps) => {
+export const useTravelingDot = ({ animation, id, roundTrip = false }: UseTravelingDotProps) => {
   // Para animación de punto recorriendo (traveling-dot)
   const [dotPosition, setDotPosition] = useState(0);
+  const [isReturning, setIsReturning] = useState(false); // Para rastrear si está regresando
 
   // Update dot position for traveling-dot animation
   useEffect(() => {
@@ -30,15 +32,37 @@ export const useTravelingDot = ({ animation, id }: UseTravelingDotProps) => {
 
     const interval = setInterval(() => {
       setDotPosition((prev) => {
-        const newPos = prev + speedFactor;
-        return newPos >= 1 ? 0 : newPos;
+        if (roundTrip) {
+          // Lógica para ida y vuelta
+          if (!isReturning) {
+            // Yendo hacia adelante
+            const newPos = prev + speedFactor;
+            if (newPos >= 1) {
+              setIsReturning(true);
+              return 1;
+            }
+            return newPos;
+          } else {
+            // Regresando
+            const newPos = prev - speedFactor;
+            if (newPos <= 0) {
+              setIsReturning(false);
+              return 0;
+            }
+            return newPos;
+          }
+        } else {
+          // Lógica original: solo ida (reinicia al llegar a 1)
+          const newPos = prev + speedFactor;
+          return newPos >= 1 ? 0 : newPos;
+        }
       });
     }, 16); // 60fps para animación más fluida
 
     return () => {
       clearInterval(interval);
     };
-  }, [animation, id]);
+  }, [animation, id, roundTrip, isReturning]);
 
   // Color del punto según la velocidad
   const getDotColor = (baseColor: string): string => {
@@ -57,5 +81,6 @@ export const useTravelingDot = ({ animation, id }: UseTravelingDotProps) => {
       animation === "traveling-dot" ||
       animation === "traveling-dot-fast" ||
       animation === "traveling-dot-fastest",
+    isReturning, // Para indicar si está en el viaje de regreso
   };
 };
