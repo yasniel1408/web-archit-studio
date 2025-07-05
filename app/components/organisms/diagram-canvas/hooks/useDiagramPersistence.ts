@@ -59,6 +59,9 @@ export function useDiagramPersistence(
             icon: node.icon || node.iconType || undefined,
             backgroundColor: node.backgroundColor || undefined,
             zIndex: node.zIndex || 0,
+            // Propiedades específicas para Queue
+            speed: node.speed || undefined,
+            maxMessages: node.maxMessages || undefined,
           };
         });
 
@@ -139,6 +142,9 @@ export function useDiagramPersistence(
           icon: node.icon || undefined,
           backgroundColor: node.backgroundColor || undefined,
           zIndex: node.zIndex || 0,
+          // Propiedades específicas para Queue
+          speed: node.speed || undefined,
+          maxMessages: node.maxMessages || undefined,
         };
       });
 
@@ -665,6 +671,9 @@ export function useDiagramPersistence(
                 size: node.size || { width: 140, height: 80 },
                 icon: node.icon || undefined,
                 backgroundColor: node.backgroundColor || undefined,
+                // Propiedades específicas para Queue
+                speed: node.speed || undefined,
+                maxMessages: node.maxMessages || undefined,
               };
             });
 
@@ -769,6 +778,9 @@ export function useDiagramPersistence(
             size: node.size || { width: 140, height: 80 },
             icon: node.icon || undefined,
             backgroundColor: node.backgroundColor || undefined,
+            // Propiedades específicas para Queue
+            speed: node.speed || undefined,
+            maxMessages: node.maxMessages || undefined,
           };
         });
 
@@ -841,6 +853,9 @@ export function useDiagramPersistence(
         size: node.size || { width: 140, height: 80 },
         icon: node.icon || node.iconType || undefined,
         backgroundColor: node.backgroundColor || undefined,
+        // Propiedades específicas para Queue
+        speed: node.speed || undefined,
+        maxMessages: node.maxMessages || undefined,
       };
     });
   }, []);

@@ -25,7 +25,14 @@ export function SidePanel() {
               id={`container-${Date.now()}`}
               type="container"
               label="Contenedor"
-              text="Contenedor"
+              text="C"
+            />
+
+            <DraggableItem
+              id={`queue-${Date.now()}`}
+              type="queue"
+              label="Cola de Mensajes"
+              text="MQ"
             />
           </div>
 

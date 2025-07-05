@@ -7,6 +7,7 @@ import {
   ConnectionPosition,
 } from "@/app/components/atoms/connection-point/connection-point";
 import { IconType } from "@/app/components/atoms/icon-selector/types";
+import { Queue } from "@/app/components/atoms/queue/queue";
 import { Square } from "@/app/components/atoms/square/square";
 
 interface CanvasNodeProps {
@@ -18,6 +19,9 @@ interface CanvasNodeProps {
   iconType?: IconType; // Usar el tipo importado
   backgroundColor?: string; // Añadir la propiedad backgroundColor
   zIndex?: number; // Agregar zIndex
+  // Propiedades específicas para Queue
+  speed?: "slow" | "medium" | "fast";
+  maxMessages?: number;
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
   onConnectionEnd: (
     targetNodeId: string,
@@ -53,6 +57,8 @@ export function CanvasNode({
   iconType,
   backgroundColor = "#FFFFFF", // Añadir valor por defecto
   zIndex = 10, // Valor por defecto para zIndex
+  speed,
+  maxMessages,
   onConnectionStart,
   onConnectionEnd,
   onNodeMove,
@@ -87,6 +93,9 @@ export function CanvasNode({
     startY: number;
   } | null>(null);
   const initializedRef = useRef<boolean>(false);
+
+  // Determinar si es un queue
+  const isQueueType = type.includes("queue");
 
   // Buscar tamaño del nodo en el DOM si no está definido
   useEffect(() => {
@@ -482,6 +491,68 @@ export function CanvasNode({
     zIndex: zIndex * 100 + (isDragging ? 30 : isResizing ? 20 : isHovered ? 10 : 0),
   };
 
+  // Función para renderizar el componente apropiado
+  const renderComponent = () => {
+    const commonProps = {
+      editable: true,
+      initialText: text,
+      icon: iconType || "none",
+      backgroundColor: backgroundColor || "#FFFFFF",
+      zIndex: zIndex,
+      onIconChange: handleIconChange,
+      onColorChange: (newColor: string, newZIndex?: number) =>
+        handleColorChange(newColor, newZIndex),
+      onTextChange: handleTextChange,
+      onColorPickerOpen: () => setIsColorPickerOpen(true),
+      onColorPickerClose: () => setIsColorPickerOpen(false),
+      onIconSelectorOpen: () => setIsIconSelectorOpen(true),
+      onIconSelectorClose: () => setIsIconSelectorOpen(false),
+      className: "no-transitions",
+    };
+
+    if (isQueueType) {
+      // Props específicas para Queue
+      const queueProps = {
+        id: id,
+        position: pos,
+        size: size,
+        color: backgroundColor || "#FFFFFF",
+        innerText: text,
+        speed: speed || ("medium" as const),
+        maxMessages: maxMessages || 5,
+        showControls: showControls,
+        editable: true,
+        onSelect: () => {},
+        onDoubleClick: () => {},
+        onDelete: () => {},
+        onSpeedChange: (nodeId: string, newSpeed: "slow" | "medium" | "fast") => {
+          console.log("Speed changed:", nodeId, newSpeed);
+          // Notificar al padre del cambio para que se guarde en el JSON
+          if (onPropertiesChange) {
+            onPropertiesChange({ speed: newSpeed });
+          }
+        },
+        onMaxMessagesChange: (nodeId: string, newMaxMessages: number) => {
+          console.log("Max messages changed:", nodeId, newMaxMessages);
+          // Notificar al padre del cambio para que se guarde en el JSON
+          if (onPropertiesChange) {
+            onPropertiesChange({ maxMessages: newMaxMessages });
+          }
+        },
+        onTextChange: handleTextChange,
+        onIconChange: handleIconChange,
+        onColorPickerOpen: () => setIsColorPickerOpen(true),
+        onColorPickerClose: () => setIsColorPickerOpen(false),
+        onIconSelectorOpen: () => setIsIconSelectorOpen(true),
+        onIconSelectorClose: () => setIsIconSelectorOpen(false),
+        className: "no-transitions",
+      };
+      return <Queue {...queueProps} />;
+    } else {
+      return <Square {...commonProps} />;
+    }
+  };
+
   return (
     <div
       ref={nodeRef}
@@ -493,22 +564,8 @@ export function CanvasNode({
       onMouseLeave={handleMouseLeave}
       onMouseUp={handleMouseUp}
     >
-      <div className="h-full w-full overflow-hidden rounded-md p-2" style={{ transition: "none" }}>
-        <Square
-          editable={true}
-          initialText={text}
-          icon={iconType || "none"}
-          backgroundColor={backgroundColor || "#FFFFFF"}
-          zIndex={zIndex}
-          onIconChange={handleIconChange}
-          onColorChange={(newColor, newZIndex) => handleColorChange(newColor, newZIndex)}
-          onTextChange={handleTextChange}
-          onColorPickerOpen={() => setIsColorPickerOpen(true)}
-          onColorPickerClose={() => setIsColorPickerOpen(false)}
-          onIconSelectorOpen={() => setIsIconSelectorOpen(true)}
-          onIconSelectorClose={() => setIsIconSelectorOpen(false)}
-          className="no-transitions"
-        />
+      <div className="h-full w-full overflow-hidden rounded-md" style={{ transition: "none" }}>
+        {renderComponent()}
       </div>
 
       {/* Mostrar puntos de conexión solo cuando los controles están visibles */}

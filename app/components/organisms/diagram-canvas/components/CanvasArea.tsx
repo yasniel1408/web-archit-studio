@@ -205,6 +205,8 @@ export function CanvasArea({
                   iconType={node.icon || "none"}
                   backgroundColor={node.backgroundColor || "#FFFFFF"}
                   zIndex={node.zIndex || 10}
+                  {...(node.speed && { speed: node.speed })}
+                  {...(node.maxMessages && { maxMessages: node.maxMessages })}
                   onNodeMove={onNodeMove}
                   onNodeResize={onNodeResize}
                   onDeleteNode={onDeleteNode}

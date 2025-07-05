@@ -267,3 +267,65 @@ body.is-dragging .flex-1.bg-slate-100 {
 .connection-selected {
   filter: drop-shadow(0 0 3px rgba(79, 70, 229, 0.4));
 }
+
+/* Estilos personalizados para la animación de la cola */
+@keyframes queuePulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: translateX(-50%) scale(1.1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes queueGlow {
+  0% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.7), 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5);
+  }
+}
+
+@keyframes queueTrackPulse {
+  0% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.queue-message {
+  animation: queuePulse 2s infinite ease-in-out, queueGlow 3s infinite ease-in-out;
+}
+
+.queue-track {
+  animation: queueTrackPulse 4s infinite ease-in-out;
+}
+
+.queue-entry-effect {
+  animation: queueGlow 2s infinite ease-in-out;
+}
+
+.queue-exit-effect {
+  animation: queueGlow 2s infinite ease-in-out reverse;
+}

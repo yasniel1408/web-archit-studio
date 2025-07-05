@@ -1,6 +1,6 @@
 export const squareStyles = {
   container:
-    "w-full h-full border border-gray-300 rounded shadow-md flex flex-col items-center justify-center p-2 relative transform-none",
+    "w-full h-full border border-gray-300 rounded shadow-md flex flex-col items-center justify-center relative transform-none",
   icon: "absolute top-1.5 left-1.5",
   iconClickable: "cursor-pointer",
   addIconButton:

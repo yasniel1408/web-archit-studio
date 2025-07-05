@@ -9,6 +9,9 @@ export type NodeType = {
   icon?: IconType;
   backgroundColor?: string;
   zIndex?: number;
+  // Propiedades específicas para Queue
+  speed?: "slow" | "medium" | "fast";
+  maxMessages?: number;
 };
 
 export type ConnectionPosition = "top" | "right" | "bottom" | "left";

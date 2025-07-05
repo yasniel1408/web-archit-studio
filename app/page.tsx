@@ -10,7 +10,7 @@ export default function Home() {
           <h1 className="flex items-center text-xl font-bold text-gray-800">
             <span className="text-primary">Archit</span>Studio
             <span className="ml-2 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-              v1.1
+              v1.2
             </span>
           </h1>
         </div>

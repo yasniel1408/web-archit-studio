@@ -272,10 +272,6 @@ export function CanvasContainer({
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    // Solo mostrar controles si no hay operaciones en curso
-    if (!isDragging && !isResizing && !isColorPickerOpen && !isIconSelectorOpen) {
-      setShowControls(true);
-    }
   };
 
   const handleMouseLeave = () => {
@@ -435,10 +431,12 @@ export function CanvasContainer({
 
   // Sincronizar el estado showControls con isHovered para mantener compatibilidad
   useEffect(() => {
-    if (isHovered && !isDragging && !isResizing) {
+    if (isHovered && !isDragging && !isResizing && !isColorPickerOpen && !isIconSelectorOpen) {
       setShowControls(true);
+    } else if (!isHovered || isDragging || isResizing) {
+      setShowControls(false);
     }
-  }, [isHovered, isDragging, isResizing]);
+  }, [isHovered, isDragging, isResizing, isColorPickerOpen, isIconSelectorOpen]);
 
   // Determinar las clases CSS para el nodo según su estado
   const containerClasses = `
@@ -486,7 +484,7 @@ export function CanvasContainer({
       onMouseLeave={handleMouseLeave}
       onMouseUp={handleMouseUp}
     >
-      <div className="h-full w-full overflow-hidden rounded-md p-2" style={{ transition: "none" }}>
+      <div className="h-full w-full overflow-hidden rounded-md" style={{ transition: "none" }}>
         <Container
           editable={true}
           initialText={text}
