@@ -55,7 +55,13 @@ type CanvasAreaProps = {
   onDeleteConnection: (connectionId: string) => void;
   onNodePropertiesChange: (
     nodeId: string,
-    properties: { icon?: IconType; backgroundColor?: string }
+    properties: {
+      icon?: IconType;
+      backgroundColor?: string;
+      speed?: "slow" | "medium" | "fast";
+      maxMessages?: number;
+      text?: string;
+    }
   ) => void;
 };
 

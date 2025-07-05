@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 
+import { IconRenderer } from "../icon-selector/icon-renderer";
 import { IconType } from "../icon-selector/types";
 import { QueueConfigModal } from "./components/QueueConfigModal";
 import { useQueueAnimation } from "./hooks/useQueueAnimation";
@@ -18,7 +19,6 @@ export function Queue(props: QueueProps) {
     maxMessages = 5,
     className,
     style,
-    showControls,
     onSelect,
     onDoubleClick,
     onSpeedChange,
@@ -65,7 +65,7 @@ export function Queue(props: QueueProps) {
   return (
     <>
       <div
-        className={`${queueStyles.container} ${className || ""}`}
+        className={`${queueStyles.container} ${className || ""} p-2`}
         style={{
           ...style,
           width: size.width,
@@ -77,7 +77,14 @@ export function Queue(props: QueueProps) {
       >
         {/* Título del componente */}
         <div className="mb-2 text-center">
-          <div className="text-sm font-semibold text-gray-700">{innerText || "Message Queue"}</div>
+          <div className="flex items-center justify-center gap-2">
+            {/* Icono */}
+            {icon && icon !== "none" && <IconRenderer iconType={icon} className="h-5 w-5" />}
+            {/* Título */}
+            <div className="text-sm font-semibold text-gray-700">
+              {innerText || "Message Queue"}
+            </div>
+          </div>
         </div>
 
         {/* Área de animación GRANDE y VISIBLE */}
@@ -133,7 +140,6 @@ export function Queue(props: QueueProps) {
             </span>
           </div>
         </div>
-
       </div>
 
       {/* Modal de configuración */}

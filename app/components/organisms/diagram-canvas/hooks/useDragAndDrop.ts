@@ -18,7 +18,13 @@ type DragAndDropConfig = {
   ) => NodeType;
   onNodePropertiesChange?: (
     nodeId: string,
-    properties: { icon?: IconType; backgroundColor?: string }
+    properties: {
+      icon?: IconType;
+      backgroundColor?: string;
+      speed?: "slow" | "medium" | "fast";
+      maxMessages?: number;
+      text?: string;
+    }
   ) => void;
   logDebug: (message: string) => void;
 };
