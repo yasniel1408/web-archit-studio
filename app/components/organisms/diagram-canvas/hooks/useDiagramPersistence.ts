@@ -582,14 +582,12 @@ export function useDiagramPersistence(
               gif.addFrame(scaledCanvas, {
                 copy: true,
                 delay: frameDelay * 10,
-                quality: 1, // Máxima calidad por frame
               });
             } else {
               // Fallback con el canvas original
               gif.addFrame(canvas, {
                 copy: true,
                 delay: frameDelay * 10,
-                quality: 1,
               });
             }
 

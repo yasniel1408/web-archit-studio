@@ -129,13 +129,12 @@ export function DiagramCanvas() {
   });
 
   // Hook para efecto de imán en conexiones
-  const { updateSnapState, getFinalConnectionCoordinates, getSnapIndicatorStyle, isSnapping } =
-    useConnectionSnapping({
-      nodes,
-      activeConnection,
-      snapDistance: 30,
-      logDebug: logger.debug,
-    });
+  const { updateSnapState } = useConnectionSnapping({
+    nodes,
+    activeConnection,
+    snapDistance: 30,
+    logDebug: logger.debug,
+  });
 
   // Guardar cambios cuando cambian nodos o conexiones
   useEffect(() => {
@@ -305,16 +304,16 @@ export function DiagramCanvas() {
         onConnectionEnd={handleConnectionEnd}
         onDeleteConnection={handleDeleteConnection}
         onConnectionPropertiesChange={handleUpdateConnectionProperties}
-        snapIndicatorStyle={getSnapIndicatorStyle()}
-        isSnapping={isSnapping}
-        finalConnectionCoordinates={getFinalConnectionCoordinates()}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        onConnectionSelect={() => {}}
       />
 
       <JsonModal
         isOpen={showJsonModal}
         onClose={() => setShowJsonModal(false)}
         onCopy={copyJsonToClipboard}
-        jsonContent={formattedJson}
+        json={formattedJson}
       />
 
       <TemplatesModal

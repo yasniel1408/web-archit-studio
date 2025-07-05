@@ -11,7 +11,7 @@ export function useModernGifExport() {
   const exportToModernGif = useCallback(
     async (
       diagramRef: React.RefObject<HTMLDivElement>,
-      viewportData?: { scale: number; position: { x: number; y: number } },
+      _viewportData?: { scale: number; position: { x: number; y: number } },
       options: ExportOptions = {}
     ) => {
       try {
