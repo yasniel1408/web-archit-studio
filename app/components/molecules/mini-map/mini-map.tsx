@@ -42,15 +42,16 @@ export function MiniMap({
   // Hooks personalizados para la lógica del minimapa
   const bounds = useMinimapBounds(nodes);
 
-  const { handleMouseDown, handleMousePosition, handleMouseUp } = useMinimapNavigation({
-    bounds,
-    scale,
-    viewportSize,
-    canvasRef,
-    mapWidth: MINI_MAP_WIDTH,
-    mapHeight: MINI_MAP_HEIGHT,
-    zoomOutFactor: ZOOM_OUT_FACTOR,
-  });
+  const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } =
+    useMinimapNavigation({
+      bounds,
+      scale,
+      viewportSize,
+      canvasRef,
+      mapWidth: MINI_MAP_WIDTH,
+      mapHeight: MINI_MAP_HEIGHT,
+      zoomOutFactor: ZOOM_OUT_FACTOR,
+    });
 
   // Hook para renderizar el canvas
   useMinimapRenderer({
@@ -77,9 +78,9 @@ export function MiniMap({
         height={MINI_MAP_HEIGHT}
         isEmpty={isEmpty}
         onMouseDown={handleMouseDown}
-        onMouseMove={handleMousePosition}
+        onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
       />
     </div>
   );

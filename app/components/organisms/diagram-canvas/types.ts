@@ -35,6 +35,7 @@ export type ConnectionType = {
   startArrowHead?: "none" | "arrow" | "circle" | "diamond";
   endArrowHead?: "none" | "arrow" | "circle" | "diamond";
   roundTrip?: boolean; // Para controlar si las animaciones de puntos van y regresan
+  multiplePoints?: boolean; // Para mostrar múltiples puntos (3) uno detrás del otro
   color?: string;
   strokeWidth?: number;
   isSyncEnabled?: boolean;
@@ -62,6 +63,7 @@ export type ConnectionPropertiesType = {
   startArrowHead?: "none" | "arrow" | "circle" | "diamond";
   endArrowHead?: "none" | "arrow" | "circle" | "diamond";
   roundTrip?: boolean; // Para controlar si las animaciones de puntos van y regresan
+  multiplePoints?: boolean; // Para mostrar múltiples puntos (3) uno detrás del otro
   color?: string;
   strokeWidth?: number;
 };

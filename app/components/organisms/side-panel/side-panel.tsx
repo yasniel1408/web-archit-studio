@@ -2,7 +2,6 @@
 
 import React from "react";
 
-import { GoogleAds } from "@/app/components/atoms/google-ads/google-ads";
 import { DraggableItem } from "@/app/components/molecules/draggable-item/draggable-item";
 
 export function SidePanel() {
@@ -79,19 +78,8 @@ export function SidePanel() {
             </a>
           </div>
 
-          {/* Anuncios de Google AdSense */}
-          <div className="mt-6">
-            <GoogleAds
-              adSlot="1234567890" // Reemplazar con tu Ad Slot ID real
-              adFormat="auto"
-              className="mx-auto w-full max-w-sm"
-              style={{ minHeight: "200px" }}
-              fallbackText="🚀 Considera desactivar tu bloqueador de anuncios para apoyar este proyecto gratuito"
-            />
-          </div>
-
           {/* Segundo anuncio más pequeño */}
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <GoogleAds
               adSlot="0987654321" // Reemplazar con tu segundo Ad Slot ID real
               adFormat="banner"
@@ -99,7 +87,7 @@ export function SidePanel() {
               style={{ minHeight: "100px" }}
               fallbackText="💡 Los anuncios nos ayudan a mantener esta herramienta gratuita"
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

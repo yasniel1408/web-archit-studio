@@ -67,6 +67,7 @@ export function useConnectionManagement() {
           startArrowHead: "none",
           endArrowHead: "arrow",
           roundTrip: false, // Por defecto, las animaciones van solo de ida
+          multiplePoints: false, // Por defecto, un solo punto animado
           color: "#000000",
           strokeWidth: 2,
         };

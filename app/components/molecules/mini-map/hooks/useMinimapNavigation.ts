@@ -39,14 +39,9 @@ export function useMinimapNavigation({
     return { offsetX, offsetY };
   }, [bounds.width, bounds.height, mapWidth, mapHeight, calculateMiniMapScale]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    setIsDragging(true);
-    handleMousePosition(e);
-  }, []);
-
-  const handleMousePosition = useCallback(
+  const navigateToPosition = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!canvasRef.current) return; // Permitir navegación inmediata, no solo al arrastrar
+      if (!canvasRef.current) return;
 
       const rect = canvasRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -74,15 +69,39 @@ export function useMinimapNavigation({
     [canvasRef, bounds, scale, viewportSize, calculateMiniMapScale, calculateOffset]
   );
 
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      setIsDragging(true);
+      navigateToPosition(e);
+    },
+    [navigateToPosition]
+  );
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      // Solo navegar si estamos arrastrando
+      if (isDragging) {
+        navigateToPosition(e);
+      }
+    },
+    [isDragging, navigateToPosition]
+  );
+
   const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    // Parar el arrastre si sales del minimapa
     setIsDragging(false);
   }, []);
 
   return {
     isDragging,
     handleMouseDown,
-    handleMousePosition,
+    handleMouseMove,
     handleMouseUp,
+    handleMouseLeave,
     calculateMiniMapScale,
     calculateOffset,
   };

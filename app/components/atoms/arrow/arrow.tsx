@@ -6,6 +6,8 @@ import { createPortal } from "react-dom";
 
 import { ConnectionPosition } from "@/app/components/atoms/connection-point/connection-point";
 
+import { useTravelingDot } from "./hooks/useTravelingDot";
+
 // Estilos personalizados para la barra de desplazamiento
 const scrollbarStyles = `
   .custom-scrollbar::-webkit-scrollbar {
@@ -53,6 +55,7 @@ interface ArrowProps {
   style?: ArrowStyle;
   animation?: ArrowAnimation;
   roundTrip?: boolean; // Para controlar si las animaciones de puntos van y regresan
+  multiplePoints?: boolean; // Para mostrar múltiples puntos (3) uno detrás del otro
   color?: string;
   strokeWidth?: number;
   isSelected?: boolean;
@@ -63,6 +66,7 @@ interface ArrowProps {
     startArrowHead?: ArrowHeadType;
     endArrowHead?: ArrowHeadType;
     roundTrip?: boolean;
+    multiplePoints?: boolean;
     color?: string;
     strokeWidth?: number;
   }) => void;
@@ -82,6 +86,7 @@ export function Arrow({
   style = "solid",
   animation = "none",
   roundTrip = false,
+  multiplePoints = false,
   color = "#000000",
   strokeWidth = 2,
   isSelected = false,
@@ -98,76 +103,19 @@ export function Arrow({
     startArrowHead || "none"
   );
   const [currentRoundTrip, setCurrentRoundTrip] = useState<boolean>(roundTrip);
+  const [currentMultiplePoints, setCurrentMultiplePoints] = useState<boolean>(multiplePoints);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const optionsMenuRef = useRef<HTMLDivElement>(null);
   const animationsMenuRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // Para animación de punto recorriendo (traveling-dot)
-  const [dotPosition, setDotPosition] = useState(0);
-  const [isReturning, setIsReturning] = useState(false); // Para rastrear si está regresando
-
-  // Update dot position for traveling-dot animation
-  useEffect(() => {
-    if (
-      currentAnimation !== "traveling-dot" &&
-      currentAnimation !== "traveling-dot-fast" &&
-      currentAnimation !== "traveling-dot-fastest"
-    )
-      return;
-
-    let speedFactor = 0.005; // Velocidad base (normal)
-
-    if (currentAnimation === "traveling-dot-fast") {
-      speedFactor = 0.01; // 2x velocidad
-    } else if (currentAnimation === "traveling-dot-fastest") {
-      speedFactor = 0.02; // 4x velocidad
-    }
-
-    console.log(
-      `Arrow ${id}: Iniciando animación de punto recorriendo - velocidad: ${
-        currentAnimation === "traveling-dot-fastest"
-          ? "muy rápida"
-          : currentAnimation === "traveling-dot-fast"
-            ? "rápida"
-            : "normal"
-      }`
-    );
-
-    const interval = setInterval(() => {
-      setDotPosition((prev) => {
-        if (currentRoundTrip) {
-          // Lógica para ida y vuelta
-          if (!isReturning) {
-            // Yendo hacia adelante
-            const newPos = prev + speedFactor;
-            if (newPos >= 1) {
-              setIsReturning(true);
-              return 1;
-            }
-            return newPos;
-          } else {
-            // Regresando
-            const newPos = prev - speedFactor;
-            if (newPos <= 0) {
-              setIsReturning(false);
-              return 0;
-            }
-            return newPos;
-          }
-        } else {
-          // Lógica original: solo ida (reinicia al llegar a 1)
-          const newPos = prev + speedFactor;
-          return newPos >= 1 ? 0 : newPos;
-        }
-      });
-    }, 16); // 60fps para animación más fluida
-
-    return () => {
-      console.log(`Arrow ${id}: Limpiando animación de punto`);
-      clearInterval(interval);
-    };
-  }, [currentAnimation, id, currentRoundTrip, isReturning]);
+  // Usar el hook para manejo de animaciones de puntos
+  const { dotPosition, dotPositions, getDotColor } = useTravelingDot({
+    animation: currentAnimation,
+    id,
+    roundTrip: currentRoundTrip,
+    multiplePoints: currentMultiplePoints,
+  });
 
   console.log(
     `Arrow ${id}: Rendering with animation = ${currentAnimation}, style = ${currentStyle}`
@@ -429,7 +377,7 @@ export function Arrow({
     document.body.classList.remove("overflow-hidden");
   }
 
-  // Renderizar punto viajero para las animaciones de tipo traveling-dot
+  // Renderizar punto(s) viajero(s) para las animaciones de tipo traveling-dot
   const renderTravelingDot = () => {
     if (
       currentAnimation !== "traveling-dot" &&
@@ -439,44 +387,82 @@ export function Arrow({
       return null;
     }
 
-    const dotPos = getPointOnCurve(dotPosition);
-
-    let dotColor = baseColor;
-    if (currentAnimation === "traveling-dot-fast") {
-      dotColor = "#4F46E5";
-    } else if (currentAnimation === "traveling-dot-fastest") {
-      dotColor = "#EF4444";
-    }
-
+    const dotColor = getDotColor(baseColor);
     const dotSize = strokeWidth * 2.5;
     const shadowSize = dotSize + 2;
 
-    return (
-      <>
-        <circle
-          cx={dotPos.x}
-          cy={dotPos.y}
-          r={shadowSize}
-          fill="#FFFFFF"
-          opacity={0.6}
-          style={{ zIndex: 45 }}
-          data-animation={currentAnimation}
-          className="traveling-dot-shadow"
-        />
-        <circle
-          cx={dotPos.x}
-          cy={dotPos.y}
-          r={dotSize}
-          fill={dotColor}
-          style={{
-            zIndex: 50,
-            filter: "drop-shadow(0 0 3px rgba(0,0,0,0.3))",
-          }}
-          data-animation={currentAnimation}
-          className="traveling-dot"
-        />
-      </>
-    );
+    if (currentMultiplePoints) {
+      // Renderizar múltiples puntos
+      return (
+        <>
+          {dotPositions.map((position, index) => {
+            // Solo renderizar puntos que están en el rango visible (position >= 0 y <= 1)
+            if (position < 0 || position > 1) return null;
+
+            const dotPos = getPointOnCurve(position);
+            const opacity = Math.max(0.3, 1 - index * 0.2); // Cada punto un poco más transparente
+
+            return (
+              <g key={`dot-${index}`}>
+                <circle
+                  cx={dotPos.x}
+                  cy={dotPos.y}
+                  r={shadowSize}
+                  fill="#FFFFFF"
+                  opacity={0.6 * opacity}
+                  style={{ zIndex: 45 }}
+                  data-animation={currentAnimation}
+                  className="traveling-dot-shadow"
+                />
+                <circle
+                  cx={dotPos.x}
+                  cy={dotPos.y}
+                  r={dotSize}
+                  fill={dotColor}
+                  opacity={opacity}
+                  style={{
+                    zIndex: 50,
+                    filter: "drop-shadow(0 0 3px rgba(0,0,0,0.3))",
+                  }}
+                  data-animation={currentAnimation}
+                  className="traveling-dot"
+                />
+              </g>
+            );
+          })}
+        </>
+      );
+    } else {
+      // Renderizar un solo punto (comportamiento original)
+      const dotPos = getPointOnCurve(dotPosition);
+
+      return (
+        <>
+          <circle
+            cx={dotPos.x}
+            cy={dotPos.y}
+            r={shadowSize}
+            fill="#FFFFFF"
+            opacity={0.6}
+            style={{ zIndex: 45 }}
+            data-animation={currentAnimation}
+            className="traveling-dot-shadow"
+          />
+          <circle
+            cx={dotPos.x}
+            cy={dotPos.y}
+            r={dotSize}
+            fill={dotColor}
+            style={{
+              zIndex: 50,
+              filter: "drop-shadow(0 0 3px rgba(0,0,0,0.3))",
+            }}
+            data-animation={currentAnimation}
+            className="traveling-dot"
+          />
+        </>
+      );
+    }
   };
 
   const handleMouseEnter = () => {
@@ -560,10 +546,11 @@ export function Arrow({
         currentAnimation !== animation ||
         currentArrowHead !== endArrowHead ||
         currentStartArrowHead !== startArrowHead ||
-        currentRoundTrip !== roundTrip)
+        currentRoundTrip !== roundTrip ||
+        currentMultiplePoints !== multiplePoints)
     ) {
       console.log(
-        `Arrow ${id}: Enviando cambios al componente padre - style=${currentStyle}, animation=${currentAnimation}, startArrowHead=${currentStartArrowHead}, endArrowHead=${currentArrowHead}, roundTrip=${currentRoundTrip}`
+        `Arrow ${id}: Enviando cambios al componente padre - style=${currentStyle}, animation=${currentAnimation}, startArrowHead=${currentStartArrowHead}, endArrowHead=${currentArrowHead}, roundTrip=${currentRoundTrip}, multiplePoints=${currentMultiplePoints}`
       );
 
       onPropertiesChange({
@@ -572,6 +559,7 @@ export function Arrow({
         endArrowHead: currentArrowHead,
         startArrowHead: currentStartArrowHead,
         roundTrip: currentRoundTrip,
+        multiplePoints: currentMultiplePoints,
       });
     }
   }, [
@@ -580,11 +568,13 @@ export function Arrow({
     currentArrowHead,
     currentStartArrowHead,
     currentRoundTrip,
+    currentMultiplePoints,
     style,
     animation,
     endArrowHead,
     startArrowHead,
     roundTrip,
+    multiplePoints,
     onPropertiesChange,
     id,
   ]);
@@ -942,29 +932,63 @@ export function Arrow({
                     {(currentAnimation === "traveling-dot" ||
                       currentAnimation === "traveling-dot-fast" ||
                       currentAnimation === "traveling-dot-fastest") && (
-                      <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-                        <div className="flex items-center space-x-3">
-                          <input
-                            id="roundTrip"
-                            type="checkbox"
-                            checked={currentRoundTrip}
-                            onChange={(e) => {
-                              setCurrentRoundTrip(e.target.checked);
-                              if (onPropertiesChange) {
-                                onPropertiesChange({ roundTrip: e.target.checked });
-                              }
-                            }}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                          />
-                          <label htmlFor="roundTrip" className="text-sm font-medium text-gray-700">
-                            Ida y vuelta
-                          </label>
+                      <div className="space-y-3">
+                        <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
+                          <div className="flex items-center space-x-3">
+                            <input
+                              id="roundTrip"
+                              type="checkbox"
+                              checked={currentRoundTrip}
+                              onChange={(e) => {
+                                setCurrentRoundTrip(e.target.checked);
+                                if (onPropertiesChange) {
+                                  onPropertiesChange({ roundTrip: e.target.checked });
+                                }
+                              }}
+                              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor="roundTrip"
+                              className="text-sm font-medium text-gray-700"
+                            >
+                              Ida y vuelta
+                            </label>
+                          </div>
+                          <p className="mt-2 text-xs text-gray-500">
+                            {currentRoundTrip
+                              ? "El punto viaja del inicio al final y regresa al inicio"
+                              : "El punto viaja del inicio al final y reinicia"}
+                          </p>
                         </div>
-                        <p className="mt-2 text-xs text-gray-500">
-                          {currentRoundTrip
-                            ? "El punto viaja del inicio al final y regresa al inicio"
-                            : "El punto viaja del inicio al final y reinicia"}
-                        </p>
+
+                        {/* Checkbox para múltiples puntos */}
+                        <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
+                          <div className="flex items-center space-x-3">
+                            <input
+                              id="multiplePoints"
+                              type="checkbox"
+                              checked={currentMultiplePoints}
+                              onChange={(e) => {
+                                setCurrentMultiplePoints(e.target.checked);
+                                if (onPropertiesChange) {
+                                  onPropertiesChange({ multiplePoints: e.target.checked });
+                                }
+                              }}
+                              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor="multiplePoints"
+                              className="text-sm font-medium text-gray-700"
+                            >
+                              Múltiples puntos
+                            </label>
+                          </div>
+                          <p className="mt-2 text-xs text-gray-500">
+                            {currentMultiplePoints
+                              ? "Muestra 3 puntos siguiendo uno detrás del otro para simular más carga"
+                              : "Muestra un solo punto viajando por la flecha"}
+                          </p>
+                        </div>
                       </div>
                     )}
 

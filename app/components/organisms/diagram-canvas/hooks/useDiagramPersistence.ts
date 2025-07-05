@@ -94,6 +94,7 @@ export function useDiagramPersistence(
             startArrowHead: conn.startArrowHead || "none",
             endArrowHead: conn.endArrowHead || "arrow",
             roundTrip: conn.roundTrip || false, // Añadir propiedad de ida y vuelta
+            multiplePoints: conn.multiplePoints || false, // Añadir propiedad de múltiples puntos
             color: conn.color || "#000000",
             strokeWidth: conn.strokeWidth || 2,
             isSyncEnabled: conn.isSyncEnabled || false, // Añadir propiedad de sincronización
@@ -149,6 +150,7 @@ export function useDiagramPersistence(
         startArrowHead: conn.startArrowHead || "none",
         endArrowHead: conn.endArrowHead || "arrow",
         roundTrip: conn.roundTrip || false, // Añadir propiedad de ida y vuelta
+        multiplePoints: conn.multiplePoints || false, // Añadir propiedad de múltiples puntos
         color: conn.color || "#000000",
         strokeWidth: conn.strokeWidth || 2,
         isSyncEnabled: conn.isSyncEnabled || false, // Añadir propiedad de sincronización
@@ -224,6 +226,7 @@ export function useDiagramPersistence(
           startArrowHead: conn.startArrowHead || "none",
           endArrowHead: conn.endArrowHead || "arrow",
           roundTrip: conn.roundTrip || false, // Añadir propiedad de ida y vuelta
+          multiplePoints: conn.multiplePoints || false, // Añadir propiedad de múltiples puntos
           color: conn.color || "#000000",
           strokeWidth: conn.strokeWidth || 2,
           isSyncEnabled: conn.isSyncEnabled || false, // Añadir propiedad de sincronización
@@ -698,6 +701,7 @@ export function useDiagramPersistence(
                 startArrowHead: conn.startArrowHead || "none",
                 endArrowHead: conn.endArrowHead || "arrow",
                 roundTrip: conn.roundTrip || false, // Añadir propiedad de ida y vuelta
+                multiplePoints: conn.multiplePoints || false, // Añadir propiedad de múltiples puntos
                 color: conn.color || "#000000",
                 strokeWidth: conn.strokeWidth || 2,
                 isSyncEnabled: conn.isSyncEnabled || false, // Añadir propiedad de sincronización
@@ -776,6 +780,7 @@ export function useDiagramPersistence(
           startArrowHead: conn.startArrowHead || "none",
           endArrowHead: conn.endArrowHead || "arrow",
           roundTrip: conn.roundTrip || false, // Añadir propiedad de ida y vuelta
+          multiplePoints: conn.multiplePoints || false, // Añadir propiedad de múltiples puntos
           color: conn.color || "#000000",
           strokeWidth: conn.strokeWidth || 2,
           isSyncEnabled: conn.isSyncEnabled || false, // Añadir propiedad de sincronización
@@ -858,6 +863,7 @@ export function useDiagramPersistence(
         startArrowHead: conn.startArrowHead || "none",
         endArrowHead: conn.endArrowHead || "arrow",
         roundTrip: conn.roundTrip || false, // Añadir propiedad de ida y vuelta
+        multiplePoints: conn.multiplePoints || false, // Añadir propiedad de múltiples puntos
         color: conn.color || "#000000",
         strokeWidth: conn.strokeWidth || 2,
         isSyncEnabled: conn.isSyncEnabled || false, // Añadir propiedad de sincronización
