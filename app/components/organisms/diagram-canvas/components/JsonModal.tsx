@@ -1,5 +1,6 @@
-import React from 'react';
-import { Modal } from '@/app/components/atoms/modal';
+import React from "react";
+
+import { Modal } from "@/app/components/atoms/modal";
 
 export type JsonModalProps = {
   isOpen?: boolean;
@@ -14,7 +15,7 @@ export const JsonModal: React.FC<JsonModalProps> = ({
   onClose,
   json,
   onCopy,
-  className = ''
+  className = "",
 }) => {
   return (
     <Modal
@@ -24,17 +25,17 @@ export const JsonModal: React.FC<JsonModalProps> = ({
       size="large"
       className={className}
     >
-      <div className="flex flex-col h-full">
+      <div className="flex h-full flex-col">
         <div className="flex-grow overflow-auto">
-          <pre className="text-xs bg-gray-50 p-3 rounded border overflow-auto max-h-[60vh]">
+          <pre className="max-h-[60vh] overflow-auto rounded border bg-gray-50 p-3 text-xs">
             {json}
           </pre>
         </div>
-        
+
         <div className="mt-4 flex justify-end">
           <button
             onClick={onCopy}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+            className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
           >
             Copiar al portapapeles
           </button>
@@ -42,4 +43,4 @@ export const JsonModal: React.FC<JsonModalProps> = ({
       </div>
     </Modal>
   );
-}; 
+};

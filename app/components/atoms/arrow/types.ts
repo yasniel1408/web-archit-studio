@@ -1,8 +1,15 @@
-import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
+import { ConnectionPosition } from "@/app/components/atoms/connection-point/connection-point";
 
-export type ArrowStyle = 'solid' | 'dashed' | 'dotted';
-export type ArrowAnimation = 'none' | 'pulse' | 'flow' | 'dash' | 'traveling-dot' | 'traveling-dot-fast' | 'traveling-dot-fastest';
-export type ArrowHeadType = 'none' | 'arrow' | 'circle' | 'diamond';
+export type ArrowStyle = "solid" | "dashed" | "dotted";
+export type ArrowAnimation =
+  | "none"
+  | "pulse"
+  | "flow"
+  | "dash"
+  | "traveling-dot"
+  | "traveling-dot-fast"
+  | "traveling-dot-fastest";
+export type ArrowHeadType = "none" | "arrow" | "circle" | "diamond";
 
 export interface ArrowProps {
   id: string;
@@ -52,4 +59,4 @@ export interface ArrowHeadProps {
   color: string;
   animation: ArrowAnimation;
   id: string;
-} 
+}

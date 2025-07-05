@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from 'react';
-import { NodeType } from '../types';
+import { useCallback, useEffect, useRef } from "react";
+
+import { NodeType } from "../types";
 
 interface UseCopyPasteConfig {
   nodes: NodeType[];
   selectedNodeIds: string[];
-  addNode: (node: Omit<NodeType, 'id'>) => void;
+  addNode: (node: Omit<NodeType, "id">) => void;
   canvasRef: React.RefObject<HTMLDivElement>;
   scale: number;
   position: { x: number; y: number };
@@ -25,7 +26,7 @@ export function useCopyPaste({
   canvasRef,
   scale,
   position,
-  logDebug
+  logDebug,
 }: UseCopyPasteConfig) {
   const clipboardRef = useRef<ClipboardData | null>(null);
   const lastMousePositionRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -37,51 +38,56 @@ export function useCopyPaste({
         const rect = canvasRef.current.getBoundingClientRect();
         const relativeX = e.clientX - rect.left;
         const relativeY = e.clientY - rect.top;
-        
+
         // Convertir a coordenadas del canvas
-        const canvasX = (relativeX / scale) - position.x;
-        const canvasY = (relativeY / scale) - position.y;
-        
+        const canvasX = relativeX / scale - position.x;
+        const canvasY = relativeY / scale - position.y;
+
         lastMousePositionRef.current = { x: canvasX, y: canvasY };
       }
     };
 
     const canvas = canvasRef.current;
     if (canvas) {
-      canvas.addEventListener('mousemove', handleMouseMove);
-      return () => canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.addEventListener("mousemove", handleMouseMove);
+      return () => canvas.removeEventListener("mousemove", handleMouseMove);
     }
+
+    return () => {}; // Return for cases where canvas doesn't exist
   }, [canvasRef, scale, position]);
 
   // Copiar nodos seleccionados
   const copyNodes = useCallback(() => {
     if (selectedNodeIds.length === 0) {
-      logDebug('No hay nodos seleccionados para copiar');
+      logDebug("No hay nodos seleccionados para copiar");
       return;
     }
 
-    const nodesToCopy = nodes.filter(node => selectedNodeIds.includes(node.id));
-    
+    const nodesToCopy = nodes.filter((node) => selectedNodeIds.includes(node.id));
+
     if (nodesToCopy.length === 0) {
-      logDebug('No se encontraron nodos válidos para copiar');
+      logDebug("No se encontraron nodos válidos para copiar");
       return;
     }
 
     clipboardRef.current = {
-      nodes: nodesToCopy.map(node => ({ ...node })), // Clonar profundo
-      timestamp: Date.now()
+      nodes: nodesToCopy.map((node) => ({ ...node })), // Clonar profundo
+      timestamp: Date.now(),
     };
 
     logDebug(`${nodesToCopy.length} nodo(s) copiado(s) al portapapeles`);
-    
+
     // Feedback visual opcional: podríamos mostrar una notificación
-    console.log('📋 Nodos copiados:', nodesToCopy.map(n => n.text || n.type));
+    console.log(
+      "📋 Nodos copiados:",
+      nodesToCopy.map((n) => n.text || n.type)
+    );
   }, [selectedNodeIds, nodes, logDebug]);
 
   // Pegar nodos desde el portapapeles
   const pasteNodes = useCallback(() => {
     if (!clipboardRef.current) {
-      logDebug('No hay nodos en el portapapeles para pegar');
+      logDebug("No hay nodos en el portapapeles para pegar");
       return;
     }
 
@@ -94,7 +100,7 @@ export function useCopyPaste({
         minX: Math.min(acc.minX, node.position.x),
         minY: Math.min(acc.minY, node.position.y),
         maxX: Math.max(acc.maxX, node.position.x + (node.size?.width || 120)),
-        maxY: Math.max(acc.maxY, node.position.y + (node.size?.height || 120))
+        maxY: Math.max(acc.maxY, node.position.y + (node.size?.height || 120)),
       }),
       { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity }
     );
@@ -107,29 +113,31 @@ export function useCopyPaste({
     const targetX = pastePosition.x + pasteOffset.x;
     const targetY = pastePosition.y + pasteOffset.y;
 
-    clipboardNodes.forEach((node, index) => {
+    clipboardNodes.forEach((node) => {
       // Calcular nueva posición relativa al centro
       const relativeX = node.position.x - centerX;
       const relativeY = node.position.y - centerY;
-      
-      const newNode: Omit<NodeType, 'id'> = {
+
+      const newNode: Omit<NodeType, "id"> = {
         position: {
           x: targetX + relativeX,
-          y: targetY + relativeY
+          y: targetY + relativeY,
         },
-        text: node.text ? `${node.text} (copia)` : '',
+        text: node.text ? `${node.text} (copia)` : "",
         type: node.type,
         size: node.size ? { ...node.size } : { width: 120, height: 120 },
         zIndex: (node.zIndex || 0) + 1, // Poner encima de los originales
         ...(node.backgroundColor && { backgroundColor: node.backgroundColor }),
-        ...(node.icon && { icon: node.icon })
+        ...(node.icon && { icon: node.icon }),
       };
 
       addNode(newNode);
     });
 
-    logDebug(`${clipboardNodes.length} nodo(s) pegado(s) en posición (${Math.round(targetX)}, ${Math.round(targetY)})`);
-    console.log('📄 Nodos pegados en:', { x: Math.round(targetX), y: Math.round(targetY) });
+    logDebug(
+      `${clipboardNodes.length} nodo(s) pegado(s) en posición (${Math.round(targetX)}, ${Math.round(targetY)})`
+    );
+    console.log("📄 Nodos pegados en:", { x: Math.round(targetX), y: Math.round(targetY) });
   }, [addNode, logDebug]);
 
   // Duplicar nodos seleccionados (atajo rápido)
@@ -149,20 +157,20 @@ export function useCopyPaste({
 
       const isCtrlOrCmd = e.ctrlKey || e.metaKey;
 
-      if (isCtrlOrCmd && e.key === 'c') {
+      if (isCtrlOrCmd && e.key === "c") {
         e.preventDefault();
         copyNodes();
-      } else if (isCtrlOrCmd && e.key === 'v') {
+      } else if (isCtrlOrCmd && e.key === "v") {
         e.preventDefault();
         pasteNodes();
-      } else if (isCtrlOrCmd && e.key === 'd') {
+      } else if (isCtrlOrCmd && e.key === "d") {
         e.preventDefault();
         duplicateNodes();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [copyNodes, pasteNodes, duplicateNodes]);
 
   // Verificar si hay algo en el portapapeles
@@ -173,7 +181,7 @@ export function useCopyPaste({
   // Limpiar portapapeles
   const clearClipboard = useCallback(() => {
     clipboardRef.current = null;
-    logDebug('Portapapeles limpiado');
+    logDebug("Portapapeles limpiado");
   }, [logDebug]);
 
   return {
@@ -182,6 +190,6 @@ export function useCopyPaste({
     duplicateNodes,
     hasClipboardData,
     clearClipboard,
-    clipboardCount: clipboardRef.current?.nodes.length || 0
+    clipboardCount: clipboardRef.current?.nodes.length || 0,
   };
-} 
+}

@@ -3,14 +3,14 @@
  */
 
 // Application metadata
-export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'ArchitStudio';
-export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '1.1.0';
-export const APP_DESCRIPTION = 'Professional C4 & Cloud Architecture Diagramming Tool';
+export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "ArchitStudio";
+export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || "1.1.0";
+export const APP_DESCRIPTION = "Professional C4 & Cloud Architecture Diagramming Tool";
 
 // Feature flags
 export const FEATURES = {
-  COLLABORATION: process.env.NEXT_PUBLIC_ENABLE_COLLABORATION === 'true',
-  EXPORT: process.env.NEXT_PUBLIC_ENABLE_EXPORT === 'true',
+  COLLABORATION: process.env.NEXT_PUBLIC_ENABLE_COLLABORATION === "true",
+  EXPORT: process.env.NEXT_PUBLIC_ENABLE_EXPORT === "true",
   TEMPLATES: false, // Coming soon
   VERSION_CONTROL: false, // Coming soon
 } as const;
@@ -45,53 +45,53 @@ export const ANIMATION = {
 
 // Local storage keys
 export const STORAGE_KEYS = {
-  THEME: 'architstudio-theme',
-  RECENT_DIAGRAMS: 'architstudio-recent-diagrams',
-  USER_PREFERENCES: 'architstudio-preferences',
-  CANVAS_SETTINGS: 'architstudio-canvas-settings',
+  THEME: "architstudio-theme",
+  RECENT_DIAGRAMS: "architstudio-recent-diagrams",
+  USER_PREFERENCES: "architstudio-preferences",
+  CANVAS_SETTINGS: "architstudio-canvas-settings",
 } as const;
 
 // API endpoints (when backend is implemented)
 export const API_ENDPOINTS = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || '/api',
-  DIAGRAMS: '/diagrams',
-  AUTH: '/auth',
-  USERS: '/users',
-  EXPORT: '/export',
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "/api",
+  DIAGRAMS: "/diagrams",
+  AUTH: "/auth",
+  USERS: "/users",
+  EXPORT: "/export",
 } as const;
 
 // Color palette
 export const COLORS = {
-  PRIMARY: 'hsl(221.2 83.2% 53.3%)',
-  SECONDARY: 'hsl(210 40% 96.1%)',
-  DESTRUCTIVE: 'hsl(0 84.2% 60.2%)',
-  MUTED: 'hsl(210 40% 96.1%)',
-  ACCENT: 'hsl(210 40% 96.1%)',
-  AWS_ORANGE: '#FF9900',
-  GCP_BLUE: '#4285F4',
-  C4_BLUE: '#438DD5',
+  PRIMARY: "hsl(221.2 83.2% 53.3%)",
+  SECONDARY: "hsl(210 40% 96.1%)",
+  DESTRUCTIVE: "hsl(0 84.2% 60.2%)",
+  MUTED: "hsl(210 40% 96.1%)",
+  ACCENT: "hsl(210 40% 96.1%)",
+  AWS_ORANGE: "#FF9900",
+  GCP_BLUE: "#4285F4",
+  C4_BLUE: "#438DD5",
 } as const;
 
 // Keyboard shortcuts
 export const SHORTCUTS = {
-  UNDO: 'cmd+z',
-  REDO: 'cmd+shift+z',
-  COPY: 'cmd+c',
-  PASTE: 'cmd+v',
-  DELETE: 'delete',
-  SELECT_ALL: 'cmd+a',
-  SAVE: 'cmd+s',
-  EXPORT: 'cmd+e',
-  ZOOM_IN: 'cmd++',
-  ZOOM_OUT: 'cmd+-',
-  ZOOM_RESET: 'cmd+0',
+  UNDO: "cmd+z",
+  REDO: "cmd+shift+z",
+  COPY: "cmd+c",
+  PASTE: "cmd+v",
+  DELETE: "delete",
+  SELECT_ALL: "cmd+a",
+  SAVE: "cmd+s",
+  EXPORT: "cmd+e",
+  ZOOM_IN: "cmd++",
+  ZOOM_OUT: "cmd+-",
+  ZOOM_RESET: "cmd+0",
 } as const;
 
 // Error messages
 export const ERROR_MESSAGES = {
-  GENERIC: 'Something went wrong. Please try again.',
-  NETWORK: 'Network error. Please check your connection.',
-  NOT_FOUND: 'The requested resource was not found.',
-  UNAUTHORIZED: 'You are not authorized to perform this action.',
-  VALIDATION: 'Please check your input and try again.',
-} as const; 
+  GENERIC: "Something went wrong. Please try again.",
+  NETWORK: "Network error. Please check your connection.",
+  NOT_FOUND: "The requested resource was not found.",
+  UNAUTHORIZED: "You are not authorized to perform this action.",
+  VALIDATION: "Please check your input and try again.",
+} as const;

@@ -5,22 +5,22 @@
 
 export const config = {
   app: {
-    name: process.env.NEXT_PUBLIC_APP_NAME || 'ArchitStudio',
-    version: process.env.NEXT_PUBLIC_APP_VERSION || '1.1.0',
-    url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-    debug: process.env.NEXT_PUBLIC_DEBUG === 'true',
+    name: process.env.NEXT_PUBLIC_APP_NAME || "ArchitStudio",
+    version: process.env.NEXT_PUBLIC_APP_VERSION || "1.1.0",
+    url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    debug: process.env.NEXT_PUBLIC_DEBUG === "true",
   },
-  
+
   environment: {
-    isDevelopment: process.env.NODE_ENV === 'development',
-    isProduction: process.env.NODE_ENV === 'production',
-    isTest: process.env.NODE_ENV === 'test',
+    isDevelopment: process.env.NODE_ENV === "development",
+    isProduction: process.env.NODE_ENV === "production",
+    isTest: process.env.NODE_ENV === "test",
   },
 
   features: {
-    analytics: process.env.NEXT_PUBLIC_ANALYTICS_ENABLED === 'true',
-    errorReporting: process.env.NEXT_PUBLIC_ERROR_REPORTING === 'true',
-    debugPanel: process.env.NEXT_PUBLIC_DEBUG_PANEL === 'true',
+    analytics: process.env.NEXT_PUBLIC_ANALYTICS_ENABLED === "true",
+    errorReporting: process.env.NEXT_PUBLIC_ERROR_REPORTING === "true",
+    debugPanel: process.env.NEXT_PUBLIC_DEBUG_PANEL === "true",
   },
 
   analytics: {
@@ -33,26 +33,26 @@ export const config = {
   },
 
   ads: {
-    adsenseId: process.env.NEXT_PUBLIC_ADSENSE_ID || '',
-    enabled: process.env.NEXT_PUBLIC_ADS_ENABLED === 'true',
+    adsenseId: process.env.NEXT_PUBLIC_ADSENSE_ID || "",
+    enabled: process.env.NEXT_PUBLIC_ADS_ENABLED === "true",
   },
 
   storage: {
     localStorage: {
-      prefix: 'architstudio_',
-      version: 'v1',
+      prefix: "architstudio_",
+      version: "v1",
     },
   },
 
   ui: {
     toast: {
-      position: 'top-right' as const,
+      position: "top-right" as const,
       duration: 5000,
       maxToasts: 5,
     },
     animation: {
       duration: 300,
-      ease: 'easeInOut' as const,
+      ease: "easeInOut" as const,
     },
   },
 
@@ -79,25 +79,25 @@ export const validateConfig = () => {
   const errors: string[] = [];
 
   if (!config.app.name) {
-    errors.push('APP_NAME is required');
+    errors.push("APP_NAME is required");
   }
 
   if (!config.app.version) {
-    errors.push('APP_VERSION is required');
+    errors.push("APP_VERSION is required");
   }
 
   if (config.environment.isProduction) {
     if (!config.monitoring.sentryDsn) {
-      console.warn('SENTRY_DSN not configured for production');
+      console.warn("SENTRY_DSN not configured for production");
     }
 
     if (!config.analytics.googleAnalyticsId) {
-      console.warn('Google Analytics not configured for production');
+      console.warn("Google Analytics not configured for production");
     }
   }
 
   if (errors.length > 0) {
-    throw new Error(`Configuration validation failed: ${errors.join(', ')}`);
+    throw new Error(`Configuration validation failed: ${errors.join(", ")}`);
   }
 
   return true;
@@ -107,8 +107,8 @@ export const validateConfig = () => {
 if (config.environment.isDevelopment) {
   try {
     validateConfig();
-    console.log('✅ Configuración validada correctamente');
+    console.log("✅ Configuración validada correctamente");
   } catch (error) {
-    console.error('❌ Error en la configuración:', error);
+    console.error("❌ Error en la configuración:", error);
   }
-} 
+}

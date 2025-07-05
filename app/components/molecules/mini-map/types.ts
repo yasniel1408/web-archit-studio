@@ -1,4 +1,4 @@
-import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
+import { ConnectionPosition } from "@/app/components/atoms/connection-point/connection-point";
 
 export type NodeType = {
   id: string;
@@ -18,7 +18,7 @@ export type ConnectionType = {
   sourceY: number;
   targetX: number;
   targetY: number;
-  style?: 'solid' | 'dashed' | 'dotted';
+  style?: "solid" | "dashed" | "dotted";
 };
 
 export type MinimapBounds = {
@@ -28,4 +28,4 @@ export type MinimapBounds = {
   maxY: number;
   width: number;
   height: number;
-}; 
+};

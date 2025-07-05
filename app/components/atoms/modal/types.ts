@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
-export type ModalSize = 'small' | 'medium' | 'large' | 'fullscreen';
+export type ModalSize = "small" | "medium" | "large" | "fullscreen";
 
 export interface ModalProps {
   isOpen: boolean;
@@ -30,4 +30,4 @@ export interface UseModalReturn {
   getModalSizeClasses: (size: ModalSize) => string;
   handleOverlayClick: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleKeyDown: (e: React.KeyboardEvent) => void;
-} 
+}

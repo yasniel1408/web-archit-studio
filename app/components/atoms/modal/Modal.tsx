@@ -1,10 +1,11 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { AnimatePresence, motion } from 'framer-motion';
-import { FiX } from 'react-icons/fi';
-import { ModalProps, ModalRef } from './types';
-import { ANIMATION_DURATION } from './constants';
-import { useModal } from './hooks/useModal';
+import { AnimatePresence, motion } from "framer-motion";
+import React, { forwardRef, useImperativeHandle } from "react";
+import { createPortal } from "react-dom";
+import { FiX } from "react-icons/fi";
+
+import { ANIMATION_DURATION } from "./constants";
+import { useModal } from "./hooks/useModal";
+import { ModalProps, ModalRef } from "./types";
 
 /**
  * Componente Modal reutilizable con diferentes tamaños y animación
@@ -16,20 +17,15 @@ export const Modal = forwardRef<ModalRef, ModalProps>(
       onClose,
       title,
       children,
-      size = 'medium',
+      size = "medium",
       closeOnOverlayClick = true,
-      overlayClassName = '',
+      overlayClassName = "",
       showCloseButton = true,
-      className = '',
+      className = "",
     },
-    ref,
+    ref
   ) => {
-    const { 
-      modalRef, 
-      getModalSizeClasses, 
-      handleOverlayClick, 
-      handleKeyDown 
-    } = useModal({
+    const { modalRef, getModalSizeClasses, handleOverlayClick, handleKeyDown } = useModal({
       onClose,
       closeOnOverlayClick,
       isOpen,
@@ -41,7 +37,7 @@ export const Modal = forwardRef<ModalRef, ModalProps>(
     }));
 
     // Solo renderizamos en el cliente
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
 
     return createPortal(
       <AnimatePresence>
@@ -87,9 +83,9 @@ export const Modal = forwardRef<ModalRef, ModalProps>(
           </div>
         )}
       </AnimatePresence>,
-      document.body,
+      document.body
     );
-  },
+  }
 );
 
-Modal.displayName = 'Modal'; 
+Modal.displayName = "Modal";

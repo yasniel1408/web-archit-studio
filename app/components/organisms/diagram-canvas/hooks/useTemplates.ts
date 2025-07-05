@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { TemplateType } from '../types';
+import { TemplateType } from "../types";
 
 // Plantillas de ejemplo predefinidas
 const serverlessTemplate: TemplateType = {
-  id: 'serverless',
-  name: 'Arquitectura Serverless',
-  description: 'Arquitectura basada en servicios serverless con API Gateway, funciones Lambda y servicios de almacenamiento.',
-  image: '/templates/serverless.png',
+  id: "serverless",
+  name: "Arquitectura Serverless",
+  description:
+    "Arquitectura basada en servicios serverless con API Gateway, funciones Lambda y servicios de almacenamiento.",
+  image: "/templates/serverless.png",
   version: "1.0",
   nodes: [
     {
@@ -14,71 +14,71 @@ const serverlessTemplate: TemplateType = {
       type: "square size:490x145",
       position: {
         x: 217,
-        y: -14
+        y: -14,
       },
       size: {
         width: 490,
-        height: 145
+        height: 145,
       },
       text: "API Gateway",
-      iconType: "api"
+      iconType: "api",
     },
     {
       id: "auth-lambda",
       type: "square size:177x144",
       position: {
         x: 121,
-        y: 250
+        y: 250,
       },
       size: {
         width: 177,
-        height: 144
+        height: 144,
       },
       text: "Auth Lambda",
-      iconType: "cloud"
+      iconType: "cloud",
     },
     {
       id: "users-lambda",
       type: "square size:208x142",
       position: {
         x: 329,
-        y: 249
+        y: 249,
       },
       size: {
         width: 208,
-        height: 142
+        height: 142,
       },
       text: "Users Lambda",
-      iconType: "cloud"
+      iconType: "cloud",
     },
     {
       id: "dynamo-users",
       type: "square size:192x130",
       position: {
         x: 312,
-        y: 503
+        y: 503,
       },
       size: {
         width: 192,
-        height: 130
+        height: 130,
       },
       text: "DynamoDB Users",
-      iconType: "database"
+      iconType: "database",
     },
     {
       id: "s3-storage",
       type: "square size:164x142",
       position: {
         x: 657,
-        y: 315
+        y: 315,
       },
       size: {
         width: 164,
-        height: 142
+        height: 142,
       },
       text: "S3 Storage",
-      iconType: "database"
-    }
+      iconType: "database",
+    },
   ],
   connections: [
     {
@@ -96,7 +96,7 @@ const serverlessTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#6200ee",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-2",
@@ -113,7 +113,7 @@ const serverlessTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#6200ee",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-3",
@@ -130,7 +130,7 @@ const serverlessTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-4",
@@ -147,159 +147,160 @@ const serverlessTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
-    }
+      strokeWidth: 2,
+    },
   ],
   viewport: {
     scale: 0.8499999999999999,
     position: {
       x: 183.55459555555558,
-      y: 131.49277291005296
-    }
+      y: 131.49277291005296,
+    },
   },
   metadata: {
     exportedAt: "2025-04-20T05:14:56.389Z",
     nodeCount: 5,
-    connectionCount: 4
-  }
+    connectionCount: 4,
+  },
 };
 
 const microservicesTemplate: TemplateType = {
-  id: 'aws-architecture',
-  name: 'Arquitectura AWS',
-  description: 'Ejemplo de arquitectura completa en AWS con bases de datos, servidores y puntos de integración.',
-  image: '/templates/aws-architecture.png',
+  id: "aws-architecture",
+  name: "Arquitectura AWS",
+  description:
+    "Ejemplo de arquitectura completa en AWS con bases de datos, servidores y puntos de integración.",
+  image: "/templates/aws-architecture.png",
   version: "1.0",
   nodes: [
     {
       id: "api-gateway",
       position: {
         x: -158,
-        y: -78
+        y: -78,
       },
       text: "API Gateway",
       type: "square",
       size: {
         width: 1087,
-        height: 189
+        height: 189,
       },
       iconType: "api",
-      backgroundColor: "#FFCCBC"
+      backgroundColor: "#FFCCBC",
     },
     {
       id: "user-db",
       position: {
         x: -234,
-        y: 567
+        y: 567,
       },
       text: "User DB",
       type: "square",
       size: {
         width: 229,
-        height: 138
+        height: 138,
       },
-      iconType: "database"
+      iconType: "database",
     },
     {
       id: "order-db",
       position: {
         x: 84,
-        y: 567
+        y: 567,
       },
       text: "Order DB",
       type: "square",
       size: {
         width: 235,
-        height: 142
+        height: 142,
       },
-      iconType: "database"
+      iconType: "database",
     },
     {
       id: "product-db",
       position: {
         x: 426,
-        y: 565
+        y: 565,
       },
       text: "Product DB",
       type: "square",
       size: {
         width: 249,
-        height: 143
+        height: 143,
       },
-      iconType: "database"
+      iconType: "database",
     },
     {
       id: "message-queue",
       position: {
         x: 746.3125,
-        y: 611.3333333333334
+        y: 611.3333333333334,
       },
       text: "Message Queue",
       type: "square",
       size: {
         width: 599.5,
-        height: 145
+        height: 145,
       },
       backgroundColor: "#BBDEFB",
-      iconType: "mq"
+      iconType: "mq",
     },
     {
       id: "lambda-function",
       position: {
         x: 1108.9791666666667,
-        y: 50.666666666666686
+        y: 50.666666666666686,
       },
       text: "Lambda Function",
       type: "square",
       size: {
         width: 239.75,
-        height: 135.75
+        height: 135.75,
       },
       iconType: "cloud",
-      backgroundColor: "#FFE0B2"
+      backgroundColor: "#FFE0B2",
     },
     {
       id: "users-service",
       position: {
         x: -147.35416666666669,
-        y: 230.66666666666669
+        y: 230.66666666666669,
       },
       text: "Users Service",
       type: "square",
       size: {
         width: 178,
-        height: 211
+        height: 211,
       },
-      iconType: "service"
+      iconType: "service",
     },
     {
       id: "orders-service",
       position: {
         x: 200.3125,
-        y: 234.33333333333331
+        y: 234.33333333333331,
       },
       text: "Orders Service",
       type: "square",
       size: {
         width: 200.5,
-        height: 192.5
+        height: 192.5,
       },
-      iconType: "service"
+      iconType: "service",
     },
     {
       id: "products-service",
       position: {
         x: 570.3125,
-        y: 231.33333333333331
+        y: 231.33333333333331,
       },
       text: "Products Service",
       type: "square",
       size: {
         width: 181,
-        height: 201
+        height: 201,
       },
-      iconType: "service"
-    }
+      iconType: "service",
+    },
   ],
   connections: [
     {
@@ -317,7 +318,7 @@ const microservicesTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-1745283379820",
@@ -334,7 +335,7 @@ const microservicesTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-1745283382630",
@@ -351,7 +352,7 @@ const microservicesTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-1745283388754",
@@ -368,7 +369,7 @@ const microservicesTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-1745283392241",
@@ -385,7 +386,7 @@ const microservicesTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-1745283432344",
@@ -402,7 +403,7 @@ const microservicesTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-1745283444570",
@@ -419,7 +420,7 @@ const microservicesTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-1745283446940",
@@ -436,7 +437,7 @@ const microservicesTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-1745283450937",
@@ -453,7 +454,7 @@ const microservicesTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
+      strokeWidth: 2,
     },
     {
       id: "conn-1745283511874",
@@ -470,21 +471,21 @@ const microservicesTemplate: TemplateType = {
       startArrowHead: "none",
       endArrowHead: "arrow",
       color: "#000000",
-      strokeWidth: 2
-    }
+      strokeWidth: 2,
+    },
   ],
   viewport: {
     scale: 0.75,
     position: {
       x: 346,
-      y: 229.16031901041657
-    }
+      y: 229.16031901041657,
+    },
   },
   metadata: {
     exportedAt: "2025-04-22T01:00:57.726Z",
     nodeCount: 9,
-    connectionCount: 10
-  }
+    connectionCount: 10,
+  },
 };
 
 // Template de Analítica de Datos AWS
@@ -502,7 +503,7 @@ export const analyticaAWS: TemplateType = {
       text: "Amazon S3",
       type: "rounded",
       icon: { type: "aws", name: "S3" },
-      backgroundColor: "#FFD58C"
+      backgroundColor: "#FFD58C",
     },
     {
       id: "kinesis",
@@ -511,7 +512,7 @@ export const analyticaAWS: TemplateType = {
       text: "Kinesis Data Streams",
       type: "rounded",
       icon: { type: "aws", name: "Kinesis" },
-      backgroundColor: "#C8E6CA"
+      backgroundColor: "#C8E6CA",
     },
     {
       id: "glue",
@@ -520,7 +521,7 @@ export const analyticaAWS: TemplateType = {
       text: "AWS Glue",
       type: "rounded",
       icon: { type: "aws", name: "Glue" },
-      backgroundColor: "#B3DBF0"
+      backgroundColor: "#B3DBF0",
     },
     {
       id: "athena",
@@ -529,7 +530,7 @@ export const analyticaAWS: TemplateType = {
       text: "Amazon Athena",
       type: "rounded",
       icon: { type: "aws", name: "Athena" },
-      backgroundColor: "#E9E6FF"
+      backgroundColor: "#E9E6FF",
     },
     {
       id: "quicksight",
@@ -538,7 +539,7 @@ export const analyticaAWS: TemplateType = {
       text: "QuickSight",
       type: "rounded",
       icon: { type: "aws", name: "QuickSight" },
-      backgroundColor: "#FFD0D0"
+      backgroundColor: "#FFD0D0",
     },
     {
       id: "redshift",
@@ -547,8 +548,8 @@ export const analyticaAWS: TemplateType = {
       text: "Redshift",
       type: "rounded",
       icon: { type: "aws", name: "Redshift" },
-      backgroundColor: "#D8CAFA"
-    }
+      backgroundColor: "#D8CAFA",
+    },
   ],
   connections: [
     {
@@ -565,7 +566,7 @@ export const analyticaAWS: TemplateType = {
       animation: "traveling-dot-fast",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "kinesis-to-glue",
@@ -581,7 +582,7 @@ export const analyticaAWS: TemplateType = {
       animation: "pulse",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "s3-to-redshift",
@@ -597,7 +598,7 @@ export const analyticaAWS: TemplateType = {
       animation: "flow",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "glue-to-athena",
@@ -613,7 +614,7 @@ export const analyticaAWS: TemplateType = {
       animation: "dash",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "athena-to-quicksight",
@@ -629,7 +630,7 @@ export const analyticaAWS: TemplateType = {
       animation: "traveling-dot",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "redshift-to-quicksight",
@@ -645,18 +646,18 @@ export const analyticaAWS: TemplateType = {
       animation: "traveling-dot-fastest",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
-    }
+      endArrowHead: "arrow",
+    },
   ],
   viewport: {
     scale: 1,
-    position: { x: 0, y: 0 }
+    position: { x: 0, y: 0 },
   },
   metadata: {
     exportedAt: new Date().toISOString(),
     nodeCount: 8,
-    connectionCount: 7
-  }
+    connectionCount: 7,
+  },
 };
 
 // Template de Arquitectura Híbrida AWS
@@ -674,7 +675,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       text: "Data Center",
       type: "rectangle",
       icon: { type: "general", name: "datacenter" },
-      backgroundColor: "#E1E1FF"
+      backgroundColor: "#E1E1FF",
     },
     {
       id: "vpn-gateway",
@@ -683,7 +684,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       text: "VPN Gateway",
       type: "rounded",
       icon: { type: "aws", name: "VPNGateway" },
-      backgroundColor: "#C8FFF2"
+      backgroundColor: "#C8FFF2",
     },
     {
       id: "vpc",
@@ -692,7 +693,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       text: "Amazon VPC",
       type: "rounded",
       icon: { type: "aws", name: "VPC" },
-      backgroundColor: "#FDFFCD"
+      backgroundColor: "#FDFFCD",
     },
     {
       id: "ec2-instances",
@@ -701,7 +702,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       text: "EC2 Instances",
       type: "rounded",
       icon: { type: "aws", name: "EC2" },
-      backgroundColor: "#FFD8D0"
+      backgroundColor: "#FFD8D0",
     },
     {
       id: "rds",
@@ -710,7 +711,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       text: "Amazon RDS",
       type: "rounded",
       icon: { type: "aws", name: "RDS" },
-      backgroundColor: "#D0F0FF"
+      backgroundColor: "#D0F0FF",
     },
     {
       id: "direct-connect",
@@ -719,7 +720,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       text: "Direct Connect",
       type: "rounded",
       icon: { type: "aws", name: "DirectConnect" },
-      backgroundColor: "#FFDECE"
+      backgroundColor: "#FFDECE",
     },
     {
       id: "s3-backup",
@@ -728,8 +729,8 @@ export const arquitecturaHibridaAWS: TemplateType = {
       text: "S3 Backup",
       type: "rounded",
       icon: { type: "aws", name: "S3" },
-      backgroundColor: "#FFD58C"
-    }
+      backgroundColor: "#FFD58C",
+    },
   ],
   connections: [
     {
@@ -746,7 +747,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       animation: "pulse",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "vpn-to-vpc",
@@ -762,7 +763,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       animation: "traveling-dot",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "vpc-to-ec2",
@@ -778,7 +779,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       animation: "flow",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "vpc-to-rds",
@@ -794,7 +795,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       animation: "dash",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "datacenter-to-direct-connect",
@@ -810,7 +811,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       animation: "traveling-dot-fast",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "direct-connect-to-vpc",
@@ -826,7 +827,7 @@ export const arquitecturaHibridaAWS: TemplateType = {
       animation: "traveling-dot-fastest",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
+      endArrowHead: "arrow",
     },
     {
       id: "direct-connect-to-s3",
@@ -842,21 +843,23 @@ export const arquitecturaHibridaAWS: TemplateType = {
       animation: "flow",
       color: "#6B7280",
       strokeWidth: 2,
-      endArrowHead: "arrow"
-    }
+      endArrowHead: "arrow",
+    },
   ],
   viewport: {
     scale: 1,
-    position: { x: 0, y: 0 }
+    position: { x: 0, y: 0 },
   },
   metadata: {
     exportedAt: new Date().toISOString(),
     nodeCount: 7,
-    connectionCount: 7
-  }
+    connectionCount: 7,
+  },
 };
 
 // Export the templates array
 export const useTemplates = () => {
-  return { templates: [serverlessTemplate, microservicesTemplate, analyticaAWS, arquitecturaHibridaAWS] };
-}; 
+  return {
+    templates: [serverlessTemplate, microservicesTemplate, analyticaAWS, arquitecturaHibridaAWS],
+  };
+};

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, useRef, useEffect } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 interface UseNodeSelectionConfig {
   logDebug: (message: string) => void;
@@ -8,20 +8,15 @@ interface UseNodeSelectionConfig {
 
 export function useNodeSelection({ logDebug }: UseNodeSelectionConfig) {
   const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
-  const selectionBoxRef = useRef<{ startX: number; startY: number; isActive: boolean }>({ 
-    startX: 0, 
-    startY: 0, 
-    isActive: false 
-  });
 
   // Seleccionar/deseleccionar un nodo individual
   const toggleNodeSelection = useCallback((nodeId: string, isMultiSelect: boolean = false) => {
-    setSelectedNodeIds(prev => {
+    setSelectedNodeIds((prev) => {
       if (isMultiSelect) {
         // Multi-selección con Ctrl/Cmd
         if (prev.includes(nodeId)) {
           // Deseleccionar si ya estaba seleccionado
-          return prev.filter(id => id !== nodeId);
+          return prev.filter((id) => id !== nodeId);
         } else {
           // Agregar a la selección
           return [...prev, nodeId];
@@ -41,7 +36,7 @@ export function useNodeSelection({ logDebug }: UseNodeSelectionConfig) {
 
   // Seleccionar un nodo específico (forzar selección)
   const selectNode = useCallback((nodeId: string, isMultiSelect: boolean = false) => {
-    setSelectedNodeIds(prev => {
+    setSelectedNodeIds((prev) => {
       if (isMultiSelect) {
         if (!prev.includes(nodeId)) {
           return [...prev, nodeId];
@@ -55,16 +50,16 @@ export function useNodeSelection({ logDebug }: UseNodeSelectionConfig) {
 
   // Deseleccionar un nodo específico
   const deselectNode = useCallback((nodeId: string) => {
-    setSelectedNodeIds(prev => prev.filter(id => id !== nodeId));
+    setSelectedNodeIds((prev) => prev.filter((id) => id !== nodeId));
   }, []);
 
   // Seleccionar múltiples nodos
   const selectMultipleNodes = useCallback((nodeIds: string[], replace: boolean = true) => {
-    setSelectedNodeIds(prev => {
+    setSelectedNodeIds((prev) => {
       if (replace) {
         return [...nodeIds];
       } else {
-        const newIds = nodeIds.filter(id => !prev.includes(id));
+        const newIds = nodeIds.filter((id) => !prev.includes(id));
         return [...prev, ...newIds];
       }
     });
@@ -76,9 +71,12 @@ export function useNodeSelection({ logDebug }: UseNodeSelectionConfig) {
   }, []);
 
   // Verificar si un nodo está seleccionado
-  const isNodeSelected = useCallback((nodeId: string) => {
-    return selectedNodeIds.includes(nodeId);
-  }, [selectedNodeIds]);
+  const isNodeSelected = useCallback(
+    (nodeId: string) => {
+      return selectedNodeIds.includes(nodeId);
+    },
+    [selectedNodeIds]
+  );
 
   // Obtener el primer nodo seleccionado
   const getFirstSelectedNode = useCallback(() => {
@@ -86,19 +84,23 @@ export function useNodeSelection({ logDebug }: UseNodeSelectionConfig) {
   }, [selectedNodeIds]);
 
   // Manejar click en el canvas (deseleccionar si no hay nodo clickeado)
-  const handleCanvasClick = useCallback((e: React.MouseEvent) => {
-    const target = e.target as HTMLElement;
-    
-    // Si el click fue en el canvas vacío (no en un nodo)
-    const isClickOnCanvas = target === e.currentTarget || 
-                           target.hasAttribute('data-diagram-export') ||
-                           target.hasAttribute('data-diagram-transform');
-    
-    if (isClickOnCanvas && !e.ctrlKey && !e.metaKey) {
-      clearSelection();
-      logDebug('Selección limpiada por click en canvas vacío');
-    }
-  }, [clearSelection, logDebug]);
+  const handleCanvasClick = useCallback(
+    (e: React.MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      // Si el click fue en el canvas vacío (no en un nodo)
+      const isClickOnCanvas =
+        target === e.currentTarget ||
+        target.hasAttribute("data-diagram-export") ||
+        target.hasAttribute("data-diagram-transform");
+
+      if (isClickOnCanvas && !e.ctrlKey && !e.metaKey) {
+        clearSelection();
+        logDebug("Selección limpiada por click en canvas vacío");
+      }
+    },
+    [clearSelection, logDebug]
+  );
 
   // Manejar teclas para selección
   useEffect(() => {
@@ -108,18 +110,18 @@ export function useNodeSelection({ logDebug }: UseNodeSelectionConfig) {
         return;
       }
 
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         clearSelection();
-        logDebug('Selección limpiada con Escape');
-      } else if (e.ctrlKey && e.key === 'a') {
+        logDebug("Selección limpiada con Escape");
+      } else if (e.ctrlKey && e.key === "a") {
         e.preventDefault();
         // Aquí podríamos seleccionar todos los nodos, pero necesitaríamos la lista de nodos
-        logDebug('Seleccionar todos (no implementado aún)');
+        logDebug("Seleccionar todos (no implementado aún)");
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [clearSelection, logDebug]);
 
   // Información sobre la selección actual
@@ -127,7 +129,7 @@ export function useNodeSelection({ logDebug }: UseNodeSelectionConfig) {
     count: selectedNodeIds.length,
     hasSelection: selectedNodeIds.length > 0,
     isMultipleSelection: selectedNodeIds.length > 1,
-    selectedIds: selectedNodeIds
+    selectedIds: selectedNodeIds,
   };
 
   return {
@@ -140,6 +142,6 @@ export function useNodeSelection({ logDebug }: UseNodeSelectionConfig) {
     isNodeSelected,
     getFirstSelectedNode,
     handleCanvasClick,
-    selectionInfo
+    selectionInfo,
   };
-} 
+}

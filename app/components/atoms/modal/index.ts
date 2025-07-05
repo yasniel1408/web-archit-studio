@@ -1,3 +1,3 @@
-export * from './Modal';
-export * from './types';
-export * from './hooks/useModal'; 
+export * from "./hooks/useModal";
+export * from "./Modal";
+export * from "./types";

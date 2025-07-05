@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { ErrorHandler, AppError } from '@/lib/error-handler';
+import React, { Component, ErrorInfo, ReactNode } from "react";
+
+import { AppError, ErrorHandler } from "@/lib/error-handler";
 
 interface Props {
   children: ReactNode;
@@ -25,8 +26,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+
     // Usar nuestro sistema de manejo de errores
     const appError = ErrorHandler.logError(
       error,
@@ -34,7 +35,7 @@ export class ErrorBoundary extends Component<Props, State> {
         componentStack: errorInfo.componentStack,
         errorBoundary: true,
       },
-      'critical'
+      "critical"
     );
 
     this.setState({ errorId: appError.id });
@@ -48,34 +49,32 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <div className="max-w-md w-full bg-card p-8 rounded-lg shadow-lg border border-border">
-            <h2 className="text-2xl font-bold text-destructive mb-4">
-              Oops! Something went wrong
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              We're sorry, but something unexpected happened. Please try refreshing the page.
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="w-full max-w-md rounded-lg border border-border bg-card p-8 shadow-lg">
+            <h2 className="text-destructive mb-4 text-2xl font-bold">Oops! Something went wrong</h2>
+            <p className="mb-6 text-muted-foreground">
+              We&apos;re sorry, but something unexpected happened. Please try refreshing the page.
             </p>
             <div className="flex gap-4">
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                className="rounded-md bg-primary px-4 py-2 text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Refresh Page
               </button>
               <button
                 onClick={() => this.setState({ hasError: false })}
-                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
+                className="rounded-md bg-secondary px-4 py-2 text-secondary-foreground transition-colors hover:bg-secondary/90"
               >
                 Try Again
               </button>
             </div>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <details className="mt-6">
                 <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
                   Error Details (Development Only)
                 </summary>
-                <pre className="mt-2 p-4 bg-muted rounded text-xs overflow-auto">
+                <pre className="mt-2 overflow-auto rounded bg-muted p-4 text-xs">
                   {this.state.error.stack}
                 </pre>
               </details>
@@ -87,4 +86,4 @@ export class ErrorBoundary extends Component<Props, State> {
 
     return this.props.children;
   }
-} 
+}

@@ -1,6 +1,7 @@
-import React from 'react';
-import { miniMapStyles } from '../styles';
-import { EmptyMinimapMessage } from './empty-minimap-message';
+import React from "react";
+
+import { miniMapStyles } from "../styles";
+import { EmptyMinimapMessage } from "./empty-minimap-message";
 
 type MinimapCanvasProps = {
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -24,13 +25,13 @@ export function MinimapCanvas({
   onMouseDown,
   onMouseMove,
   onMouseUp,
-  onMouseLeave
+  onMouseLeave,
 }: MinimapCanvasProps) {
   return (
     <div className="relative">
-      <canvas 
-        ref={canvasRef} 
-        width={width} 
+      <canvas
+        ref={canvasRef}
+        width={width}
         height={height}
         className={miniMapStyles.canvas}
         onMouseDown={onMouseDown}
@@ -41,4 +42,4 @@ export function MinimapCanvas({
       {isEmpty && <EmptyMinimapMessage />}
     </div>
   );
-} 
+}

@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
-import { Modal, ModalRef } from '@/app/components/atoms/modal';
+import React, { useRef, useState } from "react";
+
+import { Modal, ModalRef } from "@/app/components/atoms/modal";
 
 export const BasicModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,18 +18,13 @@ export const BasicModal = () => {
       >
         Abrir Modal Básico
       </button>
-      
-      <Modal
-        ref={modalRef}
-        isOpen={isOpen}
-        onClose={closeModal}
-        title="Modal Básico"
-      >
+
+      <Modal ref={modalRef} isOpen={isOpen} onClose={closeModal} title="Modal Básico">
         <div className="flex flex-col gap-4">
           <p>Este es un modal básico con un título y contenido simple.</p>
           <p>
-            Puedes cerrar este modal haciendo clic en el botón de cerrar, 
-            presionando ESC o haciendo clic fuera del modal.
+            Puedes cerrar este modal haciendo clic en el botón de cerrar, presionando ESC o haciendo
+            clic fuera del modal.
           </p>
           <div className="flex justify-end">
             <button
@@ -43,4 +39,4 @@ export const BasicModal = () => {
       </Modal>
     </div>
   );
-}; 
+};

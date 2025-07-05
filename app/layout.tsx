@@ -1,13 +1,16 @@
 import "./globals.css";
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+
 import { AppProvider } from "./providers/app-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "ArchitStudio - C4 & Cloud Architecture Diagramming",
-  description: "Professional tool for diagramming cloud architectures and C4 models. Create beautiful, professional diagrams with ease.",
+  description:
+    "Professional tool for diagramming cloud architectures and C4 models. Create beautiful, professional diagrams with ease.",
   keywords: "architecture, diagrams, C4, cloud, AWS, GCP, Azure, diagramming tool",
   authors: [{ name: "ArchitStudio Team" }],
   creator: "ArchitStudio",
@@ -26,11 +29,7 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
@@ -39,9 +38,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#3b82f6" />
       </head>
       <body className={inter.className} suppressHydrationWarning>
-        <AppProvider>
-          {children}
-        </AppProvider>
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );

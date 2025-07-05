@@ -1,35 +1,33 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Arrow } from '@/app/components/atoms/arrow/arrow';
-import { ConnectionType, ActiveConnectionType, ConnectionPropertiesType } from '../types';
+import React from "react";
+
+import { Arrow } from "@/app/components/atoms/arrow/arrow";
+
+import { ActiveConnectionType, ConnectionPropertiesType, ConnectionType } from "../types";
 
 type CanvasConnectionsProps = {
   connections: ConnectionType[];
   activeConnection: ActiveConnectionType | null;
-  canvasRef: React.RefObject<HTMLDivElement>;
-  scale: number;
   onConnectionSelect: (connectionId: string) => void;
   selectedConnectionId: string | null;
-  onConnectionPropertiesChange?: (connectionId: string, properties: ConnectionPropertiesType) => void;
+  onConnectionPropertiesChange?: (
+    connectionId: string,
+    properties: ConnectionPropertiesType
+  ) => void;
   onDeleteConnection?: (connectionId: string) => void;
-  nodes?: any[]; 
 };
 
 export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
   connections,
   activeConnection,
-  canvasRef,
-  scale,
   onConnectionSelect,
   selectedConnectionId,
   onConnectionPropertiesChange,
   onDeleteConnection,
-  nodes = []
 }) => {
-  
   return (
     <>
       {/* Conexiones existentes */}
-      {connections.map(connection => (
+      {connections.map((connection) => (
         <Arrow
           key={connection.id}
           id={connection.id}
@@ -39,19 +37,22 @@ export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
           endY={connection.targetY}
           startPosition={connection.sourcePosition}
           endPosition={connection.targetPosition}
-          style={connection.style || 'solid'}
-          animation={connection.animation || 'none'}
-          startArrowHead={connection.startArrowHead || 'none'}
-          endArrowHead={connection.endArrowHead || 'arrow'}
-          color={connection.color || '#000000'}
+          style={connection.style || "solid"}
+          animation={connection.animation || "none"}
+          startArrowHead={connection.startArrowHead || "none"}
+          endArrowHead={connection.endArrowHead || "arrow"}
+          color={connection.color || "#000000"}
           strokeWidth={connection.strokeWidth || 2}
           isSelected={selectedConnectionId === connection.id}
           onSelect={onConnectionSelect}
-          onPropertiesChange={onConnectionPropertiesChange ? (properties) => onConnectionPropertiesChange(connection.id, properties) : undefined}
-          onDelete={onDeleteConnection ? () => onDeleteConnection(connection.id) : undefined}
+          {...(onConnectionPropertiesChange && {
+            onPropertiesChange: (properties) =>
+              onConnectionPropertiesChange(connection.id, properties),
+          })}
+          {...(onDeleteConnection && { onDelete: () => onDeleteConnection(connection.id) })}
         />
       ))}
-      
+
       {/* Conexión activa mientras se arrastra */}
       {activeConnection && (
         <Arrow
@@ -68,14 +69,14 @@ export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
               // Calcular la dirección general del movimiento
               const dx = activeConnection.currentX - activeConnection.sourceX;
               const dy = activeConnection.currentY - activeConnection.sourceY;
-              
+
               // Determinar la dirección predominante
               if (Math.abs(dx) > Math.abs(dy)) {
                 // Movimiento principalmente horizontal
-                return dx > 0 ? 'left' : 'right';
+                return dx > 0 ? "left" : "right";
               } else {
                 // Movimiento principalmente vertical
-                return dy > 0 ? 'top' : 'bottom';
+                return dy > 0 ? "top" : "bottom";
               }
             })()
           }
@@ -91,4 +92,4 @@ export const CanvasConnections: React.FC<CanvasConnectionsProps> = ({
       )}
     </>
   );
-}; 
+};

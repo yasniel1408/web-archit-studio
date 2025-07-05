@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { ErrorHandler, AppError, handleAsync } from '@/lib/error-handler';
+import { useState, useCallback } from "react";
+import { ErrorHandler, AppError, handleAsync } from "@/lib/error-handler";
 
 interface AsyncState<T> {
   data: T | null;
@@ -34,7 +34,7 @@ export function useAsyncOperation<T = any>(
 
   const execute = useCallback(
     async (...args: any[]): Promise<T | null> => {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         loading: true,
         error: null,
@@ -45,7 +45,7 @@ export function useAsyncOperation<T = any>(
         const [result, error] = await handleAsync(asyncFunction(...args));
 
         if (error) {
-          setState(prev => ({
+          setState((prev) => ({
             ...prev,
             loading: false,
             error,
@@ -55,7 +55,7 @@ export function useAsyncOperation<T = any>(
           return null;
         }
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           data: result,
           loading: false,
@@ -72,10 +72,10 @@ export function useAsyncOperation<T = any>(
         const error = ErrorHandler.logError(
           catchError instanceof Error ? catchError : new Error(String(catchError)),
           { function: asyncFunction.name, args },
-          'high'
+          "high"
         );
 
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           loading: false,
           error,
@@ -99,7 +99,7 @@ export function useAsyncOperation<T = any>(
   }, [initialData]);
 
   const setData = useCallback((data: T) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       data,
       success: true,
@@ -113,4 +113,4 @@ export function useAsyncOperation<T = any>(
     reset,
     setData,
   };
-} 
+}

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { IconType } from '../../icon-selector';
+import { useEffect, useState } from "react";
+
+import { IconType } from "../../icon-selector";
 
 interface UseSquareProps {
   initialText?: string;
@@ -17,10 +18,10 @@ interface UseSquareProps {
 }
 
 export function useSquare({
-  initialText = '',
-  text = '',
-  icon = 'none',
-  backgroundColor = '#FFFFFF',
+  initialText = "",
+  text = "",
+  icon = "none",
+  backgroundColor = "#FFFFFF",
   editable = false,
   onIconChange,
   onColorChange,
@@ -28,40 +29,40 @@ export function useSquare({
   onIconSelectorClose,
   onColorPickerOpen,
   onColorPickerClose,
-  onTextChange
+  onTextChange,
 }: UseSquareProps) {
   const [innerText, setInnerText] = useState(initialText || text);
   const [showIconSelector, setShowIconSelector] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<IconType>(icon);
   const [selectedColor, setSelectedColor] = useState<string>(backgroundColor);
-  
+
   // Actualizar el estado local cuando cambien las props
   useEffect(() => {
     setSelectedIcon(icon);
   }, [icon]);
-  
+
   useEffect(() => {
     setSelectedColor(backgroundColor);
   }, [backgroundColor]);
-  
+
   useEffect(() => {
     // Actualizar el texto interno si cambia la prop text
     if (text && text !== innerText) {
       setInnerText(text);
     }
   }, [text]);
-  
+
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newText = e.target.value;
     setInnerText(newText);
-    
+
     // Notificar al componente padre sobre el cambio de texto
     if (onTextChange) {
       onTextChange(newText);
     }
   };
-  
+
   const handleInputClick = (e: React.MouseEvent) => {
     // Detener la propagación para que el clic en el input no inicie el arrastre
     e.stopPropagation();
@@ -82,16 +83,16 @@ export function useSquare({
       e.stopPropagation();
     }
   };
-  
+
   const handleSquareDoubleClick = (e: React.MouseEvent) => {
     if (editable) {
       // Verificar si el evento ocurrió dentro del elemento de texto
       const target = e.target as HTMLElement;
-      const isTextElement = 
-        target.tagName === 'INPUT' || 
-        target.classList.contains('square-text-element') ||
-        target.closest('.square-text-element') !== null;
-      
+      const isTextElement =
+        target.tagName === "INPUT" ||
+        target.classList.contains("square-text-element") ||
+        target.closest(".square-text-element") !== null;
+
       // Solo abrir el selector de color si el doble clic no fue en un elemento de texto
       if (!isTextElement) {
         e.stopPropagation();
@@ -153,6 +154,6 @@ export function useSquare({
     handleIconChange,
     handleColorChange,
     handleCloseColorPicker,
-    handleCloseIconSelector
+    handleCloseIconSelector,
   };
-} 
+}

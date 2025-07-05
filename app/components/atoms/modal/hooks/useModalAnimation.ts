@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
 export interface UseModalAnimationProps {
   isOpen: boolean;
@@ -10,21 +10,27 @@ export const useModalAnimation = ({ isOpen, animationDuration = 200 }: UseModalA
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
+
     if (isOpen) {
       setShouldRender(true);
       setIsAnimating(true);
     } else if (shouldRender) {
       setIsAnimating(false);
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         setShouldRender(false);
       }, animationDuration);
-      
-      return () => clearTimeout(timer);
     }
-  }, [isOpen, animationDuration]);
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [isOpen, animationDuration, shouldRender]);
 
   return {
     shouldRender,
     isAnimating,
   };
-}; 
+};

@@ -1,1 +1,1 @@
-export { GoogleAds } from './google-ads'; 
+export { GoogleAds } from "./google-ads";

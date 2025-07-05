@@ -1,4 +1,4 @@
-import { IconType } from '../icon-selector';
+import { IconType } from "../icon-selector";
 
 export interface ContainerProps {
   className?: string;
@@ -7,7 +7,7 @@ export interface ContainerProps {
   initialText?: string;
   icon?: IconType;
   backgroundColor?: string;
-  borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'none';
+  borderStyle?: "solid" | "dashed" | "dotted" | "double" | "none";
   zIndex?: number;
   onIconChange?: (icon: IconType) => void;
   onColorChange?: (color: string, zIndex?: number) => void;
@@ -16,4 +16,4 @@ export interface ContainerProps {
   onIconSelectorOpen?: () => void;
   onIconSelectorClose?: () => void;
   onTextChange?: (text: string) => void;
-} 
+}

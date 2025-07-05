@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface UseColorPickerProps {
   initialColor: string;
@@ -13,28 +13,28 @@ export function useColorPicker({
   onSelect,
   onClose,
   showZIndexControls = false,
-  initialZIndex = 0
+  initialZIndex = 0,
 }: UseColorPickerProps) {
-  const [selectedColor, setSelectedColor] = useState<string>(initialColor || '#FFFFFF');
+  const [selectedColor, setSelectedColor] = useState<string>(initialColor || "#FFFFFF");
   const [zIndex, setZIndex] = useState<number>(initialZIndex);
-  
+
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedColor(e.target.value);
   };
-  
+
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedColor(e.target.value);
   };
-  
+
   const handleZIndexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     setZIndex(isNaN(value) ? 0 : value);
   };
-  
+
   const selectColor = (color: string) => {
     setSelectedColor(color);
   };
-  
+
   const applyColor = () => {
     if (showZIndexControls) {
       onSelect(selectedColor, zIndex);
@@ -43,7 +43,7 @@ export function useColorPicker({
     }
     onClose();
   };
-  
+
   return {
     selectedColor,
     zIndex,
@@ -51,6 +51,6 @@ export function useColorPicker({
     handleTextChange,
     handleZIndexChange,
     selectColor,
-    applyColor
+    applyColor,
   };
-} 
+}

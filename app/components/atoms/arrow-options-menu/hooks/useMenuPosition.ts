@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 interface UseMenuPositionProps {
   x: number;
@@ -15,22 +15,22 @@ export const useMenuPosition = ({ x, y }: UseMenuPositionProps) => {
     const menuHeight = 400; // Altura estimada del menú
 
     // Si estamos en el navegador, ajustar según el tamaño de la ventana
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const menuX = Math.min(x, window.innerWidth - menuWidth);
       const menuY = Math.min(y, window.innerHeight - menuHeight);
-      
+
       return {
         left: `${menuX}px`,
-        top: `${menuY}px`
+        top: `${menuY}px`,
       };
     }
-    
+
     // Fallback para SSR
     return {
       left: `${x}px`,
-      top: `${y}px`
+      top: `${y}px`,
     };
   }, [x, y]);
 
   return position;
-}; 
+};

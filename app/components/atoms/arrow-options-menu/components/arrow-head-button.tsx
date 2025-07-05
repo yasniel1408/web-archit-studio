@@ -1,14 +1,16 @@
-import React from 'react';
-import { ArrowHeadButtonProps } from '../types';
-import { arrowHeadButtonClass, getArrowHeadSymbol } from '../styles';
+import React from "react";
 
-export const ArrowHeadButton: React.FC<ArrowHeadButtonProps> = ({ arrowHead, position, onClick }) => {
+import { arrowHeadButtonClass, getArrowHeadSymbol } from "../styles";
+import { ArrowHeadButtonProps } from "../types";
+
+export const ArrowHeadButton: React.FC<ArrowHeadButtonProps> = ({
+  arrowHead,
+  position,
+  onClick,
+}) => {
   return (
-    <button 
-      onClick={onClick}
-      className={arrowHeadButtonClass}
-    >
+    <button onClick={onClick} className={arrowHeadButtonClass}>
       {getArrowHeadSymbol(arrowHead, position)}
     </button>
   );
-}; 
+};

@@ -1,22 +1,22 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { ErrorBoundary } from '@/app/components/atoms/error-boundary/error-boundary';
-import { NotificationContainer, useNotifications } from '@/app/components/atoms/notification/notification';
-import { DebugProvider } from '@/app/contexts/debug-context';
-import { DebugPanel } from '@/app/components/atoms/debug-panel/debug-panel';
-import { ErrorHandler } from '@/lib/error-handler';
+import React, { useEffect } from "react";
+
+import { DebugPanel } from "@/app/components/atoms/debug-panel/debug-panel";
+import { ErrorBoundary } from "@/app/components/atoms/error-boundary/error-boundary";
+import {
+  NotificationContainer,
+  useNotifications,
+} from "@/app/components/atoms/notification/notification";
+import { DebugProvider } from "@/app/contexts/debug-context";
+import { ErrorHandler } from "@/lib/error-handler";
 
 interface AppProviderProps {
   children: React.ReactNode;
 }
 
 const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const {
-    notifications,
-    removeNotification,
-    notifyAppError,
-  } = useNotifications();
+  const { notifications, removeNotification, notifyAppError } = useNotifications();
 
   useEffect(() => {
     // Suscribirse a los errores globales
@@ -33,7 +33,7 @@ const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           lineno: event.lineno,
           colno: event.colno,
         },
-        'critical'
+        "critical"
       );
     };
 
@@ -41,18 +41,18 @@ const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       ErrorHandler.logError(
         event.reason instanceof Error ? event.reason : new Error(String(event.reason)),
-        { type: 'unhandled-promise-rejection' },
-        'high'
+        { type: "unhandled-promise-rejection" },
+        "high"
       );
     };
 
-    window.addEventListener('error', handleUnhandledError);
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener("error", handleUnhandledError);
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
     return () => {
       unsubscribe();
-      window.removeEventListener('error', handleUnhandledError);
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      window.removeEventListener("error", handleUnhandledError);
+      window.removeEventListener("unhandledrejection", handleUnhandledRejection);
     };
   }, [notifyAppError]);
 
@@ -73,10 +73,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   return (
     <ErrorBoundary>
       <DebugProvider>
-        <NotificationProvider>
-          {children}
-        </NotificationProvider>
+        <NotificationProvider>{children}</NotificationProvider>
       </DebugProvider>
     </ErrorBoundary>
   );
-}; 
+};

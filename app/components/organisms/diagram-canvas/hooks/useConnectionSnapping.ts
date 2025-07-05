@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useState, useRef, useEffect } from 'react';
-import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
-import { NodeType, ActiveConnectionType } from '../types';
+import { useCallback, useEffect, useState } from "react";
+
+import { ConnectionPosition } from "@/app/components/atoms/connection-point/connection-point";
+
+import { ActiveConnectionType, NodeType } from "../types";
 
 interface UseConnectionSnappingConfig {
   nodes: NodeType[];
@@ -31,14 +33,14 @@ export function useConnectionSnapping({
   nodes,
   activeConnection,
   snapDistance = 30, // 30 pixels de distancia para snap
-  logDebug
+  logDebug,
 }: UseConnectionSnappingConfig) {
   const [snapState, setSnapState] = useState<SnapState>({
     isSnapping: false,
     targetNodeId: null,
     targetPosition: null,
     snapX: 0,
-    snapY: 0
+    snapY: 0,
   });
 
   // Calcular las coordenadas de los puntos de conexión de un nodo
@@ -48,110 +50,145 @@ export function useConnectionSnapping({
     const halfHeight = size.height / 2;
 
     return {
-      top: { x: node.position.x + halfWidth, y: node.position.y, position: 'top' as ConnectionPosition },
-      right: { x: node.position.x + size.width, y: node.position.y + halfHeight, position: 'right' as ConnectionPosition },
-      bottom: { x: node.position.x + halfWidth, y: node.position.y + size.height, position: 'bottom' as ConnectionPosition },
-      left: { x: node.position.x, y: node.position.y + halfHeight, position: 'left' as ConnectionPosition }
+      top: {
+        x: node.position.x + halfWidth,
+        y: node.position.y,
+        position: "top" as ConnectionPosition,
+      },
+      right: {
+        x: node.position.x + size.width,
+        y: node.position.y + halfHeight,
+        position: "right" as ConnectionPosition,
+      },
+      bottom: {
+        x: node.position.x + halfWidth,
+        y: node.position.y + size.height,
+        position: "bottom" as ConnectionPosition,
+      },
+      left: {
+        x: node.position.x,
+        y: node.position.y + halfHeight,
+        position: "left" as ConnectionPosition,
+      },
     };
   }, []);
 
   // Encontrar el punto de conexión más cercano a la posición del mouse
-  const findNearestSnapTarget = useCallback((mouseX: number, mouseY: number): SnapTarget | null => {
-    if (!activeConnection) return null;
+  const findNearestSnapTarget = useCallback(
+    (mouseX: number, mouseY: number): SnapTarget | null => {
+      if (!activeConnection) return null;
 
-    let nearestTarget: SnapTarget | null = null;
-    let minDistance = snapDistance;
+      let nearestTarget: SnapTarget | null = null;
+      let minDistance = snapDistance;
 
-    // Revisar todos los nodos excepto el nodo fuente
-    nodes.forEach(node => {
-      if (node.id === activeConnection.sourceId) return; // No snap al nodo fuente
+      // Revisar todos los nodos excepto el nodo fuente
+      nodes.forEach((node) => {
+        if (node.id === activeConnection.sourceId) return; // No snap al nodo fuente
 
-      const connectionPoints = getNodeConnectionPoints(node);
-      
-      // Revisar cada punto de conexión del nodo
-      Object.values(connectionPoints).forEach(point => {
-        const distance = Math.sqrt(
-          Math.pow(mouseX - point.x, 2) + Math.pow(mouseY - point.y, 2)
-        );
+        const connectionPoints = getNodeConnectionPoints(node);
 
-        if (distance < minDistance) {
-          minDistance = distance;
-          nearestTarget = {
-            nodeId: node.id,
-            position: point.position,
-            x: point.x,
-            y: point.y,
-            distance
-          };
-        }
+        // Revisar cada punto de conexión del nodo
+        Object.values(connectionPoints).forEach((point) => {
+          const distance = Math.sqrt(Math.pow(mouseX - point.x, 2) + Math.pow(mouseY - point.y, 2));
+
+          if (distance < minDistance) {
+            minDistance = distance;
+            nearestTarget = {
+              nodeId: node.id,
+              position: point.position,
+              x: point.x,
+              y: point.y,
+              distance,
+            };
+          }
+        });
       });
-    });
 
-    return nearestTarget;
-  }, [nodes, activeConnection, snapDistance, getNodeConnectionPoints]);
+      return nearestTarget;
+    },
+    [nodes, activeConnection, snapDistance, getNodeConnectionPoints]
+  );
 
   // Actualizar el estado de snap basado en la posición del mouse
-  const updateSnapState = useCallback((mouseX: number, mouseY: number) => {
-    if (!activeConnection) {
-      setSnapState(prev => prev.isSnapping ? {
-        isSnapping: false,
-        targetNodeId: null,
-        targetPosition: null,
-        snapX: 0,
-        snapY: 0
-      } : prev);
-      return;
-    }
-
-    const nearestTarget = findNearestSnapTarget(mouseX, mouseY);
-
-    if (nearestTarget) {
-      setSnapState({
-        isSnapping: true,
-        targetNodeId: nearestTarget.nodeId,
-        targetPosition: nearestTarget.position,
-        snapX: nearestTarget.x,
-        snapY: nearestTarget.y
-      });
-      
-      // Log solo cuando empieza el snap para evitar spam
-      if (!snapState.isSnapping || snapState.targetNodeId !== nearestTarget.nodeId) {
-        logDebug(`Imán activado: ${nearestTarget.nodeId} (${nearestTarget.position}) - distancia: ${Math.round(nearestTarget.distance)}px`);
+  const updateSnapState = useCallback(
+    (mouseX: number, mouseY: number) => {
+      if (!activeConnection) {
+        setSnapState((prev) =>
+          prev.isSnapping
+            ? {
+                isSnapping: false,
+                targetNodeId: null,
+                targetPosition: null,
+                snapX: 0,
+                snapY: 0,
+              }
+            : prev
+        );
+        return;
       }
-    } else {
-      if (snapState.isSnapping) {
-        logDebug('Imán desactivado');
+
+      const nearestTarget = findNearestSnapTarget(mouseX, mouseY);
+
+      if (nearestTarget) {
+        setSnapState({
+          isSnapping: true,
+          targetNodeId: nearestTarget.nodeId,
+          targetPosition: nearestTarget.position,
+          snapX: nearestTarget.x,
+          snapY: nearestTarget.y,
+        });
+
+        // Log solo cuando empieza el snap para evitar spam
+        if (!snapState.isSnapping || snapState.targetNodeId !== nearestTarget.nodeId) {
+          logDebug(
+            `Imán activado: ${nearestTarget.nodeId} (${nearestTarget.position}) - distancia: ${Math.round(nearestTarget.distance)}px`
+          );
+        }
+      } else {
+        if (snapState.isSnapping) {
+          logDebug("Imán desactivado");
+        }
+        setSnapState({
+          isSnapping: false,
+          targetNodeId: null,
+          targetPosition: null,
+          snapX: 0,
+          snapY: 0,
+        });
       }
-      setSnapState({
-        isSnapping: false,
-        targetNodeId: null,
-        targetPosition: null,
-        snapX: 0,
-        snapY: 0
-      });
-    }
-  }, [activeConnection, findNearestSnapTarget, snapState.isSnapping, snapState.targetNodeId, logDebug]);
+    },
+    [
+      activeConnection,
+      findNearestSnapTarget,
+      snapState.isSnapping,
+      snapState.targetNodeId,
+      logDebug,
+    ]
+  );
 
   // Obtener las coordenadas finales (con o sin snap)
-  const getFinalConnectionCoordinates = useCallback((mouseX: number, mouseY: number) => {
-    if (snapState.isSnapping) {
-      return {
-        x: snapState.snapX,
-        y: snapState.snapY,
-        isSnapped: true,
-        targetNodeId: snapState.targetNodeId,
-        targetPosition: snapState.targetPosition
-      };
-    }
+  const getFinalConnectionCoordinates = useCallback(
+    (mouseX: number, mouseY: number) => {
+      if (snapState.isSnapping) {
+        return {
+          x: snapState.snapX,
+          y: snapState.snapY,
+          isSnapped: true,
+          targetNodeId: snapState.targetNodeId,
+          targetPosition: snapState.targetPosition,
+        };
+      }
 
-    return {
-      x: mouseX,
-      y: mouseY,
-      isSnapped: false,
-      targetNodeId: null,
-      targetPosition: null
-    };
-  }, [snapState]);
+      return {
+        x: mouseX,
+        y: mouseY,
+        isSnapped: false,
+        targetNodeId: null,
+        targetPosition: null,
+      };
+    },
+    [snapState]
+  );
 
   // Limpiar estado cuando no hay conexión activa
   useEffect(() => {
@@ -161,7 +198,7 @@ export function useConnectionSnapping({
         targetNodeId: null,
         targetPosition: null,
         snapX: 0,
-        snapY: 0
+        snapY: 0,
       });
     }
   }, [activeConnection, snapState.isSnapping]);
@@ -171,27 +208,27 @@ export function useConnectionSnapping({
     if (!snapState.isSnapping) return null;
 
     return {
-      position: 'absolute' as const,
+      position: "absolute" as const,
       left: `${snapState.snapX - 8}px`, // Centrar el indicador (16px / 2)
       top: `${snapState.snapY - 8}px`,
-      width: '16px',
-      height: '16px',
-      borderRadius: '50%',
-      backgroundColor: '#10B981', // Verde más intenso
-      border: '2px solid white',
-      boxShadow: '0 0 10px rgba(16, 185, 129, 0.6), 0 0 20px rgba(16, 185, 129, 0.3)',
+      width: "16px",
+      height: "16px",
+      borderRadius: "50%",
+      backgroundColor: "#10B981", // Verde más intenso
+      border: "2px solid white",
+      boxShadow: "0 0 10px rgba(16, 185, 129, 0.6), 0 0 20px rgba(16, 185, 129, 0.3)",
       zIndex: 1000,
-      pointerEvents: 'none' as const,
-      animation: 'snap-pulse 0.8s ease-in-out infinite alternate'
+      pointerEvents: "none" as const,
+      animation: "snap-pulse 0.8s ease-in-out infinite alternate",
     };
   }, [snapState]);
 
   // Agregar estilos CSS para la animación de snap
   useEffect(() => {
-    const styleId = 'snap-animation-styles';
-    
+    const styleId = "snap-animation-styles";
+
     if (!document.getElementById(styleId)) {
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.id = styleId;
       style.textContent = `
         @keyframes snap-pulse {
@@ -226,17 +263,17 @@ export function useConnectionSnapping({
   // Función para aplicar highlight a los puntos de conexión del nodo target
   const highlightTargetConnectionPoints = useCallback(() => {
     // Remover highlights previos
-    document.querySelectorAll('.connection-point').forEach(point => {
-      point.classList.remove('connection-point-highlight');
+    document.querySelectorAll(".connection-point").forEach((point) => {
+      point.classList.remove("connection-point-highlight");
     });
 
     if (snapState.isSnapping && snapState.targetNodeId) {
       // Buscar y highlight el nodo target
       const targetNode = document.querySelector(`[data-node-id="${snapState.targetNodeId}"]`);
       if (targetNode) {
-        const connectionPoints = targetNode.querySelectorAll('.connection-point');
-        connectionPoints.forEach(point => {
-          point.classList.add('connection-point-highlight');
+        const connectionPoints = targetNode.querySelectorAll(".connection-point");
+        connectionPoints.forEach((point) => {
+          point.classList.add("connection-point-highlight");
         });
       }
     }
@@ -253,11 +290,13 @@ export function useConnectionSnapping({
     getFinalConnectionCoordinates,
     getSnapIndicatorStyle,
     isSnapping: snapState.isSnapping,
-    snapTarget: snapState.isSnapping ? {
-      nodeId: snapState.targetNodeId!,
-      position: snapState.targetPosition!,
-      x: snapState.snapX,
-      y: snapState.snapY
-    } : null
+    snapTarget: snapState.isSnapping
+      ? {
+          nodeId: snapState.targetNodeId!,
+          position: snapState.targetPosition!,
+          x: snapState.snapX,
+          y: snapState.snapY,
+        }
+      : null,
   };
-} 
+}

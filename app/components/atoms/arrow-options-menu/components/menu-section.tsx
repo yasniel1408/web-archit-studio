@@ -1,5 +1,6 @@
-import React, { ReactNode } from 'react';
-import { sectionTitleClass } from '../styles';
+import React, { ReactNode } from "react";
+
+import { sectionTitleClass } from "../styles";
 
 interface MenuSectionProps {
   title: string;
@@ -13,4 +14,4 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ title, children }) => 
       {children}
     </div>
   );
-}; 
+};

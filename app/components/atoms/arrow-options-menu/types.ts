@@ -1,4 +1,4 @@
-import { ArrowStyle, ArrowAnimation, ArrowHeadType } from '@/app/components/atoms/arrow/types';
+import { ArrowAnimation, ArrowHeadType, ArrowStyle } from "@/app/components/atoms/arrow/types";
 
 export interface ArrowOptionsMenuProps {
   connectionId: string;
@@ -6,7 +6,7 @@ export interface ArrowOptionsMenuProps {
   y: number;
   onStyleChange: (id: string, style: ArrowStyle) => void;
   onAnimationChange: (id: string, animation: ArrowAnimation) => void;
-  onArrowHeadChange: (id: string, position: 'start' | 'end', type: ArrowHeadType) => void;
+  onArrowHeadChange: (id: string, position: "start" | "end", type: ArrowHeadType) => void;
   onClose: () => void;
 }
 
@@ -22,6 +22,6 @@ export interface AnimationButtonProps {
 
 export interface ArrowHeadButtonProps {
   arrowHead: ArrowHeadType;
-  position: 'start' | 'end';
+  position: "start" | "end";
   onClick: () => void;
-} 
+}

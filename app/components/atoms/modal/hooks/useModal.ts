@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
-import { ModalSize, UseModalProps, UseModalReturn } from '../types';
-import { ANIMATION_DURATION } from '../constants';
+import { useEffect, useRef } from "react";
+
+import { ANIMATION_DURATION } from "../constants";
+import { ModalSize, UseModalProps, UseModalReturn } from "../types";
 
 /**
  * Hook personalizado para gestionar el estado de un modal
@@ -15,18 +16,21 @@ export const useModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
     } else {
       // Esperar a que termine la animación antes de restaurar el scroll
       const timeout = setTimeout(() => {
-        document.body.style.overflow = '';
+        document.body.style.overflow = "";
       }, ANIMATION_DURATION);
       return () => clearTimeout(timeout);
     }
   }, [isOpen]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' && isOpen && onClose) {
+    if (e.key === "Escape" && isOpen && onClose) {
       onClose();
     }
   };
@@ -39,16 +43,16 @@ export const useModal = ({
 
   const getModalSizeClasses = (size: ModalSize): string => {
     switch (size) {
-      case 'small':
-        return 'w-full max-w-sm';
-      case 'medium':
-        return 'w-full max-w-md';
-      case 'large':
-        return 'w-full max-w-lg';
-      case 'fullscreen':
-        return 'w-full h-full m-4';
+      case "small":
+        return "w-full max-w-sm";
+      case "medium":
+        return "w-full max-w-md";
+      case "large":
+        return "w-full max-w-lg";
+      case "fullscreen":
+        return "w-full h-full m-4";
       default:
-        return 'w-full max-w-md';
+        return "w-full max-w-md";
     }
   };
 
@@ -58,4 +62,4 @@ export const useModal = ({
     handleOverlayClick,
     handleKeyDown,
   };
-}; 
+};

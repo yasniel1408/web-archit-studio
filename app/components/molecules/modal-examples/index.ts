@@ -1,2 +1,2 @@
-export * from './BasicModal';
-export * from './CustomSizeModal'; 
+export * from "./BasicModal";
+export * from "./CustomSizeModal";

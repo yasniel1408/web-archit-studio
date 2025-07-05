@@ -1,4 +1,4 @@
-import { IconType } from '../icon-selector';
+import { IconType } from "../icon-selector";
 
 export interface SquareProps {
   className?: string;
@@ -47,4 +47,4 @@ export const predefinedColors = [
   "#FFECB3", // Ámbar claro
   "#FFE0B2", // Naranja claro
   "#FFCCBC", // Naranja profundo claro
-]; 
+];

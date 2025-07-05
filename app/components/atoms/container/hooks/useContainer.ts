@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
-import { IconType } from '../../icon-selector';
+import { useEffect, useState } from "react";
+
+import { IconType } from "../../icon-selector";
 
 interface UseContainerProps {
   initialText?: string;
   text?: string;
   icon?: IconType;
   backgroundColor?: string;
-  borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'none';
+  borderStyle?: "solid" | "dashed" | "dotted" | "double" | "none";
   zIndex?: number;
   editable?: boolean;
   onIconChange?: (icon: IconType) => void;
@@ -19,11 +20,11 @@ interface UseContainerProps {
 }
 
 export function useContainer({
-  initialText = '',
-  text = '',
-  icon = 'none',
-  backgroundColor = 'transparent',
-  borderStyle = 'dashed',
+  initialText = "",
+  text = "",
+  icon = "none",
+  backgroundColor = "transparent",
+  borderStyle = "dashed",
   zIndex = 0,
   editable = false,
   onIconChange,
@@ -32,7 +33,7 @@ export function useContainer({
   onIconSelectorClose,
   onColorPickerOpen,
   onColorPickerClose,
-  onTextChange
+  onTextChange,
 }: UseContainerProps) {
   const [innerText, setInnerText] = useState(initialText || text);
   const [showIconSelector, setShowIconSelector] = useState(false);
@@ -41,36 +42,36 @@ export function useContainer({
   const [selectedColor, setSelectedColor] = useState<string>(backgroundColor);
   const [selectedBorderStyle, setSelectedBorderStyle] = useState<string>(borderStyle);
   const [selectedZIndex, setSelectedZIndex] = useState<number>(zIndex);
-  
+
   // Actualizar el estado local cuando cambien las props
   useEffect(() => {
     setSelectedIcon(icon);
   }, [icon]);
-  
+
   useEffect(() => {
     setSelectedColor(backgroundColor);
   }, [backgroundColor]);
-  
+
   useEffect(() => {
     setSelectedBorderStyle(borderStyle);
   }, [borderStyle]);
-  
+
   useEffect(() => {
     if (text && text !== innerText) {
       setInnerText(text);
     }
   }, [text]);
-  
+
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newText = e.target.value;
     setInnerText(newText);
-    
+
     // Notificar al componente padre sobre el cambio de texto
     if (onTextChange) {
       onTextChange(newText);
     }
   };
-  
+
   const handleInputClick = (e: React.MouseEvent) => {
     // Detener la propagación para que el clic en el input no inicie el arrastre
     e.stopPropagation();
@@ -91,16 +92,16 @@ export function useContainer({
       e.stopPropagation();
     }
   };
-  
+
   const handleContainerDoubleClick = (e: React.MouseEvent) => {
     if (editable) {
       // Verificar si el evento ocurrió dentro del elemento de texto
       const target = e.target as HTMLElement;
-      const isTextElement = 
-        target.tagName === 'INPUT' || 
-        target.classList.contains('container-text-element') ||
-        target.closest('.container-text-element') !== null;
-      
+      const isTextElement =
+        target.tagName === "INPUT" ||
+        target.classList.contains("container-text-element") ||
+        target.closest(".container-text-element") !== null;
+
       // Solo abrir el selector de color si el doble clic no fue en un elemento de texto
       if (!isTextElement) {
         e.stopPropagation();
@@ -167,6 +168,6 @@ export function useContainer({
     handleIconChange,
     handleColorChange,
     handleCloseColorPicker,
-    handleCloseIconSelector
+    handleCloseIconSelector,
   };
-} 
+}

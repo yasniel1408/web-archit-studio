@@ -1,8 +1,9 @@
 "use client";
 
-import React from 'react';
-import { DragWrapper } from '@/app/components/atoms/drag-wrapper/drag-wrapper';
-import { Square } from '@/app/components/atoms/square/square';
+import React from "react";
+
+import { DragWrapper } from "@/app/components/atoms/drag-wrapper/drag-wrapper";
+import { Square } from "@/app/components/atoms/square/square";
 
 interface DraggableItemProps {
   id: string;
@@ -11,17 +12,12 @@ interface DraggableItemProps {
   text?: string;
 }
 
-export function DraggableItem({ 
-  id, 
-  type, 
-  label = "Componente", 
-  text = ""
-}: DraggableItemProps) {
+export function DraggableItem({ id, type, label = "Componente", text = "" }: DraggableItemProps) {
   return (
     <DragWrapper id={id} type={type} text={text}>
-      <div className="bg-slate-700 p-3 rounded hover:bg-slate-600 transition-colors cursor-grab group border-2 border-transparent hover:border-blue-400">
+      <div className="group cursor-grab rounded border-2 border-transparent bg-slate-700 p-3 transition-colors hover:border-blue-400 hover:bg-slate-600">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 flex-shrink-0">
+          <div className="h-8 w-8 flex-shrink-0">
             <Square text={label} />
           </div>
           <div className="flex-1">

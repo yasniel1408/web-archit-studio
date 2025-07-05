@@ -1,12 +1,14 @@
-import React, { useState, useCallback } from 'react';
-import { NodeType, ActiveConnectionType, ConnectionType, ConnectionPropertiesType } from '../types';
-import { CanvasNode } from '@/app/components/molecules/canvas-node/canvas-node';
-import { CanvasContainer } from '@/app/components/molecules/canvas-container/canvas-container';
-import { CanvasConnections } from './CanvasConnections';
-import { MiniMap } from '@/app/components/molecules/mini-map/mini-map';
-import { ConnectionPosition } from '@/app/components/atoms/connection-point/connection-point';
-import { IconType } from '@/app/components/atoms/icon-selector/types';
-import { diagramCanvasStyles } from '../styles';
+import React, { useCallback, useState } from "react";
+
+import { ConnectionPosition } from "@/app/components/atoms/connection-point/connection-point";
+import { IconType } from "@/app/components/atoms/icon-selector/types";
+import { CanvasContainer } from "@/app/components/molecules/canvas-container/canvas-container";
+import { CanvasNode } from "@/app/components/molecules/canvas-node/canvas-node";
+import { MiniMap } from "@/app/components/molecules/mini-map/mini-map";
+
+import { diagramCanvasStyles } from "../styles";
+import { ActiveConnectionType, ConnectionPropertiesType, ConnectionType, NodeType } from "../types";
+import { CanvasConnections } from "./CanvasConnections";
 
 type CanvasAreaProps = {
   canvasRef: React.RefObject<HTMLDivElement>;
@@ -29,11 +31,32 @@ type CanvasAreaProps = {
   onNodeResize: (nodeId: string, newSize: { width: number; height: number }) => void;
   onDeleteNode: (nodeId: string) => void;
   onConnectionStart: (nodeId: string, position: ConnectionPosition, x: number, y: number) => void;
-  onConnectionEnd: (nodeId: string, position: ConnectionPosition, x: number, y: number, getFinalCoordinates?: (mouseX: number, mouseY: number) => { x: number; y: number; isSnapped: boolean; targetNodeId: string | null; targetPosition: ConnectionPosition | null; }) => void;
+  onConnectionEnd: (
+    nodeId: string,
+    position: ConnectionPosition,
+    x: number,
+    y: number,
+    getFinalCoordinates?: (
+      mouseX: number,
+      mouseY: number
+    ) => {
+      x: number;
+      y: number;
+      isSnapped: boolean;
+      targetNodeId: string | null;
+      targetPosition: ConnectionPosition | null;
+    }
+  ) => void;
   onConnectionSelect: (connectionId: string) => void;
-  onConnectionPropertiesChange: (connectionId: string, properties: ConnectionPropertiesType) => void;
+  onConnectionPropertiesChange: (
+    connectionId: string,
+    properties: ConnectionPropertiesType
+  ) => void;
   onDeleteConnection: (connectionId: string) => void;
-  onNodePropertiesChange: (nodeId: string, properties: { icon?: IconType; backgroundColor?: string }) => void;
+  onNodePropertiesChange: (
+    nodeId: string,
+    properties: { icon?: IconType; backgroundColor?: string }
+  ) => void;
 };
 
 /**
@@ -64,15 +87,17 @@ export function CanvasArea({
   onConnectionSelect,
   onConnectionPropertiesChange,
   onDeleteConnection,
-  onNodePropertiesChange
+  onNodePropertiesChange,
 }: CanvasAreaProps) {
-  
   const [dragOverActive, setDragOverActive] = useState(false);
 
-  const handleDragOverWithIndicator = useCallback((e: React.DragEvent) => {
-    setDragOverActive(true);
-    onDragOver(e);
-  }, [onDragOver]);
+  const handleDragOverWithIndicator = useCallback(
+    (e: React.DragEvent) => {
+      setDragOverActive(true);
+      onDragOver(e);
+    },
+    [onDragOver]
+  );
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     // Solo ocultar si realmente salimos del canvas
@@ -81,10 +106,13 @@ export function CanvasArea({
     }
   }, []);
 
-  const handleDropWithIndicator = useCallback((e: React.DragEvent) => {
-    setDragOverActive(false);
-    onDrop(e);
-  }, [onDrop]);
+  const handleDropWithIndicator = useCallback(
+    (e: React.DragEvent) => {
+      setDragOverActive(false);
+      onDrop(e);
+    },
+    [onDrop]
+  );
 
   const getCursorStyle = () => {
     if (isDraggingCanvas) return diagramCanvasStyles.canvasGrabbing;
@@ -95,7 +123,7 @@ export function CanvasArea({
   return (
     <div
       ref={canvasRef}
-      className={`${diagramCanvasStyles.canvas} ${getCursorStyle()} ${dragOverActive ? 'border-4 border-blue-500 border-dashed' : ''}`}
+      className={`${diagramCanvasStyles.canvas} ${getCursorStyle()} ${dragOverActive ? "border-4 border-dashed border-blue-500" : ""}`}
       onMouseDown={onCanvasMouseDown}
       onMouseMove={onCanvasMouseMove}
       onMouseUp={onCanvasMouseUp}
@@ -111,9 +139,9 @@ export function CanvasArea({
         className={diagramCanvasStyles.transformLayer}
         style={{
           transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-          transformOrigin: '0 0',
-          width: '100%',
-          height: '100%'
+          transformOrigin: "0 0",
+          width: "100%",
+          height: "100%",
         }}
         data-diagram-transform="true"
       >
@@ -121,22 +149,19 @@ export function CanvasArea({
         <CanvasConnections
           connections={connections}
           activeConnection={activeConnection}
-          canvasRef={canvasRef}
-          scale={scale}
           onConnectionSelect={onConnectionSelect}
           selectedConnectionId={selectedConnectionId}
           onConnectionPropertiesChange={onConnectionPropertiesChange}
           onDeleteConnection={onDeleteConnection}
-          nodes={nodes}
         />
 
         {/* Renderizar todos los nodos ordenados por z-index (menor a mayor) */}
         {/* Los nodos con mayor z-index se renderizan al final y quedan por encima */}
         {nodes
           .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
-          .map(node => {
+          .map((node) => {
             // Renderizar contenedores
-            if (node.type.includes('container')) {
+            if (node.type.includes("container")) {
               return (
                 <CanvasContainer
                   key={node.id}
@@ -145,13 +170,20 @@ export function CanvasArea({
                   size={node.size}
                   text={node.text}
                   type={node.type}
-                  iconType={node.icon || 'none'}
-                  backgroundColor={node.backgroundColor || 'rgba(240, 249, 255, 0.3)'}
+                  iconType={node.icon || "none"}
+                  backgroundColor={node.backgroundColor || "rgba(240, 249, 255, 0.3)"}
                   zIndex={node.zIndex || 0}
-                  borderStyle={(node.type.includes('solid') ? 'solid' : 
-                              node.type.includes('dotted') ? 'dotted' :
-                              node.type.includes('double') ? 'double' :
-                              node.type.includes('none') ? 'none' : 'dashed')}
+                  borderStyle={
+                    node.type.includes("solid")
+                      ? "solid"
+                      : node.type.includes("dotted")
+                        ? "dotted"
+                        : node.type.includes("double")
+                          ? "double"
+                          : node.type.includes("none")
+                            ? "none"
+                            : "dashed"
+                  }
                   onNodeMove={onNodeMove}
                   onNodeResize={onNodeResize}
                   onDeleteNode={onDeleteNode}
@@ -170,8 +202,8 @@ export function CanvasArea({
                   size={node.size}
                   text={node.text}
                   type={node.type}
-                  iconType={node.icon || 'none'}
-                  backgroundColor={node.backgroundColor || '#FFFFFF'}
+                  iconType={node.icon || "none"}
+                  backgroundColor={node.backgroundColor || "#FFFFFF"}
                   zIndex={node.zIndex || 10}
                   onNodeMove={onNodeMove}
                   onNodeResize={onNodeResize}
@@ -187,26 +219,27 @@ export function CanvasArea({
 
       {/* Indicador visual de drag and drop */}
       {dragOverActive && (
-        <div className="absolute inset-0 bg-blue-500/10 pointer-events-none z-50 flex items-center justify-center">
-          <div className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg animate-pulse">
+        <div className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center bg-blue-500/10">
+          <div className="animate-pulse rounded-lg bg-blue-500 px-6 py-3 text-white shadow-lg">
             🎯 Suelta aquí para agregar componente
           </div>
         </div>
       )}
 
       {/* Mini-mapa */}
-      <div className="absolute bottom-4 right-4 z-10 ignore-export" data-minimap="true">
+      <div className="ignore-export absolute bottom-4 right-4 z-10" data-minimap="true">
         <MiniMap
           nodes={nodes}
           connections={connections}
           scale={scale}
           position={{ x: -position.x, y: -position.y }}
-          viewportSize={canvasRef.current ? 
-            { width: canvasRef.current.clientWidth, height: canvasRef.current.clientHeight } : 
-            { width: 0, height: 0 }
+          viewportSize={
+            canvasRef.current
+              ? { width: canvasRef.current.clientWidth, height: canvasRef.current.clientHeight }
+              : { width: 0, height: 0 }
           }
         />
       </div>
     </div>
   );
-} 
+}
