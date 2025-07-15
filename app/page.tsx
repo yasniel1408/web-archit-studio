@@ -1,28 +1,43 @@
+"use client";
+
+import React, { useState } from "react";
+
+import { Header } from "@/app/components/atoms/header/header";
+import { MobileSidebar } from "@/app/components/molecules/mobile-sidebar/mobile-sidebar";
 import { DiagramCanvas } from "@/app/components/organisms/diagram-canvas/diagram-canvas";
 import { SidePanel } from "@/app/components/organisms/side-panel/side-panel";
+import { useMobileMenu } from "@/hooks/useMobileMenu";
 
 export default function Home() {
+  const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
+  const [canvasToolbarProps, setCanvasToolbarProps] = useState<any>(null);
+
   return (
-    <main className="flex h-screen w-full">
-      <div className="flex w-64 flex-col border-r border-border/30">
-        {/* Nombre de la aplicación en la parte superior izquierda */}
-        <div className="border-b border-border/30 bg-gradient-to-r from-primary/5 to-white px-5 py-5">
-          <h1 className="flex items-center text-xl font-bold text-gray-800">
-            <span className="text-primary">Archit</span>Studio
-            <span className="ml-2 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-              v1.2
-            </span>
-          </h1>
+    <div className="flex h-screen w-full flex-col">
+      {/* Header responsive */}
+      <Header
+        onMenuToggle={toggleMobileMenu}
+        isMobileMenuOpen={isMobileMenuOpen}
+        canvasToolbarProps={canvasToolbarProps}
+      />
+
+      {/* Layout principal */}
+      <main className="flex flex-1 overflow-hidden">
+        {/* Sidebar para desktop */}
+        <div className="hidden w-64 flex-col border-r border-border/30 bg-white md:flex">
+          <div className="flex-1 overflow-auto">
+            <SidePanel />
+          </div>
         </div>
 
-        {/* Panel lateral */}
-        <div className="flex-1 overflow-auto">
-          <SidePanel />
-        </div>
-      </div>
+        {/* Sidebar móvil (overlay) */}
+        <MobileSidebar isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
 
-      {/* Canvas de diagrama */}
-      <DiagramCanvas />
-    </main>
+        {/* Canvas de diagrama - responsive */}
+        <div className="flex-1 overflow-hidden">
+          <DiagramCanvas onToolbarPropsChange={setCanvasToolbarProps} />
+        </div>
+      </main>
+    </div>
   );
 }

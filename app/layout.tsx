@@ -1,4 +1,5 @@
 import "./globals.css";
+import "./styles/mobile.css";
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     title: "ArchitStudio - Professional Architecture Diagramming",
     description: "Create beautiful, professional architecture diagrams with ease",
   },
-  viewport: "width=device-width, initial-scale=1",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
   robots: "index, follow",
 };
 
@@ -36,6 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/favicon.ico" />
         <meta name="theme-color" content="#3b82f6" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className={inter.className} suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>

@@ -20,10 +20,14 @@ import { useTemplates } from "./hooks/useTemplates";
 import { diagramCanvasStyles } from "./styles";
 import { ConnectionPropertiesType, TemplateType } from "./types";
 
+interface DiagramCanvasProps {
+  onToolbarPropsChange?: (props: any) => void;
+}
+
 /**
  * Componente principal del canvas de diagramación
  */
-export function DiagramCanvas() {
+export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
   // Logger para debug
   const logger = useLogger("DiagramCanvas");
 
@@ -260,6 +264,28 @@ export function DiagramCanvas() {
     [handleCanvasClick]
   );
 
+  // Crear las props del toolbar
+  const toolbarProps = {
+    onZoomIn: zoomIn,
+    onZoomOut: zoomOut,
+    onResetView: resetView,
+    onExport: () => exportDiagram(nodes, connections, getViewport()),
+    onExportGif: () => exportToGif(canvasRef, getViewport()),
+    onExportModernGif: handleExportModernGif,
+    onImport: triggerFileInput,
+    onShowJson: () => showDiagramJson(nodes, connections, getViewport()),
+    onShowTemplates: () => setShowTemplatesModal(true),
+    onClearCanvas: handleClearCanvas,
+    scale: scale,
+  };
+
+  // Enviar las props del toolbar al header cuando cambien
+  useEffect(() => {
+    if (onToolbarPropsChange) {
+      onToolbarPropsChange(toolbarProps);
+    }
+  }, [onToolbarPropsChange, toolbarProps]);
+
   return (
     <div
       className={diagramCanvasStyles.container}
@@ -267,19 +293,7 @@ export function DiagramCanvas() {
       onDrop={handleDrop}
       data-diagram-export="true"
     >
-      <CanvasToolbar
-        onZoomIn={zoomIn}
-        onZoomOut={zoomOut}
-        onResetView={resetView}
-        onExport={() => exportDiagram(nodes, connections, getViewport())}
-        onExportGif={() => exportToGif(canvasRef, getViewport())}
-        onExportModernGif={handleExportModernGif}
-        onImport={triggerFileInput}
-        onShowJson={() => showDiagramJson(nodes, connections, getViewport())}
-        onShowTemplates={() => setShowTemplatesModal(true)}
-        onClearCanvas={handleClearCanvas}
-        scale={scale}
-      />
+      <CanvasToolbar {...toolbarProps} />
 
       <CanvasArea
         canvasRef={canvasRef}

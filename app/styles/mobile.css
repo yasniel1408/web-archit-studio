@@ -1,0 +1,282 @@
+/* ==============================================
+   ESTILOS MÓVILES PARA ARCHITSTUDIO
+   ============================================== */
+
+/* Touch optimizations para el canvas */
+@media (max-width: 768px) {
+  /* Mejorar área de toque para elementos pequeños */
+  .canvas-node,
+  .connection-point {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  /* Botones más grandes para móvil */
+  .canvas-controls button {
+    min-height: 48px !important;
+    min-width: 48px !important;
+    font-size: 16px !important;
+  }
+
+  /* Zoom controls para móvil */
+  .zoom-controls {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 30 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .zoom-controls button {
+    width: 52px !important;
+    height: 52px !important;
+    border-radius: 50% !important;
+    background: white !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid #e5e7eb !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+  }
+
+  .zoom-controls button:active {
+    transform: scale(0.95) !important;
+    background: #f3f4f6 !important;
+  }
+
+  /* Controles del canvas más accesibles */
+  .canvas-toolbar {
+    position: fixed !important;
+    top: 80px !important;
+    right: 20px !important;
+    z-index: 30 !important;
+    background: white !important;
+    border-radius: 12px !important;
+    padding: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  /* Hacer el canvas más responsive */
+  .diagram-canvas {
+    touch-action: pan-x pan-y !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Optimizar elementos arrastrables */
+  .draggable-item {
+    padding: 16px 12px !important;
+    min-height: 56px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Mejorar la visualización de conexiones en móvil */
+  .connection-line {
+    stroke-width: 3px !important;
+  }
+
+  /* Modales más apropiados para móvil */
+  .modal-container {
+    margin: 16px !important;
+    max-height: calc(100vh - 32px) !important;
+    width: calc(100vw - 32px) !important;
+    max-width: none !important;
+  }
+
+  /* Inputs más grandes en móvil */
+  .modal-container input,
+  .modal-container select,
+  .modal-container textarea {
+    min-height: 48px !important;
+    font-size: 16px !important;
+    padding: 12px 16px !important;
+  }
+
+  /* Botones del modal más grandes */
+  .modal-container button {
+    min-height: 48px !important;
+    padding: 12px 24px !important;
+    font-size: 16px !important;
+  }
+
+  /* Sidebar móvil animaciones suaves */
+  .mobile-sidebar-enter {
+    transform: translateX(-100%);
+  }
+  
+  .mobile-sidebar-enter-active {
+    transform: translateX(0);
+    transition: transform 300ms ease-in-out;
+  }
+  
+  .mobile-sidebar-exit {
+    transform: translateX(0);
+  }
+  
+  .mobile-sidebar-exit-active {
+    transform: translateX(-100%);
+    transition: transform 300ms ease-in-out;
+  }
+
+  /* Optimizar texto en móvil */
+  .node-text {
+    font-size: 12px !important;
+    line-height: 1.3 !important;
+    padding: 8px !important;
+  }
+
+  /* Prevenir zoom accidental en inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Estilos específicos para el toolbar responsive */
+@media (min-width: 768px) and (max-width: 1279px) {
+  /* Toolbar con scroll horizontal en tablet */
+  .canvas-toolbar-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #cbd5e1 #f1f5f9 !important;
+  }
+
+  .canvas-toolbar-container::-webkit-scrollbar {
+    height: 6px !important;
+  }
+
+  .canvas-toolbar-container::-webkit-scrollbar-track {
+    background: #f1f5f9 !important;
+    border-radius: 3px !important;
+  }
+
+  .canvas-toolbar-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1 !important;
+    border-radius: 3px !important;
+  }
+
+  .canvas-toolbar-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8 !important;
+  }
+
+  /* Hacer que el toolbar tenga un ancho mínimo para forzar scroll */
+  .canvas-toolbar-inner {
+    min-width: 1200px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Espaciado mejorado para tablet */
+  .canvas-toolbar-inner button {
+    padding: 8px 12px !important;
+    margin: 0 2px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* Optimizaciones para tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .canvas-controls button {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  .draggable-item {
+    padding: 14px 12px !important;
+    min-height: 52px !important;
+  }
+
+  .modal-container {
+    margin: 24px !important;
+    max-width: calc(100vw - 48px) !important;
+  }
+}
+
+/* Header toolbar para desktop */
+@media (min-width: 1280px) {
+  .header-toolbar {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .header-toolbar button {
+    white-space: nowrap !important;
+    font-size: 12px !important;
+    padding: 6px 10px !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .header-toolbar button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12) !important;
+  }
+}
+
+/* Animaciones mejoradas para dispositivos móviles */
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-sidebar,
+  .modal-container,
+  .zoom-controls button,
+  .canvas-toolbar,
+  .header-toolbar button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+}
+
+/* Optimizar para dispositivos con poca RAM */
+@media (max-width: 480px) {
+  .canvas-background {
+    background-image: none !important;
+  }
+  
+  .connection-animation {
+    animation: none !important;
+  }
+  
+  .node-shadow {
+    box-shadow: none !important;
+  }
+}
+
+/* Estilos adicionales para mejor UX en el toolbar */
+.canvas-toolbar-scroll-indicator {
+  position: relative;
+}
+
+.canvas-toolbar-scroll-indicator::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.8));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.canvas-toolbar-scroll-indicator::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.8));
+  pointer-events: none;
+  z-index: 1;
+} 
