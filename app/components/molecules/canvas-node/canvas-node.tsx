@@ -194,7 +194,7 @@ export function CanvasNode({
       document.removeEventListener("mousemove", handleGlobalMouseMove);
       document.removeEventListener("mouseup", handleGlobalMouseUp);
     };
-  }, [isDragging, isResizing, nodeId, onNodeMove, onNodeResize, pos.x, pos.y]);
+  }, [isDragging, isResizing, nodeId, onNodeMove, onNodeResize]);
 
   // Manejadores para arrastrar el nodo
   const handleMouseDown = (e: React.MouseEvent) => {

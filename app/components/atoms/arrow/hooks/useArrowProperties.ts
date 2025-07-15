@@ -42,10 +42,8 @@ export const useArrowProperties = ({
     animation,
     startArrowHead,
     endArrowHead,
-    currentStyle,
-    currentAnimation,
-    currentArrowHead,
-    currentStartArrowHead,
+    // NO incluir currentStyle, currentAnimation, currentArrowHead, currentStartArrowHead
+    // porque causan bucles infinitos
   ]);
 
   // Efecto para actualizar propiedades cuando cambian

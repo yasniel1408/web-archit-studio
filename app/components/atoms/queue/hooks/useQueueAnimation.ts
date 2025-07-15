@@ -23,7 +23,7 @@ export function useQueueAnimation({
   const messageCounterRef = useRef(1);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Configuración simple
+  // Configuración estática para evitar recreación
   const speedSettings = {
     slow: { interval: 100, moveStep: 0.8, addEvery: 120 }, // Más lento
     medium: { interval: 80, moveStep: 1.2, addEvery: 100 }, // Normal
@@ -32,7 +32,7 @@ export function useQueueAnimation({
 
   const settings = speedSettings[speed];
 
-  // Colores para las bolitas
+  // Colores estáticos para evitar recreación
   const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FECA57"];
 
   useEffect(() => {
@@ -129,7 +129,15 @@ export function useQueueAnimation({
         intervalRef.current = null;
       }
     };
-  }, [isActive, speed, maxMessages]); // Dependencias simplificadas
+  }, [
+    isActive,
+    maxMessages,
+    speed,
+    settings.addEvery,
+    settings.interval,
+    settings.moveStep,
+    colors,
+  ]); // Dependencias correctas
 
   return {
     messages: messages.map((msg) => ({

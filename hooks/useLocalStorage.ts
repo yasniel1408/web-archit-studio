@@ -26,7 +26,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
     }
   }, [initialValue, key]);
 
-  const [storedValue, setStoredValue] = useState<T>(readValue);
+  const [storedValue, setStoredValue] = useState<T>(() => readValue());
 
   // Return a wrapped version of useState's setter function that persists to localStorage
   const setValue: SetValue<T> = useCallback(
@@ -79,9 +79,13 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
     }
   }, [initialValue, key]);
 
+  // Solo sincronizar cuando cambian key o initialValue, no en cada render
   useEffect(() => {
-    setStoredValue(readValue());
-  }, [readValue]);
+    const currentValue = readValue();
+    if (JSON.stringify(currentValue) !== JSON.stringify(storedValue)) {
+      setStoredValue(currentValue);
+    }
+  }, [key, initialValue]); // Remover readValue para evitar bucles
 
   // Listen for changes in other tabs
   useEffect(() => {

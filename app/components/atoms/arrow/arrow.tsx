@@ -569,12 +569,8 @@ export function Arrow({
     currentStartArrowHead,
     currentRoundTrip,
     currentMultiplePoints,
-    style,
-    animation,
-    endArrowHead,
-    startArrowHead,
-    roundTrip,
-    multiplePoints,
+    // NO incluir style, animation, endArrowHead, startArrowHead, roundTrip, multiplePoints
+    // porque pueden causar bucles infinitos con onPropertiesChange
     onPropertiesChange,
     id,
   ]);

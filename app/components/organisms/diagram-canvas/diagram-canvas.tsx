@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 import { useLogger } from "@/app/contexts/debug-context";
 
@@ -149,7 +149,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
         connections: connections.length,
       });
     }
-  }, [nodes, connections, saveDiagram, getViewport, logger.debug]);
+  }, [nodes, connections, saveDiagram, getViewport]);
 
   // Manejar borrado de nodo
   const handleDeleteNode = useCallback(
@@ -157,7 +157,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       deleteNode(nodeId, connections, setConnections);
       logger.debug(`Nodo eliminado: ${nodeId}`);
     },
-    [deleteNode, connections, setConnections, logger.debug]
+    [deleteNode, connections, setConnections]
   );
 
   // Actualizar posición de un nodo cuando se mueve
@@ -166,7 +166,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       updateNodePosition(nodeId, newPosition, connections, setConnections);
       logger.debug(`Nodo movido: ${nodeId}`, { newPosition });
     },
-    [updateNodePosition, connections, setConnections, logger.debug]
+    [updateNodePosition, connections, setConnections]
   );
 
   // Actualizar tamaño de un nodo cuando se redimensiona
@@ -175,7 +175,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       updateNodeSize(nodeId, newSize, connections, setConnections);
       logger.debug(`Nodo redimensionado: ${nodeId}`, { newSize });
     },
-    [updateNodeSize, connections, setConnections, logger.debug]
+    [updateNodeSize, connections, setConnections]
   );
 
   // Actualizar propiedades de un nodo
@@ -184,7 +184,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       updateNodeProperties(nodeId, properties);
       logger.debug(`Propiedades del nodo actualizadas: ${nodeId}`, { properties });
     },
-    [updateNodeProperties, logger.debug]
+    [updateNodeProperties]
   );
 
   // Manejar borrado de conexión
@@ -193,7 +193,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       deleteConnection(connectionId);
       logger.debug(`Conexión eliminada: ${connectionId}`);
     },
-    [deleteConnection, logger.debug]
+    [deleteConnection]
   );
 
   // Actualizar propiedades de una conexión
@@ -202,7 +202,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       updateConnectionProperties(connectionId, properties);
       logger.debug(`Propiedades de conexión actualizadas: ${connectionId}`, { properties });
     },
-    [updateConnectionProperties, logger.debug]
+    [updateConnectionProperties]
   );
 
   // Manejar exportación moderna
@@ -217,7 +217,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       setShowTemplatesModal(false);
       logger.debug(`Plantilla cargada: ${template.name}`);
     },
-    [loadTemplate, setShowTemplatesModal, logger.debug]
+    [loadTemplate, setShowTemplatesModal]
   );
 
   // Manejar limpieza del canvas
@@ -228,7 +228,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       resetView();
       logger.debug("Canvas limpiado");
     }
-  }, [setNodes, setConnections, resetView, logger.debug]);
+  }, [setNodes, setConnections, resetView]);
 
   // Manejar movimiento del mouse en el canvas
   const handleCanvasMouseMoveWrapper = useCallback(
@@ -265,19 +265,38 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
   );
 
   // Crear las props del toolbar
-  const toolbarProps = {
-    onZoomIn: zoomIn,
-    onZoomOut: zoomOut,
-    onResetView: resetView,
-    onExport: () => exportDiagram(nodes, connections, getViewport()),
-    onExportGif: () => exportToGif(canvasRef, getViewport()),
-    onExportModernGif: handleExportModernGif,
-    onImport: triggerFileInput,
-    onShowJson: () => showDiagramJson(nodes, connections, getViewport()),
-    onShowTemplates: () => setShowTemplatesModal(true),
-    onClearCanvas: handleClearCanvas,
-    scale: scale,
-  };
+  const toolbarProps = useMemo(
+    () => ({
+      onZoomIn: zoomIn,
+      onZoomOut: zoomOut,
+      onResetView: resetView,
+      onExport: () => exportDiagram(nodes, connections, getViewport()),
+      onExportGif: () => exportToGif(canvasRef, getViewport()),
+      onExportModernGif: handleExportModernGif,
+      onImport: triggerFileInput,
+      onShowJson: () => showDiagramJson(nodes, connections, getViewport()),
+      onShowTemplates: () => setShowTemplatesModal(true),
+      onClearCanvas: handleClearCanvas,
+      scale: scale,
+    }),
+    [
+      zoomIn,
+      zoomOut,
+      resetView,
+      exportDiagram,
+      nodes,
+      connections,
+      getViewport,
+      exportToGif,
+      canvasRef,
+      handleExportModernGif,
+      triggerFileInput,
+      showDiagramJson,
+      setShowTemplatesModal,
+      handleClearCanvas,
+      scale,
+    ]
+  );
 
   // Enviar las props del toolbar al header cuando cambien
   useEffect(() => {
