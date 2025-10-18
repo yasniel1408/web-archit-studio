@@ -195,7 +195,9 @@ export function Queue(props: QueueProps) {
 
         <div className={queueStyles.footer} style={{ minHeight: layout.footerHeight }}>
           <div className={queueStyles.footerInfo}>
-            <span className={queueStyles.footerLabel}>{queueLength}/{maxMessages}</span>
+            <span className={queueStyles.footerLabel}>
+              {queueLength}/{maxMessages}
+            </span>
             <span className={queueStyles.footerDot}>•</span>
             <span className={queueStyles.footerLabel}>{speed}</span>
             <span className={queueStyles.footerDot}>•</span>

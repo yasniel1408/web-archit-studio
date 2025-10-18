@@ -123,7 +123,15 @@ export function useQueueAnimation({
         intervalRef.current = null;
       }
     };
-  }, [isActive, maxMessages, speed, settings.addEvery, settings.interval, settings.moveStep, colors]);
+  }, [
+    isActive,
+    maxMessages,
+    speed,
+    settings.addEvery,
+    settings.interval,
+    settings.moveStep,
+    colors,
+  ]);
 
   // Efecto para ajustar mensajes cuando cambia maxMessages
   useEffect(() => {
@@ -138,7 +146,7 @@ export function useQueueAnimation({
       else if (currentMessages.length < Math.ceil(maxMessages * 0.6)) {
         const newMessages = [...currentMessages];
         const targetCount = Math.ceil(maxMessages * 0.8);
-        
+
         while (newMessages.length < targetCount && newMessages.length < maxMessages) {
           newMessages.push({
             id: `msg-${messageCounterRef.current}`,
@@ -149,10 +157,10 @@ export function useQueueAnimation({
           });
           messageCounterRef.current++;
         }
-        
+
         return newMessages;
       }
-      
+
       return currentMessages;
     });
   }, [maxMessages, isActive, colors, settings.moveStep]);
