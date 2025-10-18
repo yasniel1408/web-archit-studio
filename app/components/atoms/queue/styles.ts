@@ -1,44 +1,29 @@
 export const queueStyles = {
   container:
-    "w-full h-full border-2 border-gray-300 rounded-lg shadow-lg flex flex-col justify-center relative ",
-  icon: "absolute z-10",
-  iconClickable: "cursor-pointer",
-  addIconButton:
-    "absolute top-1.5 left-1.5 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center cursor-pointer z-10 hover:bg-blue-200 transition-colors",
-  addIconSvg: "w-4 h-4 text-blue-600",
-  colorIndicator: "absolute top-1.5 right-1.5 flex items-center z-10",
-  colorDot:
-    "w-3 h-3 rounded-full border border-gray-300 cursor-pointer hover:scale-110 transition-transform",
-  contentContainer: "w-full h-full flex flex-col items-center justify-center relative",
-  input:
-    "w-auto max-w-full text-center focus:outline-none focus:ring-2 focus:ring-blue-300 rounded px-1 py-0.5 bg-transparent text-sm font-medium text-gray-700 placeholder-gray-400",
-  text: "text-sm font-medium text-gray-700 text-center break-words max-w-full",
-
-  // Estilos para la animación - más visibles
-  animationContainer: "absolute inset-0 pointer-events-none overflow-hidden rounded-lg",
-  queueTrack:
-    "absolute bottom-2 left-2 right-2 h-1 bg-gradient-to-r from-blue-300 via-blue-500 to-blue-300 rounded-full opacity-80",
-  queueMessage:
-    "absolute rounded-full border-2 border-white shadow-lg transition-all duration-100 ease-linear",
-
-  // Tamaños de mensajes más grandes
-  messageSmall: "w-4 h-4",
-  messageMedium: "w-6 h-6",
-  messageLarge: "w-8 h-8",
-
-  // Indicador de queue activo
-  queueIndicator:
-    "absolute top-0.5 right-0.5 text-xs font-bold text-blue-600 bg-blue-200 px-1 rounded-full",
-
-  // Efectos adicionales
-  entryEffect:
-    "absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-green-200 via-green-100 to-transparent opacity-60 rounded-l-lg",
-  exitEffect:
-    "absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-red-200 via-red-100 to-transparent opacity-60 rounded-r-lg",
-
-  // Animaciones CSS
-  pulseAnimation: "animate-pulse",
-  bounceAnimation: "animate-bounce",
+    "w-full h-full rounded-lg border-2 border-slate-300 bg-white shadow-sm flex flex-col overflow-hidden relative transition-all hover:shadow-md",
+  containerPaused: "border-amber-400",
+  header: "flex items-center justify-center gap-2 px-4 pt-3 pb-2",
+  iconBadge: "flex h-5 w-5 items-center justify-center shrink-0",
+  titleWrapper: "flex items-center justify-center",
+  titleText: "text-sm font-semibold text-slate-700 truncate",
+  trackWrapper: "relative flex-1 px-4 flex items-center min-h-[50px]",
+  track: "relative w-full h-full rounded-lg bg-slate-50 border border-slate-200",
+  trackBackground: "absolute inset-0 bg-gradient-to-r from-blue-50/50 via-slate-50 to-green-50/50",
+  trackOverlay: "pointer-events-none absolute inset-0 flex items-center justify-between px-2",
+  trackMarker: "flex items-center justify-center",
+  markerBadge: "text-xs font-bold text-slate-400 bg-white/80 px-2 py-0.5 rounded",
+  pauseBadge: "absolute left-2 top-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded",
+  message:
+    "absolute rounded-full border-2 border-white shadow-md flex items-center justify-center font-bold text-white text-xs transition-all will-change-transform",
+  messageEntering: "",
+  messageLeaving: "",
+  messageId: "text-[10px] leading-none",
+  footer: "flex items-center justify-center px-4 pb-3 pt-2",
+  footerInfo: "flex items-center gap-2 text-xs text-slate-500",
+  footerLabel: "font-medium",
+  footerDot: "text-slate-300",
+  statusDot: "h-2 w-2 rounded-full inline-block",
+  animationContainer: "relative w-full h-full",
 };
 
 export const colorPickerStyles = {

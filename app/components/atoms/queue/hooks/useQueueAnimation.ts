@@ -48,10 +48,12 @@ export function useQueueAnimation({
     // Agregar mensajes iniciales INMEDIATAMENTE
     if (messages.length === 0) {
       const initialMessages: SimpleMessage[] = [];
-      for (let i = 0; i < Math.min(3, maxMessages); i++) {
+      // Crear mensajes iniciales basados en maxMessages (mostrar hasta 80% del máximo)
+      const initialCount = Math.min(Math.ceil(maxMessages * 0.8), maxMessages);
+      for (let i = 0; i < initialCount; i++) {
         initialMessages.push({
           id: `msg-${messageCounterRef.current}`,
-          position: i * 30, // Espaciados
+          position: i * (80 / initialCount), // Distribuir en el 80% del track
           color: colors[i % colors.length] || "#3B82F6",
           size: "medium",
           speed: settings.moveStep,
@@ -84,7 +86,7 @@ export function useQueueAnimation({
           }))
           .filter((msg) => msg.position <= 110); // Dar más margen antes de eliminar
 
-        // Agregar nueva bolita más frecuentemente
+        // Agregar nueva bolita si hay espacio (respetando maxMessages)
         if (newMessages.length < maxMessages && frameCount % settings.addEvery === 0) {
           const newMessage: SimpleMessage = {
             id: `msg-${messageCounterRef.current}`,
@@ -98,8 +100,8 @@ export function useQueueAnimation({
           console.log("🔵 Nueva bolita creada:", newMessage);
         }
 
-        // SIEMPRE mantener al menos una bolita visible
-        if (newMessages.length === 0) {
+        // Mantener al menos 1 mensaje si maxMessages > 0
+        if (newMessages.length === 0 && maxMessages > 0) {
           const rescueMessage: SimpleMessage = {
             id: `rescue-${Date.now()}`,
             position: 0,
@@ -111,14 +113,6 @@ export function useQueueAnimation({
           console.log("🆘 Bolita de rescate creada:", rescueMessage);
         }
 
-        console.log("📊 Estado actual:", {
-          totalMessages: newMessages.length,
-          positions: newMessages.map((m) => Math.round(m.position)),
-          frameCount,
-          maxMessages,
-          speed,
-        });
-
         return newMessages;
       });
     }, settings.interval);
@@ -129,15 +123,39 @@ export function useQueueAnimation({
         intervalRef.current = null;
       }
     };
-  }, [
-    isActive,
-    maxMessages,
-    speed,
-    settings.addEvery,
-    settings.interval,
-    settings.moveStep,
-    colors,
-  ]); // Dependencias correctas
+  }, [isActive, maxMessages, speed, settings.addEvery, settings.interval, settings.moveStep, colors]);
+
+  // Efecto para ajustar mensajes cuando cambia maxMessages
+  useEffect(() => {
+    if (!isActive) return;
+
+    setMessages((currentMessages) => {
+      // Si hay más mensajes de los permitidos, remover los extras
+      if (currentMessages.length > maxMessages) {
+        return currentMessages.slice(0, maxMessages);
+      }
+      // Si hay menos mensajes, agregar más hasta llegar al 80% del máximo
+      else if (currentMessages.length < Math.ceil(maxMessages * 0.6)) {
+        const newMessages = [...currentMessages];
+        const targetCount = Math.ceil(maxMessages * 0.8);
+        
+        while (newMessages.length < targetCount && newMessages.length < maxMessages) {
+          newMessages.push({
+            id: `msg-${messageCounterRef.current}`,
+            position: Math.random() * 80, // Posición aleatoria en el track
+            color: colors[messageCounterRef.current % colors.length] || "#3B82F6",
+            size: "medium",
+            speed: settings.moveStep,
+          });
+          messageCounterRef.current++;
+        }
+        
+        return newMessages;
+      }
+      
+      return currentMessages;
+    });
+  }, [maxMessages, isActive, colors, settings.moveStep]);
 
   return {
     messages: messages.map((msg) => ({

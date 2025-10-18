@@ -129,6 +129,9 @@ export function useCopyPaste({
         zIndex: (node.zIndex || 0) + 1, // Poner encima de los originales
         ...(node.backgroundColor && { backgroundColor: node.backgroundColor }),
         ...(node.icon && { icon: node.icon }),
+        // Preservar propiedades específicas de Queue
+        ...(node.speed && { speed: node.speed }),
+        ...(node.maxMessages && { maxMessages: node.maxMessages }),
       };
 
       addNode(newNode);

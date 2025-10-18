@@ -348,9 +348,9 @@ export function useDiagramPersistence(
         }
 
         // Configuración para la animación - ⭐ MÁXIMA CALIDAD PROFESIONAL ⭐
-        const fps = 25; // FPS optimizado para GIF (balance perfecto calidad/tamaño)
-        const duration = 6; // Duración más larga para mejor showcase
-        const totalFrames = fps * duration; // Frames totales optimizados
+        const fps = 30; // FPS mejorado para animaciones más fluidas
+        const duration = 8; // Duración extendida para ver más ciclos de animación
+        const totalFrames = fps * duration; // Frames totales optimizados (240 frames)
         const frameDelay = Math.round(100 / fps); // Delay entre frames en centésimas de segundo
 
         // Creamos un div para mostrar progreso con mejor UX
@@ -368,7 +368,7 @@ export function useDiagramPersistence(
         progressContainer.style.boxShadow = "0 10px 25px rgba(0,0,0,0.5)";
         progressContainer.innerHTML = `
         <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">⭐ Generando GIF de Alta Calidad</div>
-        <div style="font-size: 12px; color: #888; margin-bottom: 12px;">25 FPS • 6 segundos • Resolución HD</div>
+        <div style="font-size: 12px; color: #888; margin-bottom: 12px;">30 FPS • 8 segundos • Resolución HD Premium</div>
         <div id="gif-progress-text" style="font-size: 16px; margin-bottom: 12px;">0%</div>
         <div style="width: 250px; height: 8px; background: #333; margin: 0 auto; border-radius: 4px; overflow: hidden;">
           <div id="gif-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 0.3s ease;"></div>
@@ -384,7 +384,7 @@ export function useDiagramPersistence(
         const containerHeight = diagramContainer.clientHeight;
 
         // ⭐ ESCALA MEJORADA PARA MÁXIMA CALIDAD ⭐
-        const scale = 1.25; // Escala aumentada significativamente para HD
+        const scale = 1.5; // Escala aumentada a 1.5x para resolución superior
         const scaledWidth = Math.floor(containerWidth * scale);
         const scaledHeight = Math.floor(containerHeight * scale);
 

@@ -95,6 +95,8 @@ export function useDragAndDrop({
       let size;
       if (type.includes("container")) {
         size = { width: 400, height: 300 }; // Tamaño predeterminado para contenedores
+      } else if (type.includes("queue")) {
+        size = { width: 220, height: 120 }; // Tamaño simple y compacto para queues
       } else {
         size = { width: 220, height: 120 }; // Tamaño predeterminado para squares
       }

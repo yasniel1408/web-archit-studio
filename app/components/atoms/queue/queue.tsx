@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import { IconRenderer } from "../icon-selector/icon-renderer";
-import { IconType } from "../icon-selector/types";
 import { QueueConfigModal } from "./components/QueueConfigModal";
 import { useQueueAnimation } from "./hooks/useQueueAnimation";
 import { queueStyles } from "./styles";
@@ -30,13 +29,62 @@ export function Queue(props: QueueProps) {
 
   // Estado para el modal de configuración
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [isPaused] = useState(false);
+  const [hoveredMessage, setHoveredMessage] = useState<string | null>(null);
 
-  // Animación SIMPLE que SÍ funciona
+  const layout = useMemo(() => {
+    const normalizedWidth = Math.max(180, size.width);
+    const normalizedHeight = Math.max(100, size.height);
+
+    const headerHeight = Math.max(28, normalizedHeight * 0.2);
+    const footerHeight = Math.max(28, normalizedHeight * 0.2);
+    const trackHeight = Math.max(36, normalizedHeight - headerHeight - footerHeight - 8);
+    const paddingX = Math.max(12, normalizedWidth * 0.08);
+    const trackWidth = Math.max(80, normalizedWidth - paddingX * 2);
+    const messageDiameter = Math.max(16, Math.min(trackHeight * 0.7, 28));
+
+    return {
+      normalizedWidth,
+      normalizedHeight,
+      headerHeight,
+      footerHeight,
+      trackHeight,
+      paddingX,
+      trackWidth,
+      messageDiameter,
+    };
+  }, [size.height, size.width]);
+
   const { messages, queueLength, isProcessing } = useQueueAnimation({
-    isActive: true,
+    isActive: !isPaused,
     speed,
     maxMessages,
   });
+
+  const computedMessages = useMemo(() => {
+    const travelSpace = Math.max(8, layout.trackWidth - layout.messageDiameter);
+
+    return messages.map((message, index) => {
+      const clamped = Math.max(0, Math.min(100, message.position));
+      const leftPx = (clamped / 100) * travelSpace + layout.messageDiameter / 2;
+      const state = clamped <= 12 ? "entering" : clamped >= 88 ? "leaving" : "queued";
+
+      return {
+        id: message.id,
+        index: index + 1,
+        leftPx,
+        state,
+        color: message.color,
+      };
+    });
+  }, [layout.messageDiameter, layout.trackWidth, messages]);
+
+  const statusColorClass = useMemo(() => {
+    if (isPaused) {
+      return "bg-amber-400";
+    }
+    return isProcessing ? "bg-emerald-500 animate-pulse" : "bg-slate-300";
+  }, [isPaused, isProcessing]);
 
   // Manejar doble click para abrir configuración
   const handleDoubleClick = (e: React.MouseEvent) => {
@@ -47,97 +95,111 @@ export function Queue(props: QueueProps) {
   };
 
   // Manejar guardado de configuración
-  const handleConfigSave = (config: {
-    icon?: string;
-    speed: "slow" | "medium" | "fast";
-    maxMessages: number;
-    title: string;
-  }) => {
-    // Propagar los cambios a los handlers del padre
-    onSpeedChange?.(id, config.speed);
-    onMaxMessagesChange?.(id, config.maxMessages);
-    onTextChange?.(id, config.title);
-    if (config.icon) {
-      onIconChange?.(config.icon as IconType);
-    }
-  };
+  const handleConfigSave = useCallback(
+    (config: {
+      icon?: string;
+      speed: "slow" | "medium" | "fast";
+      maxMessages: number;
+      title: string;
+    }) => {
+      // Propagar los cambios a los handlers del padre
+      onSpeedChange?.(id, config.speed);
+      onMaxMessagesChange?.(id, config.maxMessages);
+      onTextChange?.(id, config.title);
+      if (config.icon) {
+        onIconChange?.(config.icon as any);
+      }
+    },
+    [id, onIconChange, onMaxMessagesChange, onSpeedChange, onTextChange]
+  );
 
   return (
     <>
       <div
-        className={`${queueStyles.container} ${className || ""} p-2`}
+        className={`${queueStyles.container} ${isPaused ? queueStyles.containerPaused : ""} ${
+          className || ""
+        }`}
         style={{
           ...style,
-          width: size.width,
-          height: size.height,
+          width: layout.normalizedWidth,
+          height: layout.normalizedHeight,
           backgroundColor: color,
         }}
         onClick={() => onSelect?.(id)}
         onDoubleClick={handleDoubleClick}
       >
-        {/* Título del componente */}
-        <div className="mb-2 text-center">
-          <div className="flex items-center justify-center gap-2">
-            {/* Icono */}
-            {icon && icon !== "none" && <IconRenderer iconType={icon} className="h-5 w-5" />}
-            {/* Título */}
-            <div className="text-sm font-semibold text-gray-700">
-              {innerText || "Message Queue"}
+        {isPaused && (
+          <div className={queueStyles.pauseBadge}>
+            <span className="inline-flex h-2 w-2 rounded-full bg-amber-400" />
+            {"Paused"}
+          </div>
+        )}
+
+        <div className={queueStyles.header} style={{ minHeight: layout.headerHeight }}>
+          {icon && icon !== "none" && (
+            <div className={queueStyles.iconBadge}>
+              <IconRenderer iconType={icon} className="h-4 w-4" />
             </div>
+          )}
+          <div className={queueStyles.titleWrapper}>
+            <span className={queueStyles.titleText}>{innerText || "Message Queue"}</span>
           </div>
         </div>
 
-        {/* Área de animación GRANDE y VISIBLE */}
-        <div className="relative mb-2 h-16 overflow-hidden rounded-lg border border-gray-300 bg-gradient-to-r from-green-100 via-blue-100 to-red-100">
-          {/* Marcadores de entrada y salida */}
-          <div className="absolute left-2 top-2 text-xs font-bold text-green-600">IN</div>
-          <div className="absolute right-2 top-2 text-xs font-bold text-red-600">OUT</div>
+        <div
+          className={queueStyles.trackWrapper}
+          style={{
+            minHeight: layout.trackHeight + 8,
+            paddingLeft: layout.paddingX,
+            paddingRight: layout.paddingX,
+          }}
+        >
+          <div className={queueStyles.track} style={{ height: layout.trackHeight }}>
+            <div className={queueStyles.trackBackground} />
+            <div className={queueStyles.trackOverlay}>
+              <div className={queueStyles.trackMarker}>
+                <span className={queueStyles.markerBadge}>IN</span>
+              </div>
+              <div className={queueStyles.trackMarker}>
+                <span className={queueStyles.markerBadge}>OUT</span>
+              </div>
+            </div>
 
-          {/* Flecha direccional */}
-          <div className="absolute inset-x-0 bottom-1 text-center font-mono text-xs text-gray-400">
-            ← → → →
-          </div>
-
-          {/* Mensajes animados */}
-          {messages.map((message) => {
-            // Posición calculada del 5% al 95% del ancho
-            const leftPosition = 5 + message.position * 0.9;
-
-            return (
+            {computedMessages.map((message) => (
               <div
                 key={message.id}
-                className="absolute flex items-center justify-center rounded-full border-2 border-white bg-blue-500 text-white shadow-lg transition-all duration-100"
+                className={`${queueStyles.message} ${
+                  message.state === "entering"
+                    ? queueStyles.messageEntering
+                    : message.state === "leaving"
+                      ? queueStyles.messageLeaving
+                      : ""
+                }`}
                 style={{
-                  left: `${leftPosition}%`,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  width: "20px",
-                  height: "20px",
-                  fontSize: "10px",
-                  fontWeight: "bold",
+                  width: layout.messageDiameter,
+                  height: layout.messageDiameter,
+                  left: message.leftPx,
+                  top: layout.trackHeight / 2,
+                  transform: `translate(-50%, -50%) scale(${hoveredMessage === message.id ? 1.1 : 1})`,
+                  background: message.color,
+                  cursor: "pointer",
                 }}
+                onMouseEnter={() => setHoveredMessage(message.id)}
+                onMouseLeave={() => setHoveredMessage(null)}
               >
-                {message.id.split("-")[1]}
+                <span className={queueStyles.messageId}>{message.index}</span>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
-        {/* INFO PANEL - Solo información esencial */}
-        <div className="mt-2 rounded-lg border border-gray-300 bg-gray-50 p-2 text-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-600">
-              Queue: <strong className="text-gray-800">{queueLength}</strong>
-            </span>
-            <span className="text-gray-600">
-              Speed: <strong className="text-gray-800">{speed}</strong>
-            </span>
-            <span className="text-gray-600">
-              Status:{" "}
-              <strong className={isProcessing ? "text-orange-600" : "text-green-600"}>
-                {isProcessing ? "Processing" : "Ready"}
-              </strong>
-            </span>
+        <div className={queueStyles.footer} style={{ minHeight: layout.footerHeight }}>
+          <div className={queueStyles.footerInfo}>
+            <span className={queueStyles.footerLabel}>{queueLength}/{maxMessages}</span>
+            <span className={queueStyles.footerDot}>•</span>
+            <span className={queueStyles.footerLabel}>{speed}</span>
+            <span className={queueStyles.footerDot}>•</span>
+            <span className={`${queueStyles.statusDot} ${statusColorClass}`} />
           </div>
         </div>
       </div>
