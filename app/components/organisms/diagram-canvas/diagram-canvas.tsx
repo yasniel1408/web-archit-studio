@@ -149,7 +149,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
         connections: connections.length,
       });
     }
-  }, [nodes, connections, saveDiagram, getViewport]);
+  }, [nodes, connections, saveDiagram, getViewport, logger]);
 
   // Manejar borrado de nodo
   const handleDeleteNode = useCallback(
@@ -157,7 +157,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       deleteNode(nodeId, connections, setConnections);
       logger.debug(`Nodo eliminado: ${nodeId}`);
     },
-    [deleteNode, connections, setConnections]
+    [deleteNode, connections, setConnections, logger]
   );
 
   // Actualizar posición de un nodo cuando se mueve
@@ -166,7 +166,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       updateNodePosition(nodeId, newPosition, connections, setConnections);
       logger.debug(`Nodo movido: ${nodeId}`, { newPosition });
     },
-    [updateNodePosition, connections, setConnections]
+    [updateNodePosition, connections, setConnections, logger]
   );
 
   // Actualizar tamaño de un nodo cuando se redimensiona
@@ -175,7 +175,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       updateNodeSize(nodeId, newSize, connections, setConnections);
       logger.debug(`Nodo redimensionado: ${nodeId}`, { newSize });
     },
-    [updateNodeSize, connections, setConnections]
+    [updateNodeSize, connections, setConnections, logger]
   );
 
   // Actualizar propiedades de un nodo
@@ -184,7 +184,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       updateNodeProperties(nodeId, properties);
       logger.debug(`Propiedades del nodo actualizadas: ${nodeId}`, { properties });
     },
-    [updateNodeProperties]
+    [updateNodeProperties, logger]
   );
 
   // Manejar borrado de conexión
@@ -193,7 +193,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       deleteConnection(connectionId);
       logger.debug(`Conexión eliminada: ${connectionId}`);
     },
-    [deleteConnection]
+    [deleteConnection, logger]
   );
 
   // Actualizar propiedades de una conexión
@@ -202,7 +202,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       updateConnectionProperties(connectionId, properties);
       logger.debug(`Propiedades de conexión actualizadas: ${connectionId}`, { properties });
     },
-    [updateConnectionProperties]
+    [updateConnectionProperties, logger]
   );
 
   // Manejar exportación moderna
@@ -217,7 +217,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       setShowTemplatesModal(false);
       logger.debug(`Plantilla cargada: ${template.name}`);
     },
-    [loadTemplate, setShowTemplatesModal]
+    [loadTemplate, setShowTemplatesModal, logger]
   );
 
   // Manejar limpieza del canvas
@@ -228,7 +228,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
       resetView();
       logger.debug("Canvas limpiado");
     }
-  }, [setNodes, setConnections, resetView]);
+  }, [setNodes, setConnections, resetView, logger]);
 
   // Manejar movimiento del mouse en el canvas
   const handleCanvasMouseMoveWrapper = useCallback(
