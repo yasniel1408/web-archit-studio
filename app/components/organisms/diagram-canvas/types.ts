@@ -96,8 +96,8 @@ export type TemplateType = {
   description: string;
   image: string;
   version: string;
-  nodes: any[];
-  connections: any[];
+  nodes: unknown[];
+  connections: unknown[];
   viewport?: ViewportType;
   metadata?: {
     exportedAt: string;

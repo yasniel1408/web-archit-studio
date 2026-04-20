@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ConnectionType, NodeType, TemplateType, ViewportType } from "../types";
 
+type LooseNode = NodeType & { iconType?: NodeType["icon"] };
+
 export function useDiagramPersistence(
   setNodes: React.Dispatch<React.SetStateAction<NodeType[]>>,
   setConnections: React.Dispatch<React.SetStateAction<ConnectionType[]>>,
@@ -28,7 +30,7 @@ export function useDiagramPersistence(
         const idMap = new Map<string, number>();
 
         // Cargar nodos, asegurándose de que todos los campos estén presentes y los IDs sean únicos
-        const nodesWithCorrectProps = (savedNodes || []).map((node: any) => {
+        const nodesWithCorrectProps = (savedNodes || []).map((node: LooseNode) => {
           // Verificar si este ID ya existe en nuestro mapa
           let uniqueId = node.id;
           if (idMap.has(uniqueId)) {
@@ -76,7 +78,7 @@ export function useDiagramPersistence(
 
         // También necesitamos actualizar las referencias a los nodos en las conexiones
         const nodeIdMapping = new Map<string, string>();
-        savedNodes.forEach((originalNode: any, index: number) => {
+        savedNodes.forEach((originalNode: LooseNode, index: number) => {
           nodeIdMapping.set(originalNode.id, nodesWithCorrectProps[index].id);
         });
 
@@ -402,7 +404,7 @@ export function useDiagramPersistence(
           repeat: 0, // Loop infinito
           globalPalette: false, // Paleta optimizada por frame
           optimizePalette: true, // Optimización automática de colores
-        } as any);
+        } as unknown as ConstructorParameters<typeof GIF>[0]);
 
         try {
           // Capturar frames en un bucle
@@ -702,7 +704,7 @@ export function useDiagramPersistence(
             }
 
             // Procesar nodos garantizando todas las propiedades necesarias
-            const importedNodes = data.nodes.map((node: any) => {
+            const importedNodes = data.nodes.map((node: LooseNode) => {
               // Asegurar que el tamaño del nodo esté incluido en su tipo si es un nodo square
               let nodeType = node.type || "square";
               const hasDefinedSize = node.size && node.size.width && node.size.height;
@@ -744,7 +746,7 @@ export function useDiagramPersistence(
 
             // Procesar conexiones con actualización de referencias y garantizar propiedades
             if (data.connections && Array.isArray(data.connections)) {
-              const importedConnections = data.connections.map((conn: any) => ({
+              const importedConnections = data.connections.map((conn: ConnectionType) => ({
                 id: conn.id || `conn-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                 sourceId: conn.sourceId,
                 targetId: conn.targetId,
@@ -883,8 +885,9 @@ export function useDiagramPersistence(
   }, [formattedJson, logDebug]);
 
   // Función auxiliar para mapear nodos de un template
-  const mapTemplateNodes = useCallback((templateNodes: any[]): NodeType[] => {
-    return templateNodes.map((node) => {
+  const mapTemplateNodes = useCallback((templateNodes: unknown[]): NodeType[] => {
+    return templateNodes.map((rawNode) => {
+      const node = rawNode as LooseNode;
       // Si el nodo tiene un tipo definido y es square, verificar si necesitamos incluir el tamaño
       const hasDefinedSize = node.size && node.size.width && node.size.height;
       let nodeType = node.type || "square";
@@ -900,38 +903,42 @@ export function useDiagramPersistence(
         text: node.text || "",
         type: nodeType,
         size: node.size || { width: 140, height: 80 },
-        icon: node.icon || node.iconType || undefined,
-        backgroundColor: node.backgroundColor || undefined,
-        // Propiedades específicas para Queue
-        speed: node.speed || undefined,
-        maxMessages: node.maxMessages || undefined,
+        ...(node.icon || node.iconType
+          ? { icon: (node.icon || node.iconType) as NonNullable<NodeType["icon"]> }
+          : {}),
+        ...(node.backgroundColor ? { backgroundColor: node.backgroundColor } : {}),
+        ...(node.speed ? { speed: node.speed } : {}),
+        ...(node.maxMessages ? { maxMessages: node.maxMessages } : {}),
       };
     });
   }, []);
 
   // Convertir plantilla a conexiones
   const mapTemplateConnections = useCallback(
-    (templateConnections: any[], _nodes: NodeType[]): ConnectionType[] => {
-      return templateConnections.map((conn) => ({
-        id: conn.id,
-        sourceId: conn.sourceId,
-        targetId: conn.targetId,
-        sourcePosition: conn.sourcePosition,
-        targetPosition: conn.targetPosition,
-        sourceX: conn.sourceX,
-        sourceY: conn.sourceY,
-        targetX: conn.targetX,
-        targetY: conn.targetY,
-        style: conn.style || "solid",
-        animation: conn.animation || "none",
-        startArrowHead: conn.startArrowHead || "none",
-        endArrowHead: conn.endArrowHead || "arrow",
-        roundTrip: conn.roundTrip || false, // Añadir propiedad de ida y vuelta
-        multiplePoints: conn.multiplePoints || false, // Añadir propiedad de múltiples puntos
-        color: conn.color || "#000000",
-        strokeWidth: conn.strokeWidth || 2,
-        isSyncEnabled: conn.isSyncEnabled || false, // Añadir propiedad de sincronización
-      }));
+    (templateConnections: unknown[], _nodes: NodeType[]): ConnectionType[] => {
+      return templateConnections.map((rawConnection) => {
+        const conn = rawConnection as ConnectionType;
+        return {
+          id: conn.id,
+          sourceId: conn.sourceId,
+          targetId: conn.targetId,
+          sourcePosition: conn.sourcePosition,
+          targetPosition: conn.targetPosition,
+          sourceX: conn.sourceX,
+          sourceY: conn.sourceY,
+          targetX: conn.targetX,
+          targetY: conn.targetY,
+          style: conn.style || "solid",
+          animation: conn.animation || "none",
+          startArrowHead: conn.startArrowHead || "none",
+          endArrowHead: conn.endArrowHead || "arrow",
+          roundTrip: conn.roundTrip || false, // Añadir propiedad de ida y vuelta
+          multiplePoints: conn.multiplePoints || false, // Añadir propiedad de múltiples puntos
+          color: conn.color || "#000000",
+          strokeWidth: conn.strokeWidth || 2,
+          isSyncEnabled: conn.isSyncEnabled || false, // Añadir propiedad de sincronización
+        };
+      });
     },
     []
   );
