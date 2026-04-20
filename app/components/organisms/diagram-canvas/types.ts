@@ -71,6 +71,21 @@ export type ConnectionPropertiesType = {
   strokeWidth?: number;
 };
 
+
+export type CanvasToolbarPropsType = {
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onResetView: () => void;
+  onExport: () => void;
+  onExportGif: () => void;
+  onExportModernGif: () => void;
+  onImport: () => void;
+  onShowJson: () => void;
+  onShowTemplates: () => void;
+  onClearCanvas: () => void;
+  scale: number;
+};
+
 export type ViewportType = {
   scale: number;
   position: { x: number; y: number };
