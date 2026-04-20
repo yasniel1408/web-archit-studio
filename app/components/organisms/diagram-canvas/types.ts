@@ -71,7 +71,6 @@ export type ConnectionPropertiesType = {
   strokeWidth?: number;
 };
 
-
 export type CanvasToolbarPropsType = {
   onZoomIn: () => void;
   onZoomOut: () => void;

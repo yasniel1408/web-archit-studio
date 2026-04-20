@@ -8,7 +8,7 @@ interface HeaderProps {
   onMenuToggle: () => void;
   isMobileMenuOpen: boolean;
   // Props del toolbar
-  canvasToolbarProps?: CanvasToolbarPropsType;
+  canvasToolbarProps?: CanvasToolbarPropsType | undefined;
 }
 
 export function Header({ onMenuToggle, isMobileMenuOpen, canvasToolbarProps }: HeaderProps) {

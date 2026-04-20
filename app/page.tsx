@@ -12,7 +12,9 @@ import { useMobileMenu } from "@/hooks/useMobileMenu";
 
 export default function Home() {
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
-  const [canvasToolbarProps, setCanvasToolbarProps] = useState<CanvasToolbarPropsType | null>(null);
+  const [canvasToolbarProps, setCanvasToolbarProps] = useState<CanvasToolbarPropsType | undefined>(
+    undefined
+  );
 
   // Hook para trackear usuarios automáticamente
   useAnalytics();
