@@ -4,7 +4,7 @@ export interface AppError {
   code: string;
   severity: "low" | "medium" | "high" | "critical";
   timestamp: Date;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   stack?: string;
 }
 
@@ -14,7 +14,7 @@ export class ErrorHandler {
 
   static logError(
     error: Error,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     severity: AppError["severity"] = "medium"
   ): AppError {
     const appError: AppError = {
@@ -71,7 +71,7 @@ export class ErrorHandler {
 }
 
 // Helper para crear errores tipados
-export const createError = (message: string, code: string, _context?: Record<string, any>) => {
+export const createError = (message: string, code: string, _context?: Record<string, unknown>) => {
   const error = new Error(message);
   error.name = code;
   return error;

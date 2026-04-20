@@ -2,23 +2,13 @@
 
 import React from "react";
 
+import { CanvasToolbarPropsType } from "@/app/components/organisms/diagram-canvas/types";
+
 interface HeaderProps {
   onMenuToggle: () => void;
   isMobileMenuOpen: boolean;
   // Props del toolbar
-  canvasToolbarProps?: {
-    onZoomIn: () => void;
-    onZoomOut: () => void;
-    onResetView: () => void;
-    onExport: () => void;
-    onExportGif: () => void;
-    onExportModernGif: () => void;
-    onImport: () => void;
-    onShowJson: () => void;
-    onShowTemplates: () => void;
-    onClearCanvas: () => void;
-    scale: number;
-  };
+  canvasToolbarProps?: CanvasToolbarPropsType;
 }
 
 export function Header({ onMenuToggle, isMobileMenuOpen, canvasToolbarProps }: HeaderProps) {

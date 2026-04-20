@@ -18,10 +18,10 @@ import { useModernGifExport } from "./hooks/useModernGifExport";
 import { useNodeManagement } from "./hooks/useNodeManagement";
 import { useTemplates } from "./hooks/useTemplates";
 import { diagramCanvasStyles } from "./styles";
-import { ConnectionPropertiesType, TemplateType } from "./types";
+import { CanvasToolbarPropsType, ConnectionPropertiesType, NodeType, TemplateType } from "./types";
 
 interface DiagramCanvasProps {
-  onToolbarPropsChange?: (props: any) => void;
+  onToolbarPropsChange?: (props: CanvasToolbarPropsType) => void;
 }
 
 /**
@@ -180,7 +180,7 @@ export function DiagramCanvas({ onToolbarPropsChange }: DiagramCanvasProps) {
 
   // Actualizar propiedades de un nodo
   const handleNodePropertiesChange = useCallback(
-    (nodeId: string, properties: Partial<any>) => {
+    (nodeId: string, properties: Partial<NodeType>) => {
       updateNodeProperties(nodeId, properties);
       logger.debug(`Propiedades del nodo actualizadas: ${nodeId}`, { properties });
     },

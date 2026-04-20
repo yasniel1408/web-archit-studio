@@ -5,13 +5,14 @@ import React, { useState } from "react";
 import { Header } from "@/app/components/atoms/header/header";
 import { MobileSidebar } from "@/app/components/molecules/mobile-sidebar/mobile-sidebar";
 import { DiagramCanvas } from "@/app/components/organisms/diagram-canvas/diagram-canvas";
+import { CanvasToolbarPropsType } from "@/app/components/organisms/diagram-canvas/types";
 import { SidePanel } from "@/app/components/organisms/side-panel/side-panel";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useMobileMenu } from "@/hooks/useMobileMenu";
 
 export default function Home() {
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
-  const [canvasToolbarProps, setCanvasToolbarProps] = useState<any>(null);
+  const [canvasToolbarProps, setCanvasToolbarProps] = useState<CanvasToolbarPropsType | null>(null);
 
   // Hook para trackear usuarios automáticamente
   useAnalytics();
