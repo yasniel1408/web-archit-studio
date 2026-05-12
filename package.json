@@ -6,6 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
@@ -19,6 +23,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@opennextjs/cloudflare": "1.19.9",
     "@types/gif.js": "^0.2.5",
     "canvas": "^3.1.0",
     "classnames": "^2.5.1",
@@ -30,7 +35,7 @@
     "lodash": "^4.17.21",
     "mediabunny": "^1.0.0",
     "mp4-muxer": "^5.2.2",
-    "next": "^15.3.1",
+    "next": "^15.5.18",
     "next-themes": "^0.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -57,7 +62,8 @@
     "postcss": "^8.4.32",
     "prettier": "^3.2.4",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "wrangler": "4.90.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
