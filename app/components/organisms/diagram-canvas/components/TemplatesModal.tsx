@@ -25,14 +25,18 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({
   const handleSelect = onSelect || onSelectTemplate;
 
   const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState<"all" | "c4" | "cloud" | "data" | "platform">(
-    "all",
-  );
+  const [activeCategory, setActiveCategory] = useState<
+    "all" | "c4" | "cloud" | "data" | "platform"
+  >("all");
 
   const getTemplateCategory = (template: TemplateType): "c4" | "cloud" | "data" | "platform" => {
     const haystack = `${template.id} ${template.name} ${template.description}`.toLowerCase();
 
-    if (haystack.includes("c4") || haystack.includes("component") || haystack.includes("container")) {
+    if (
+      haystack.includes("c4") ||
+      haystack.includes("component") ||
+      haystack.includes("container")
+    ) {
       return "c4";
     }
 
@@ -40,7 +44,11 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({
       return "data";
     }
 
-    if (haystack.includes("kubernetes") || haystack.includes("microservices") || haystack.includes("cqrs")) {
+    if (
+      haystack.includes("kubernetes") ||
+      haystack.includes("microservices") ||
+      haystack.includes("cqrs")
+    ) {
       return "platform";
     }
 
@@ -91,10 +99,18 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({
             />
 
             <div className="flex flex-wrap gap-2">
-              <button type="button" className={categoryPillClass("all")} onClick={() => setActiveCategory("all")}>
+              <button
+                type="button"
+                className={categoryPillClass("all")}
+                onClick={() => setActiveCategory("all")}
+              >
                 Todas
               </button>
-              <button type="button" className={categoryPillClass("c4")} onClick={() => setActiveCategory("c4")}>
+              <button
+                type="button"
+                className={categoryPillClass("c4")}
+                onClick={() => setActiveCategory("c4")}
+              >
                 C4
               </button>
               <button
@@ -104,18 +120,28 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({
               >
                 Plataformas
               </button>
-              <button type="button" className={categoryPillClass("cloud")} onClick={() => setActiveCategory("cloud")}>
+              <button
+                type="button"
+                className={categoryPillClass("cloud")}
+                onClick={() => setActiveCategory("cloud")}
+              >
                 Cloud
               </button>
-              <button type="button" className={categoryPillClass("data")} onClick={() => setActiveCategory("data")}>
+              <button
+                type="button"
+                className={categoryPillClass("data")}
+                onClick={() => setActiveCategory("data")}
+              >
                 Data/AI/IoT
               </button>
             </div>
           </div>
 
           <p className="text-xs text-slate-600">
-            Mostrando <span className="font-semibold text-slate-800">{filteredTemplates.length}</span> de{" "}
-            <span className="font-semibold text-slate-800">{templates.length}</span> plantillas disponibles.
+            Mostrando{" "}
+            <span className="font-semibold text-slate-800">{filteredTemplates.length}</span> de{" "}
+            <span className="font-semibold text-slate-800">{templates.length}</span> plantillas
+            disponibles.
           </p>
         </div>
 
@@ -124,51 +150,52 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({
             const category = getTemplateCategory(template);
 
             return (
-            <div
-              key={template.id}
-              className="group cursor-pointer rounded-xl border border-slate-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
-              onClick={() => handleSelect && handleSelect(template)}
-            >
-              <div className="mb-2 flex items-center justify-between">
-                <h4 className="font-medium">{template.name}</h4>
-                <span className="ml-2 rounded bg-gray-100 px-2 py-1 text-xs">
-                  v{template.version}
-                </span>
-              </div>
+              <div
+                key={template.id}
+                className="group cursor-pointer rounded-xl border border-slate-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
+                onClick={() => handleSelect && handleSelect(template)}
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <h4 className="font-medium">{template.name}</h4>
+                  <span className="ml-2 rounded bg-gray-100 px-2 py-1 text-xs">
+                    v{template.version}
+                  </span>
+                </div>
 
-              <div className="mb-2 flex items-center gap-2">
-                <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-600">
-                  {category}
-                </span>
-                <span className="text-xs text-slate-500">{template.id}</span>
-              </div>
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-600">
+                    {category}
+                  </span>
+                  <span className="text-xs text-slate-500">{template.id}</span>
+                </div>
 
-              <p className="mb-3 text-sm text-gray-600">{template.description}</p>
+                <p className="mb-3 text-sm text-gray-600">{template.description}</p>
 
-              <div className="flex h-32 items-center justify-center overflow-hidden rounded border border-slate-200 bg-gray-50">
-                {template.image ? (
-                  <img
-                    src={template.image}
-                    alt={template.name}
-                    className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="text-xs text-gray-400">Vista previa no disponible</div>
-                )}
-              </div>
+                <div className="flex h-32 items-center justify-center overflow-hidden rounded border border-slate-200 bg-gray-50">
+                  {template.image ? (
+                    <img
+                      src={template.image}
+                      alt={template.name}
+                      className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="text-xs text-gray-400">Vista previa no disponible</div>
+                  )}
+                </div>
 
-              <div className="mt-3 flex justify-between text-xs text-gray-500">
-                <span>{template.nodes.length} nodos</span>
-                <span>{template.connections.length} conexiones</span>
+                <div className="mt-3 flex justify-between text-xs text-gray-500">
+                  <span>{template.nodes.length} nodos</span>
+                  <span>{template.connections.length} conexiones</span>
+                </div>
               </div>
-            </div>
             );
           })}
         </div>
 
         {filteredTemplates.length === 0 && (
           <div className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500">
-            No hay plantillas para esa búsqueda/filtro. Prueba con otra categoría o términos más generales.
+            No hay plantillas para esa búsqueda/filtro. Prueba con otra categoría o términos más
+            generales.
           </div>
         )}
 
